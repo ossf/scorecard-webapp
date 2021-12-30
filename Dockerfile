@@ -22,8 +22,8 @@ COPY . ./
 FROM base AS webapp
 ARG TARGETOS
 ARG TARGETARCH
-RUN CGO_ENABLED=0 make build-webapp
+RUN CGO_ENABLED=0 make scorecard-webapp
 
 FROM gcr.io/distroless/base:nonroot@sha256:46d4514c17aca7a68559ee03975983339fc548e6d1014e2d7633f9123f2d3c59
-COPY --from=webapp /src/webapp webapp
-ENTRYPOINT ["webapp"]
+COPY --from=webapp /src/scorecard-webapp /
+ENTRYPOINT ["/scorecard-webapp"]

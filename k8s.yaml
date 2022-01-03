@@ -16,15 +16,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: scorecard-webapp-service
-  spec:
-    # TODO: Update clusterIP with an IP address value.
-    # clusterIP: 10.4.8.246
-    selector:
-      app.kubernetes.io/name: scorecard-webapp
-    ports:
-    - protocol: TCP
-      port: 443
-      targetPort: 8080
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 34.68.26.31
+  selector:
+    app.kubernetes.io/name: scorecard-webapp
+  ports:
+  - protocol: TCP
+    port: 443
+    targetPort: 8080
 ---
 
 apiVersion: apps/v1
@@ -45,8 +45,8 @@ spec:
       - name: scorecard-webapp
         image: gcr.io/openssf/scorecard-webapp:latest
         imagePullPolicy: Always
-        strategy:
-          type: "RollingUpdate"
-          rollingUpdate:
-            maxUnavailable: 1
-            maxSurge: 1
+  strategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1

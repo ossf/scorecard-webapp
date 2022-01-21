@@ -12,18 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: scorecard-webapp-managed-cert
+spec:
+  domains:
+  - securityscorecards.dev
+  - www.securityscorecards.dev
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scorecard-webapp-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: scorecard-webapp
+    networking.gke.io/managed-certificates: scorecard-webapp-managed-cert
+    kubernetes.io/ingress.class: "gce"
+spec:
+  defaultBackend:
+    service:
+      name: scorecard-webapp-service
+      port:
+        number: 80
+---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: scorecard-webapp-service
 spec:
-  type: LoadBalancer
-  loadBalancerIP: 34.68.26.31
+  type: NodePort
   selector:
     app.kubernetes.io/name: scorecard-webapp
   ports:
   - protocol: TCP
-    port: 443
+    port: 80
     targetPort: 8080
 ---
 

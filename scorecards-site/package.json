@@ -5,14 +5,14 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "nuxt generate && nuxt start",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint:prettier": "prettier --check .",
     "lint": "yarn lint:js && yarn lint:prettier",
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix",
     "prepare": "cd ../ && husky install ./scorecards-site/.husky",
-    "deploy": "yarn build && gcloud app deploy app.yaml --project [project-id]"
+    "deploy": "yarn build && gcloud app deploy"
   },
   "lint-staged": {
     "*.{js,vue}": "eslint --cache",
@@ -25,12 +25,15 @@
     "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/redirect-module": "^0.3.1",
     "@nuxtjs/sitemap": "^2.4.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/tailwindcss": "^4.2.1",
     "@nuxtjs/svg": "^0.4.0",
     "@tailwindcss/typography": "^0.5.1",
     "core-js": "^3.19.3",
     "headroom.js": "^0.12.0",
     "nuxt": "^2.15.8",
     "swiper": "6.x",
+    "sass-loader": "10",
     "vue": "^2.6.14",
     "vue-awesome-swiper": "^4.1.1",
     "vue-intersect": "^1.1.6",
@@ -56,5 +59,6 @@
     "lint-staged": "^12.1.2",
     "postcss": "^8.4.4",
     "prettier": "^2.5.1"
-  }
+  },
+  "engines" : { "node" : "14.x.x" }
 }

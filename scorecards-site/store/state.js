@@ -1,5 +1,5 @@
 const state = {
-    bgColour: null
-};
-  
+  bgColour: null,
+}
+
 export default state

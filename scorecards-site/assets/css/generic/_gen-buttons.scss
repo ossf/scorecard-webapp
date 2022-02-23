@@ -1,15 +1,15 @@
 .button {
   @extend %button;
 
-  &--transparent-border{
-    border:solid 2px black;
+  &--transparent-border {
+    border: solid 2px black;
     @apply rounded-full;
     @apply bg-white;
   }
 }
 
-.markdown-text{
-  p a{
+.markdown-text {
+  p a {
     // apply text-16;
     // apply leading-22;
     // apply text-gray-medium;
@@ -23,15 +23,15 @@
   }
 }
 
-.cta{
+.cta {
   &_transparent {
-      background-color: white;
-      color: black;
-      padding: 2rem;
+    background-color: white;
+    color: black;
+    padding: 2rem;
   }
 }
 
-.inline--button{
+.inline--button {
   &-grey {
     @apply text-gray-dark;
     transition: all 0.2s ease-in-out;
@@ -46,7 +46,7 @@
       & svg {
         transform: translateX(5px);
         transition: all 0.2s ease-in-out;
-          animation-delay: 0.1s;
+        animation-delay: 0.1s;
         path {
           stroke: $c-purple;
         }

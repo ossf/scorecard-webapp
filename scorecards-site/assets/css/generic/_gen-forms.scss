@@ -1,4 +1,4 @@
-$inputs: "input[type=radio], input[type=checkbox], input[type=text], input[type=email], input[type=password], input[type=tel], select";
+$inputs: 'input[type=radio], input[type=checkbox], input[type=text], input[type=email], input[type=password], input[type=tel], select';
 
 @mixin reset-block-model {
   appearance: none;
@@ -233,7 +233,7 @@ label {
   display: inline-flex;
   align-items: center;
 
-  .checkbox[type="checkbox"] {
+  .checkbox[type='checkbox'] {
     height: 20px;
     opacity: 0;
     position: relative;
@@ -256,7 +256,7 @@ label {
     &:before {
       border: 2px $c-blue solid;
       border-radius: 4px;
-      content: "";
+      content: '';
       display: inline-block;
       height: 20px;
       left: -23px;
@@ -267,7 +267,7 @@ label {
     &:after {
       border-bottom: 1px solid;
       border-left: 1px solid;
-      content: "";
+      content: '';
       display: inline-block;
       height: 4px;
       left: -17px;
@@ -283,27 +283,27 @@ label {
     }
   }
 
-  [type="checkbox"] + label.checkbox-label:after {
+  [type='checkbox'] + label.checkbox-label:after {
     content: none;
   }
 
-  [type="checkbox"]:checked + label.checkbox-label:after {
+  [type='checkbox']:checked + label.checkbox-label:after {
     border-color: $c-white;
-    content: "";
+    content: '';
   }
 
-  [type="checkbox"]:checked + label.checkbox-label {
+  [type='checkbox']:checked + label.checkbox-label {
     color: $c-black;
     font-weight: bold;
   }
 
-  [type="checkbox"]:checked + label.checkbox-label:before {
+  [type='checkbox']:checked + label.checkbox-label:before {
     background-color: $c-blue;
     // border-color: $c-blue;
     border: none;
   }
 
-  [type="checkbox"]:focus + label.checkbox-label:before {
+  [type='checkbox']:focus + label.checkbox-label:before {
     outline: rgb(59, 153, 252) auto 5px;
   }
 }
@@ -311,7 +311,7 @@ label {
 .radio-wrapper {
   position: relative;
 
-  .radio__button[type="radio"] {
+  .radio__button[type='radio'] {
     display: none;
     height: 17px;
     opacity: 0;
@@ -329,7 +329,7 @@ label {
     &:before {
       border: 1px solid;
       border-radius: 50%;
-      content: "";
+      content: '';
       display: inline-block;
       height: 16px;
       right: 0;
@@ -360,7 +360,7 @@ label {
     &:checked {
       + .radio__label {
         &:after {
-          content: "";
+          content: '';
         }
 
         &:before {
@@ -368,7 +368,7 @@ label {
         }
       }
 
-      [type="radio"]:focus + label.radio__label:before {
+      [type='radio']:focus + label.radio__label:before {
         outline: $c-green auto 5px;
       }
     }
@@ -446,7 +446,7 @@ fieldset {
       background-color: $c-white;
       border-radius: 50px;
       bottom: 0;
-      content: "";
+      content: '';
       height: 100%;
       // height: 0;
       left: 0;
@@ -514,7 +514,7 @@ fieldset {
       &:after {
         background: $c-blue;
         bottom: 0;
-        content: "";
+        content: '';
         height: 3px;
         left: 0;
         opacity: 0;

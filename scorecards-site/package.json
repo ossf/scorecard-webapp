@@ -60,5 +60,7 @@
     "postcss": "^8.4.4",
     "prettier": "^2.5.1"
   },
-  "engines" : { "node" : "14.x.x" }
+  "engines": {
+    "node": "14.x.x"
+  }
 }

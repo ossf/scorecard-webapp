@@ -78,7 +78,7 @@
           class="footer--nav-button mr-36 flex justify-between text-19 hover:text-purple-light h items-center"
           :class="[text]"
           target="_blank"
-          href="https://docs.sigstore.dev"
+          href="https://docs.scorecard.dev"
         >
           Docs
           <span class="ml-6 h-20">

@@ -7,13 +7,7 @@
     <div class="container">
       <div class="flex flex-wrap justify-between items-start">
         <a href="/" title="Home link" class="logo"
-          ><Logo
-            :class="[
-              $route.params.slug === 'trust-security'
-                ? 'logo-white'
-                : 'logo-black',
-            ]"
-        /></a>
+          >Logo</a>
         <Navigation
           class="hidden md:block"
           :scrolled="isScrolling"

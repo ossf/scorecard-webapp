@@ -1,7 +1,7 @@
 import Navigation from '@/modules/Navigation/Navigation.vue'
 import Logo from '@/assets/icons/logo.svg?inline'
 export default {
-  name: 'Footer',
+  name: 'FooterModule',
   components: {
     Navigation,
     Logo,

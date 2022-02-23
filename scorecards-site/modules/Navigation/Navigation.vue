@@ -58,20 +58,10 @@
       <ul v-if="navType == 'header'" class="flex items-start">
         <li>
           <a
-            class="mr-16 lg:mr-36 flex justify-between"
-            :class="[text]"
-            target="_blank"
-            href="https://medium.com/sigstore"
-          >
-            Blog
-          </a>
-        </li>
-        <li>
-          <a
             class="mr-16 lg:mr-36 flex justify-between items-center"
             :class="[text]"
             target="_blank"
-            href="https://docs.sigstore.dev"
+            href="https://docs.scorecard.dev"
           >
             Docs
             <span class="ml-6 h-16">
@@ -122,7 +112,7 @@
         <li>
           <a
             :class="[text]"
-            href="https://github.com/sigstore"
+            href="https://github.com/ossf/scorecard"
             target="_blank"
             title="GitHub profile link"
           >

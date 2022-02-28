@@ -1,21 +1,31 @@
 <template>
   <ul>
-    <li
-      v-for="link in toc"
-      :key="link.id"
-      :class="{ toc2: link.depth === 2, toc3: link.depth === 3 }"
-      @click="tableOfContentsHeadingClick(link)"
-    >
+    <li v-for="navLink in toc" :key="navLink.slug">
       <NuxtLink
-        :class="{
-          'text-orange-dark hover:text-red-600': link.id === currentlyActiveToc,
-          'text-black hover:gray-900': link.id !== currentlyActiveToc,
-        }"
         role="button"
         class="transition-colors duration-75 text-base mb-2 block"
-        :to="`#${link.id}`"
-        >{{ link.text }}</NuxtLink
+        :to="navLink.slug"
+        >{{ navLink.title }}</NuxtLink
       >
+      <ul>
+        <li
+          v-for="link in navLink.toc"
+          :key="link.id"
+          :class="{ 'pl-12': link.depth === 2, 'pl-24 has-children': link.depth === 3 }"
+          @click="tableOfContentsHeadingClick(link)"
+        >
+          <NuxtLink
+            :class="{
+              'text-orange-dark hover:text-red-600': link.id === currentlyActiveToc,
+              'text-black hover:gray-900': link.id !== currentlyActiveToc,
+            }"
+            role="button"
+            class="transition-colors duration-75 text-base mb-2 block"
+            :to="`${navLink.slug}#${link.id}`"
+            >{{ link.text }}</NuxtLink
+          >
+        </li>
+      </ul>
     </li>
   </ul>
 </template>
@@ -35,7 +45,9 @@ export default {
 
     // Track all sections that have an `id` applied
     document
-      .querySelectorAll(".nuxt-content h2[id], .nuxt-content h3[id]")
+      .querySelectorAll(
+        ".nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
+      )
       .forEach((section) => {
         this.observer.observe(section);
       });

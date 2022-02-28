@@ -5,7 +5,7 @@
     <Header :navigation="headerNavLinks" :socialLinks="footerSocialLinks" />
     <main>
       <div class="flex justify-items-start items-start flex-wrap">
-        <Sidebar class="w-full md:w-1/2 fixed top-30" :toc="tocList" />
+        <Sidebar class="w-full md:w-1/2 fixed top-30" :toc="navList" />
         <Nuxt class="w-full md:w-1/2 pl-345" />
       </div>
     </main>
@@ -54,8 +54,7 @@ export default {
     observer: undefined,
     commits: null,
     tocList: [],
-    members: null,
-    bgColourMain: null,
+    navList: [],
     mobileNavOpen: false,
   }),
 
@@ -76,7 +75,7 @@ export default {
 
   mounted() {
     window.addEventListener("scroll", this.getScrollPos);
-    this.getGlobalHeader();
+    this.getNavLinks();
     this.getGlobalFooter();
     this.getGlobalSocialLinks();
 
@@ -93,7 +92,6 @@ export default {
 
   created() {
     this.$nuxt.$on("storeTocs", (payload) => {
-      console.log(payload);
       this.tocList = payload;
     });
   },
@@ -113,9 +111,12 @@ export default {
         this.isScrolling = false;
       }
     },
-    async getGlobalHeader() {
-      const globalData = await this.$content("header").fetch();
-      this.headerNavLinks = globalData[0].menu;
+    async getNavLinks() {
+      const globalData = await this.$content("/")
+        .where({ title: { $ne: "Home" } })
+        .only(["title", "slug", "toc"])
+        .fetch();
+      this.navList = globalData;
     },
     async getGlobalFooter() {
       const globalData = await this.$content("footer").fetch();

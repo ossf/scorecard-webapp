@@ -1,5 +1,6 @@
 ---
-title: About
+title: Learn more
+slug: learn-more
 ---
 <div class="bg-blue">
 <h1>about</h1>

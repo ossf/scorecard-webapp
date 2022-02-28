@@ -1,3 +1,5 @@
+import addClasses from 'rehype-add-classes';
+import remarkGemoji from 'remark-gemoji'
 export default {
   target: 'static',
   ssr: false,
@@ -92,6 +94,16 @@ export default {
   },
 
   content: {
+    markdown: {
+      remarkPlugins: ['remark-gemoji'],
+      // granular table styling here
+      rehypePlugins: [
+        ['rehype-add-classes', { table: 'table' }]
+      ],
+      prism: {
+        theme: 'prism-themes/themes/prism-material-oceanic.css'
+      }
+    },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   },
 

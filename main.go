@@ -69,7 +69,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
 		return
 	}
-	uuid := uuids[len(uuids)-1]
+	uuid := uuids[len(uuids)-1] // ignore past entries.
 
 	// Verify tlog entry to make sure it is actually in the log.
 	entry, err := verifyTLogEntry(ctx, rekorClient, uuid)
@@ -119,36 +119,17 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error decoding workflow contents", http.StatusInternalServerError)
 		return
 	}
-	// ioutil.WriteFile("test.yml", []byte(workflowContent), 0644)
 
-	// Next steps: verify workflow contents using actionlint.
-	// Currently just checks if there is a job titled "Scorecards analysis", but this will
-	// later be expanded to do more comprehensive scanning.
-	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
-	if lintErrs != nil {
-		http.Error(w, "error parsing workflow contents", http.StatusInternalServerError)
-		return
-	}
+	// Verify scorecard workflow.
+	verified := verifyScorecardWorkflow(workflowContent)
+	fmt.Println(verified)
 
-	jobs := workflow.Jobs
-	analysisJob := jobs["analysis"]
-	if analysisJob == nil {
-		http.Error(w, "analysis job not present in workflow", http.StatusNotFound)
-		return
-	}
-
-	analysisJobName := analysisJob.Name.Value
-	if analysisJobName != "Scorecards analysis" {
-		http.Error(w, "scorecard analysis job not found", http.StatusNotFound)
-		return
-	}
-
-	// Return result.
+	// Next: badging...
 }
 
 func main() {
 	http.HandleFunc("/", httpHandler)
-	http.HandleFunc("/verifyProject", verifySignature)
+	// http.HandleFunc("/verifyProject", verifySignature)
 	fmt.Printf("Starting HTTP server on port 8080 ...\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
@@ -164,9 +145,69 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 			" Please check back again later.")); err != nil {
 			log.Printf("error during Write: %v", err)
 		}
+	case http.MethodPost:
+		http.HandleFunc("/verifyProject", verifySignature)
 	default:
 		http.Error(w, "only GET method is allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func verifyScorecardWorkflow(workflowContent string) bool {
+	// Verify workflow contents using actionlint.
+	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
+	if lintErrs != nil {
+		return false
+	}
+
+	// Extract main job
+	jobs := workflow.Jobs
+	if len(jobs) != 1 {
+		return false
+	}
+	analysisJob := jobs["analysis"]
+	if analysisJob == nil {
+		return false
+	}
+
+	// Verify that there is no container or services.
+	if analysisJob.Container != nil || len(analysisJob.Services) > 0 {
+		return false
+	}
+
+	// Verify that the workflow runs on ubuntu-latest.
+	if len(analysisJob.RunsOn.Labels) != 1 || analysisJob.RunsOn.Labels[0].Value != "ubuntu-latest" {
+		return false
+	}
+
+	// Verify that there are no env vars set.
+	if analysisJob.Env != nil {
+		return false
+	}
+
+	// Get steps in job.
+	steps := analysisJob.Steps
+
+	if steps == nil || len(steps) > 4 {
+		return false
+	}
+
+	// Verify that steps are valid (checkout, scorecard-action, upload-artifact, upload-sarif).
+	for _, step := range steps {
+		stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
+		stepName = stepName[:strings.Index(stepName, "@")] // get rid of commit sha.
+
+		switch stepName {
+		case
+			"actions/checkout",
+			"ossf/scorecard-action",
+			"actions/upload-artifact",
+			"github/codeql-action/upload-sarif":
+		default:
+			return false
+		}
+	}
+
+	return true
 }
 
 // Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/pkg/cosign/tlog.go#L247

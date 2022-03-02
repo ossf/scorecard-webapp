@@ -14,7 +14,7 @@ func TestGetRequest(t *testing.T) {
 	// Using a scorecard results file from a previous run that was successfully signed.
 	// This isn't expected to pass verifyScorecardWorkflow because the workflow it was
 	// generated from contains extra steps to call cosign.
-	payload, _ := ioutil.ReadFile("testdata/results.sarif")
+	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
 	r, _ := http.NewRequest("POST", "/projects", bytes.NewBuffer(payload))
 	w := httptest.NewRecorder()
 
@@ -27,4 +27,24 @@ func TestVerifyValidWorkflow(t *testing.T) {
 	workflowContent, _ := ioutil.ReadFile("testdata/workflow-valid.yml")
 	res := verifyScorecardWorkflow(string(workflowContent))
 	assert.Equal(t, res, true)
+}
+
+func TestVerifyInvalidWorkflows(t *testing.T) {
+	workflowFiles := []string{
+		"testdata/workflow-invalid-formatting.yml",
+		"testdata/workflow-invalid-jobs.yml",
+		"testdata/workflow-invalid-analysisjob.yml",
+		"testdata/workflow-invalid-container.yml",
+		"testdata/workflow-invalid-services.yml",
+		"testdata/workflow-invalid-runson.yml",
+		"testdata/workflow-invalid-envvars.yml",
+		"testdata/workflow-invalid-manysteps.yml",
+		"testdata/workflow-invalid-diffsteps.yml",
+	}
+
+	for _, workflowFile := range workflowFiles {
+		workflowContent, _ := ioutil.ReadFile(workflowFile)
+		res := verifyScorecardWorkflow(string(workflowContent))
+		assert.Equal(t, res, false)
+	}
 }

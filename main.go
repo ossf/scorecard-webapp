@@ -84,10 +84,15 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error extracting certificate from entry", http.StatusInternalServerError)
 		return
 	}
+	if len(certs) > 1 {
+		http.Error(w, "multiple certificates found for the entry", http.StatusInternalServerError)
+		return
+	}
 	cert := certs[0]
 	var repoRef string
 	var repoPath string
 	for _, ext := range cert.Extensions {
+		// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
 		if ext.Id.String() == "1.3.6.1.4.1.57264.1.6" {
 			repoRef = string(ext.Value)
 		}
@@ -173,8 +178,13 @@ func verifyScorecardWorkflow(workflowContent string) bool {
 		return false
 	}
 
-	// Verify that the workflow runs on ubuntu-latest.
-	if len(analysisJob.RunsOn.Labels) != 1 || analysisJob.RunsOn.Labels[0].Value != "ubuntu-latest" {
+	// Verify that the workflow runs on ubuntu-latest and nothing else.
+	if analysisJob.RunsOn != nil {
+		labels := analysisJob.RunsOn.Labels
+		if len(labels) == 0 || len(labels) > 1 || labels[0].Value != "ubuntu-latest" {
+			return false
+		}
+	} else {
 		return false
 	}
 
@@ -233,8 +243,14 @@ func verifyTLogEntry(ctx context.Context, rekorClient *client.Rekor, uuid string
 		hashes = append(hashes, hb)
 	}
 
-	rootHash, _ := hex.DecodeString(*e.Verification.InclusionProof.RootHash)
-	leafHash, _ := hex.DecodeString(params.EntryUUID)
+	rootHash, err := hex.DecodeString(*e.Verification.InclusionProof.RootHash)
+	if err != nil {
+		return nil, errors.New("error decoding root hash string")
+	}
+	leafHash, err := hex.DecodeString(params.EntryUUID)
+	if err != nil {
+		return nil, errors.New("error decoding leaf hash string")
+	}
 
 	v := logverifier.New(rfc6962.DefaultHasher)
 	if err := v.VerifyInclusionProof(*e.Verification.InclusionProof.LogIndex, *e.Verification.InclusionProof.TreeSize, hashes, rootHash, leafHash); err != nil {

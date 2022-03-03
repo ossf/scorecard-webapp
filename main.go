@@ -211,6 +211,11 @@ func verifyScorecardWorkflow(workflowContent string) bool {
 		return false
 	}
 
+	// Verify that there are no defaults set.
+	if analysisJob.Defaults != nil {
+		return false
+	}
+
 	// Get steps in job.
 	steps := analysisJob.Steps
 

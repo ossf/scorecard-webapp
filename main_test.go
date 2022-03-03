@@ -10,17 +10,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetRequest(t *testing.T) {
+func TestVerifySignature(t *testing.T) {
 	// Using a scorecard results file from a previous run that was successfully signed.
 	// This isn't expected to pass verifyScorecardWorkflow because the workflow it was
 	// generated from contains extra steps to call cosign.
 	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+
 	r, _ := http.NewRequest("POST", "/projects", bytes.NewBuffer(payload))
+	r.Header = http.Header{"Repository": []string{"rohankh532/scorecard-OIDC-test"}, "Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
 	verifySignature(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestVerifySignatureInvalidRepo(t *testing.T) {
+	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+
+	r, _ := http.NewRequest("POST", "/projects", bytes.NewBuffer(payload))
+	r.Header = http.Header{"Repository": []string{"rohankh532/invalid-repo"}, "Branch": []string{"refs/heads/main"}}
+	w := httptest.NewRecorder()
+
+	verifySignature(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestVerifyValidWorkflow(t *testing.T) {

@@ -55,6 +55,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "error reading http request body", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
@@ -62,11 +63,13 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
 	if err != nil {
 		http.Error(w, "error initializing Rekor client", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, reqBody)
 	if err != nil || len(uuids) == 0 {
 		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 	uuid := uuids[len(uuids)-1] // ignore past entries.
@@ -75,6 +78,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	entry, err := verifyTLogEntry(ctx, rekorClient, uuid)
 	if err != nil {
 		http.Error(w, "error verifying tlog entry", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
@@ -82,6 +86,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {
 		http.Error(w, "error extracting certificate from entry", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 	if len(certs) > 1 {
@@ -110,24 +115,37 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	ownerName := repoPath[:strings.Index(repoPath, "/")]
 	repoName := repoPath[strings.Index(repoPath, "/")+1:]
 
-	// Get workflow file from repo reference
+	// Verify that the repository and branch of the cert and request are equal.
+	reqRepo := r.Header["Repository"]
+	reqBranch := r.Header["Branch"]
+	if len(reqRepo) == 0 || len(reqBranch) == 0 || reqRepo[0] != repoPath || reqBranch[0] != repoRef {
+		http.Error(w, "repository and branch of cert doesn't match that of request", http.StatusInternalServerError)
+		return
+	}
+
+	// Get workflow file from repo reference.
+	// TODO: use GITHUB_TOKEN from workflow to make the api call.
 	client := github.NewClient(nil)
 	opts := &github.RepositoryContentGetOptions{Ref: repoRef}
 	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, ".github/workflows/scorecards.yml", opts)
 	if err != nil {
 		http.Error(w, "error downloading workflow contents from repo", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
 	workflowContent, err := contents.GetContent()
 	if err != nil {
 		http.Error(w, "error decoding workflow contents", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
 	// Verify scorecard workflow.
 	verified := verifyScorecardWorkflow(workflowContent)
 	fmt.Println(verified)
+
+	// Save blob to GCS
 
 	// Next: badging...
 }
@@ -150,7 +168,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("error during Write: %v", err)
 		}
 	case http.MethodPost:
-		http.HandleFunc("/verifyProject", verifySignature)
+		verifySignature(w, r)
 	default:
 		http.Error(w, "only GET method is allowed", http.StatusMethodNotAllowed)
 	}

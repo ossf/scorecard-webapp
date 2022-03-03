@@ -60,6 +60,12 @@ module.exports = {
     options: {
       safelist: [
         /^delay-/,
+        /^prose-/,
+        /^bg-/, 
+        /^text-/, 
+        /^border-/,
+        /^md:prose-/,
+        /^lg:prose-/,
         'text-center',
         'text-right',
         'text-left',
@@ -67,6 +73,7 @@ module.exports = {
         'md:text-center',
         'md:text-left',
         'sticky',
+        'prose',
         'top-100', 'h-400', 'w-1/3'
       ],
     },

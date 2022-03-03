@@ -42,122 +42,67 @@ hr {
   opacity: 0.1;
 }
 
-.fill-white {
-  path {
-    fill: $c-white;
-  }
-  rect {
-    fill: $c-white;
-  }
+.nuxt-content {
+  @apply break-words;
 
-  &-stroke {
-    path {
-      stroke: $c-white;
+  & .nuxt-content-highlight {
+
+    & code[class*="language-"],
+    & pre[class*="language-"] {
+      text-align: left;
+      white-space: pre;
+      word-spacing: normal;
+      word-break: normal;
+      word-wrap: normal;
+      color: #eee;
+      background: #2f2f2f;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1em;
+      line-height: 1.5em;
+
+      -moz-tab-size: 4;
+      -o-tab-size: 4;
+      tab-size: 4;
+
+      -webkit-hyphens: none;
+      -moz-hyphens: none;
+      -ms-hyphens: none;
+      hyphens: none;
     }
-  }
-}
 
-.fill-grey {
-  path {
-    fill: #afafaf;
-  }
-}
-
-.fill-blue {
-  path {
-    fill: $c-blue;
-  }
-
-  &--circle {
-    circle {
-      fill: $c-blue;
+    & code[class*="language-"]::-moz-selection,
+    & pre[class*="language-"]::-moz-selection,
+    & code[class*="language-"] ::-moz-selection,
+    & pre[class*="language-"] ::-moz-selection {
+      background: #363636;
     }
-  }
-}
 
-.fill-purple-dark {
-  &-stroke {
-    path {
-      stroke: $c-dark-blue;
+    & code[class*="language-"]::selection,
+    & pre[class*="language-"]::selection,
+    & code[class*="language-"] ::selection,
+    & pre[class*="language-"] ::selection {
+      background: #363636;
     }
-  }
-}
 
-.fill-orange-dark {
-  &-stroke {
-    path {
-      stroke: $c-orange-dark;
+    :not(pre) > code[class*="language-"] {
+      white-space: normal;
+      border-radius: 0.2em;
+      padding: 0.1em;
     }
-  }
-}
 
-.fill-black {
-  path,
-  g {
-    fill: #000000;
-    stroke: #000000;
-  }
-
-  circle {
-    stroke: #000000;
-  }
-
-  rect {
-    fill: black;
-  }
-
-  &--circle {
-    circle {
-      fill: #000000;
+    & pre[class*="language-"] {
+      overflow: auto;
+      position: relative;
+      margin: 0.5em 0;
+      padding: 1.25em 1em;
     }
-  }
-}
 
-.fill-blue {
-  path,
-  g {
-    fill: $c-blue;
-    stroke: $c-blue;
-  }
-
-  circle {
-    stroke: $c-blue;
-  }
-
-  &--circle {
-    circle {
-      fill: $c-blue;
+    & .language-css > code,
+    & .language-sass > code,
+    & .language-scss > code {
+      color: #fd9170;
     }
-  }
-}
 
-.fill-blue-logo {
-  path,
-  g {
-    fill: $c-blue;
-  }
-}
-
-.stroke-blue {
-  path {
-    stroke: $c-blue;
-    stroke-opacity: 1;
-  }
-
-  &--circle {
-    circle {
-      stroke: $c-blue;
-    }
-  }
-}
-
-.logo-white {
-  path {
-    fill: $c-white;
-  }
-
-  circle {
-    fill: $c-white;
   }
 }
 

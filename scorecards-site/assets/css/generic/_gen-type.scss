@@ -11,14 +11,20 @@
 @at-root body {
   font-family: $font-sans;
   font-size: 16px;
-  font-size: 1.6rem;
+  -webkit-font-feature-settings: 'kern' 1;
+  -moz-font-feature-settings: 'kern' 1;
+  -o-font-feature-settings: 'kern' 1;
+  font-feature-settings: 'kern' 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 
 // Headings
 h1,
 .h1 {
   @include h1;
-  // apply text-purple-dark;
 }
 
 h2,
@@ -39,6 +45,26 @@ h6 {
   // apply text-purple-dark;
 }
 
+.hero-text h1{
+  font-style: normal;
+  font-weight: 600;
+  line-height: 53px;
+    letter-spacing: -0.05em;
+    text-align: center;
+    font-size: 11.5vw;
+  @include media-breakpoint-up(md) {
+    font-size: 5.5vw;
+    max-width: 20em;
+    margin: 0 auto;
+    line-height: 92px;
+  }
+  @include media-breakpoint-up(sm) {
+    font-size: 4.5vw;
+    max-width: 13em;
+    margin: 0 auto;
+  }
+}
+
 .h {
   font-family: $font-sans-header-standard;
   font-weight: $weight-medium;
@@ -57,6 +83,7 @@ p {
 
   &.subheading {
     @extend %text--subheading;
+    color: $c-heading;
   }
 }
 
@@ -65,32 +92,6 @@ a {
   @extend %text--link;
   transition: 300ms cubic-bezier(0.77, 0, 0.175, 1);
   width: fit-content;
-
-  &:not(.icon--link, .button, .inline--button-grey, .inline--button-white, .logo, .card--button, .footer--nav-button):hover {
-    opacity: 1;
-
-    &:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -3px;
-      width: 100%;
-      @apply opacity-100;
-      border-bottom: 1px solid #afafaf;
-      transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
-    }
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    width: 0%;
-    @apply opacity-0;
-    border-bottom: 1px solid #afafaf;
-    transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
-  }
 
   &[disabled='disabled'],
   &.disabled {
@@ -104,19 +105,6 @@ a {
 
   &.inline {
     @extend %inline--link;
-  }
-
-  &:not(.button, .inline--button-grey, .inline--button-white, .logo, .card--button, .footer--nav-button).nuxt-link-exact-active {
-    &:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -3px;
-      width: 100%;
-      @apply opacity-100;
-      border-bottom: 1px solid #afafaf;
-      transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
-    }
   }
 }
 
@@ -148,6 +136,47 @@ a {
   p {
     margin-bottom: 2rem;
     white-space: pre-line;
+  }
+}
+
+.table{
+  border-collapse: separate;
+  border: 1px solid #7C6153;
+  border-radius: 8px;
+  overflow: hidden;
+  border-spacing:0;
+
+  td, th {
+      border-left:solid black 1px;
+      border-top:solid black 1px;
+  }
+
+  th {
+      border-top: none;
+  }
+
+  td:first-child, th:first-child {
+      border-left: none;
+  }
+
+  & thead {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 125%;
+    border-bottom: 1px solid #7C6153;
+  }
+
+  & tbody {
+    font-family: 'Public sans';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 125%;
+    & tr {
+      border-bottom: 1px solid #7C6153;
+    }
   }
 }
 
@@ -183,57 +212,99 @@ ol {
 ul {
   @extend %text--body-1;
   list-style: none;
+  line-height: 3.2rem;
 
   &.bullet {
     @extend %bullet;
   }
 }
 
-.tooltip {
-  display: inline;
-  position: relative;
+// tocs
 
-  &:hover {
-    text-decoration: none;
-  }
+.parent-li{
+  padding:0;
+}
 
-  &:active,
-  &:focus,
-  &:hover {
-    &:after {
-      background: rgba($c-black, 0.8);
-      border-radius: 5px;
-      // bottom: 18px;
-      bottom: 103%;
-      color: #fff;
-      content: attr(tooltip);
-      display: block;
-      max-width: 165px;
-      padding: 5px 15px;
-      position: absolute;
-      right: -38%;
-      width: max-content;
-      // top: -30px;
-      // white-space: nowrap;
-      z-index: 98;
+.nav-parent {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 120%;
+  padding: 15px 0 15px;
 
-      @include media-breakpoint-up(md) {
-        left: -5%;
-        right: auto;
+    &:hover{
+      color: #FF4D00;
+      &:before {
+        @apply opacity-100;
+        transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+        left: -10px;
+        top: 10px;
+      }
+      &:after {
+        @apply opacity-100;
+        transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+        right: 0px;
+        bottom: 10px;
       }
     }
-
     &:before {
-      border: solid;
-      border-color: $c-black transparent;
-      border-width: 6px 6px 0;
-      bottom: 12px;
-      content: '';
-      display: block;
-      left: 35%;
+      content: '\FF62';
+      color: #FF4D00;
       position: absolute;
-      top: -3px;
-      z-index: 99;
+      left: -5px;
+      top: 10px;
+      width: 0%;
+      @apply opacity-0;
+      transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
     }
-  }
+    &:after {
+      content: '\FF63';
+      color: #FF4D00;
+      position: absolute;
+      right: 5px;
+      bottom: 10px;
+      width: 0%;
+      @apply opacity-0;
+      transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+    }
+  
+}
+
+.toc-item{
+  font-size: 1.6rem;
+  // &:hover{
+  //   color: #FF4D00;
+  //   &:before {
+  //     @apply opacity-100;
+  //     transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  //     left: -10px;
+  //   top: 10px;
+  //   }
+  //   &:after {
+  //     @apply opacity-100;
+  //     transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  //     right: auto;
+  //     bottom: 10px;
+  //   }
+  // }
+  // &:before {
+  //   content: '\FF62';
+  //   color: #FF4D00;
+  //   position: absolute;
+  //   left: -10px;
+  //   top: 10px;
+  //   width: 0%;
+  //   @apply opacity-0;
+  //   transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  // }
+  // &:after {
+  //   content: '\FF63';
+  //   color: #FF4D00;
+  //   position: absolute;
+  //   right: auto;
+  //   bottom: 10px;
+  //   width: 0%;
+  //   @apply opacity-0;
+  //   transition: all 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  // }
 }

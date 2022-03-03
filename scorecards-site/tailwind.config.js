@@ -5,7 +5,7 @@
  ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
  */
 
-const baseFontSize = 10
+const baseFontSize = 11
 
 /**
  * @typedef {{
@@ -68,7 +68,7 @@ module.exports = {
       ],
     },
   },
-  // plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography")],
   corePlugins: {
     // ...
     container: false,
@@ -108,10 +108,9 @@ module.exports = {
     fontSize: {
       ...pxToRem(
         baseFontSize,
-        128,
-        120,
         90,
         81,
+        72,
         58,
         54,
         50,
@@ -136,7 +135,7 @@ module.exports = {
     },
     colors: {
       black: {
-        DEFAULT: '#000000',
+        DEFAULT: '#302825',
         overlay: 'rgba(0, 0, 0, 0.12)',
       },
       blue: {
@@ -147,11 +146,10 @@ module.exports = {
         dark: '#2A1E71',
       },
       orange: {
-        medium: '#FFC398',
-        dark: '#793030',
+        dark: '#FF4D00'
       },
       pastel: {
-        orange: '#FFEAD7',
+        white: '#FDECE3',
         light: 'rgba(255, 234, 215, 1)',
         neutral: '#E9E9E9',
         blue: '#DDEFF1',
@@ -195,6 +193,8 @@ module.exports = {
     },
     minHeight: {
       screen: '100vh',
+      mobile: '75.5vh',
+      threeQuarters: '85vh',
       ...pxToRem(baseFontSize, 440, 400, 480, 700, 320, 180, 146),
     },
     borderRadius: {
@@ -208,6 +208,71 @@ module.exports = {
       large: '12px',
     },
     extend: {
+      typography: {
+        DEFAULT: { // this is for prose class
+          css: {
+            color: '#302825', // change global color scheme
+            h2: {
+              fontSize: '32px',
+              color: '#302825',
+            },
+            a: {
+              // change anchor color and on hover
+              textDecoration: 'underline',
+                '&:hover': { // could be any. It's like extending css selector
+                  color: '#F7941E',
+                  textDecoration: 'none',
+                },
+            },
+            table: {
+              thead:{
+                tr:{
+                  th: {
+                    padding: '0.75em',
+                    fontWeight: '400',
+                    '&:first-child': {
+                      paddingLeft: '0.75em',
+                    }
+                  }
+                }
+              },
+              tbody:{
+                tr:{
+                  td: {
+                    padding: '0.75em',
+                    fontWeight: '600',
+                    '&:first-child': {
+                      paddingLeft: '0.75em',
+                    }
+                  }
+                }
+              }
+            }
+          },
+        },
+        'lg': {
+          css: {
+            maxWidth: '132ch',
+            h2: {
+              fontSize: '32px',
+              color: '#302825',
+            },
+            h3: {
+              fontSize: '24px',
+              color: '#302825',
+              position: 'sticky',
+              top: 0,
+              margin: 0,
+              padding: 0,
+              zIndex: 50,
+            },
+            h4: {
+              fontSize: '18px',
+              color: '#302825',
+            }
+          },
+        }
+      },
       width: {
         832: '832px',
       },

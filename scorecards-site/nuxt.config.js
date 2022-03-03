@@ -1,5 +1,7 @@
 import addClasses from 'rehype-add-classes';
 import remarkGemoji from 'remark-gemoji'
+import { getHighlighter } from 'shiki'
+import highlightjs from 'highlight.js'
 export default {
   target: 'static',
   ssr: false,
@@ -42,10 +44,13 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['@/assets/css/base'],
+  css: ['@/assets/css/base','highlight.js/styles/nord.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '~plugins/components.client' }],
+  plugins: [
+    { src: '~plugins/components.client' },
+    { src: '~plugins/prism', mode: 'client', ssr: false }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -56,6 +61,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+
+    '@nuxtjs/google-fonts',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -95,16 +102,39 @@ export default {
 
   content: {
     markdown: {
-      remarkPlugins: ['remark-gemoji'],
-      // granular table styling here
+      highlighter(rawCode, lang) {
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
+
+        // We need to create a wrapper, because
+        // the returned code from highlight.js
+        // is only the highlighted code.
+        return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`
+      },
       rehypePlugins: [
         ['rehype-add-classes', { table: 'table' }]
       ],
-      prism: {
-        theme: 'prism-themes/themes/prism-material-oceanic.css'
-      }
+      // prism: {
+      //   theme: 'prism-themes/themes/prism-material-oceanic.css'
+      // },
+      // async highlighter() {
+      //   const highlighter = await getHighlighter({
+
+      //     theme: 'nord'
+      //   })
+      //   return (rawCode, lang) => {
+      //     return highlighter.codeToHtml(rawCode, lang)
+      //   }
+      // }
     },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
+  },
+
+  googleFonts: {
+    families: {
+      'Public Sans': [400,600],
+      'IBM Plex Mono': [400,500],
+    },
+    display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

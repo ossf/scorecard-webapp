@@ -24,10 +24,22 @@
 }
 
 .cta {
-  &_transparent {
-    background-color: white;
-    color: black;
-    padding: 2rem;
+  width: 188px;
+  height: 58px;
+  padding: 20px 12px;
+  color: white;
+  background: #FF4D00;
+  border-radius: 8px;
+  font-family: Public Sans;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 91%;
+  transition: all 0.4s ease-in-out;
+
+  &:hover{
+    background-color: #B64616;
+    transition: all 0.4s ease-in-out;
   }
 }
 

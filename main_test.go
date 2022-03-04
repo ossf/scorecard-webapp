@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -62,4 +63,21 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		res := verifyScorecardWorkflow(string(workflowContent))
 		assert.Equal(t, res, false)
 	}
+}
+
+func TestGetScore(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/score", nil)
+	w := httptest.NewRecorder()
+
+	getScore(w, r)
+
+	scorecardData := struct{ Score int }{}
+
+	res := w.Body.Bytes()
+	err := json.Unmarshal(res, &scorecardData)
+	assert.Equal(t, err, nil)
+
+	// Endpoint currently always returns 1.
+	expectedData := struct{ Score int }{Score: 1}
+	assert.Equal(t, scorecardData, expectedData)
 }

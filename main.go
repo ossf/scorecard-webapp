@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -151,12 +152,28 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	// Next: badging...
 }
 
+func getScore(w http.ResponseWriter, r *http.Request) {
+	scorecardData := struct{ Score int }{Score: 1}
+	jData, err := json.Marshal(scorecardData)
+	if err != nil {
+		http.Error(w, "error marshalling struct", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jData)
+}
+
 func main() {
 	http.HandleFunc("/", httpHandler)
 	fmt.Printf("Starting HTTP server on port 8080 ...\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
+
+	http.HandleFunc("/score", getScore) // TODO: organize in handler.
+
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {

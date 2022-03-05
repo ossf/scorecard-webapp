@@ -179,7 +179,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte("Hello world!" +
+		if _, err := w.Write([]byte("Hello world!!" +
 			" This site is still under construction." +
 			" Please check back again later.")); err != nil {
 			log.Printf("error during Write: %v", err)

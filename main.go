@@ -171,12 +171,11 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
-
-	http.HandleFunc("/score", getScore) // TODO: organize in handler.
-
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/score", getScore) // TODO: organize in handler.
+
 	switch r.Method {
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)

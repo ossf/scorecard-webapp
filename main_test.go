@@ -66,7 +66,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/score", nil)
+	r, _ := http.NewRequest("GET", "/scorecardscore", nil)
 	w := httptest.NewRecorder()
 
 	getScore(w, r)

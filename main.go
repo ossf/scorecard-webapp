@@ -174,7 +174,7 @@ func main() {
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
-	http.HandleFunc("/score", getScore) // TODO: organize in handler.
+	http.HandleFunc("/scorecardscore", getScore) // TODO: organize in handler.
 
 	switch r.Method {
 	case http.MethodGet:

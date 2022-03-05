@@ -17,7 +17,7 @@ func TestVerifySignature(t *testing.T) {
 	// generated from contains extra steps to call cosign.
 	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
 
-	r, _ := http.NewRequest("POST", "/projects", bytes.NewBuffer(payload))
+	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payload))
 	r.Header = http.Header{"Repository": []string{"rohankh532/scorecard-OIDC-test"}, "Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
@@ -29,7 +29,7 @@ func TestVerifySignature(t *testing.T) {
 func TestVerifySignatureInvalidRepo(t *testing.T) {
 	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
 
-	r, _ := http.NewRequest("POST", "/projects", bytes.NewBuffer(payload))
+	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payload))
 	r.Header = http.Header{"Repository": []string{"rohankh532/invalid-repo"}, "Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
@@ -66,7 +66,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/scorecardscore", nil)
+	r, _ := http.NewRequest("GET", "/score", nil)
 	w := httptest.NewRecorder()
 
 	getScore(w, r)

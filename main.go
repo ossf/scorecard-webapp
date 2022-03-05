@@ -34,6 +34,7 @@ import (
 	"github.com/google/go-github/v42/github"
 	"github.com/google/trillian/merkle/logverifier"
 	"github.com/google/trillian/merkle/rfc6962"
+	"github.com/gorilla/mux"
 	"github.com/rhysd/actionlint"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
@@ -166,28 +167,24 @@ func getScore(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", httpHandler)
 	fmt.Printf("Starting HTTP server on port 8080 ...\n")
+
+	r := mux.NewRouter().StrictSlash(true)
+	r.HandleFunc("/", homepage)
+	r.HandleFunc("/score", getScore).Methods("GET")
+	r.HandleFunc("/verify", verifySignature).Methods("POST")
+	http.Handle("/", r)
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func httpHandler(w http.ResponseWriter, r *http.Request) {
-	http.HandleFunc("/scorecardscore", getScore) // TODO: organize in handler.
-
-	switch r.Method {
-	case http.MethodGet:
-		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte("Hello world!!" +
-			" This site is still under construction." +
-			" Please check back again later.")); err != nil {
-			log.Printf("error during Write: %v", err)
-		}
-	case http.MethodPost:
-		verifySignature(w, r)
-	default:
-		http.Error(w, "only GET method is allowed", http.StatusMethodNotAllowed)
+func homepage(w http.ResponseWriter, r *http.Request) {
+	if _, err := fmt.Fprintf(w, "Hello world!!"+
+		" This site is still under construction."+
+		" Please check back again later."); err != nil {
+		log.Printf("error during Write: %v", err)
 	}
 }
 

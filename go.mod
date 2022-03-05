@@ -8,6 +8,7 @@ require (
 	github.com/go-openapi/runtime v0.23.2
 	github.com/google/go-github/v42 v42.0.0
 	github.com/google/trillian v1.4.0
+	github.com/gorilla/mux v1.8.0
 	github.com/rhysd/actionlint v1.6.9
 	github.com/sigstore/cosign v1.6.0
 	github.com/sigstore/rekor v0.5.0

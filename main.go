@@ -171,7 +171,7 @@ func main() {
 
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", homepage)
-	r.HandleFunc("/score", getScore).Methods("GET")
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", getScore).Methods("GET")
 	r.HandleFunc("/verify", verifySignature).Methods("POST")
 	http.Handle("/", r)
 

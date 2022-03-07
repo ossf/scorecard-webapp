@@ -7,3 +7,15 @@
 //  HELPER UTILITIES
 // ==================================
 @import 'utilities/utilities';
+
+.highlight-section {
+    background-color: #302825;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+
+    & h3,h2 {
+        color: white;
+        margin-bottom: 30px;
+    }
+}

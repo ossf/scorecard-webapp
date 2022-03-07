@@ -106,6 +106,54 @@ hr {
   }
 }
 
+details {
+  // Simulate a 1px border with same behavior as "border-collapse: collapse".
+  border: 1px solid #FF4D00;
+  border-radius: 5px;
+  display: block;
+  padding: calc($spacer-xl / 3) calc($spacer-xl / 2);
+  margin-bottom: 1rem;
+  &[open] > summary {
+    margin-bottom: $spacer-l;
+  }
+
+  & p{
+    color: white;
+  }
+  
+  summary {
+      list-style: none;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding-left: 0px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #FF4D00;
+      @apply text-16;
+  }
+  summary::-webkit-details-marker {
+      display: none;
+  }
+
+  summary::after {
+      content: ' +';
+      color: #FF4D00;
+      @apply text-25;
+      line-height: 1;
+  }
+  &[open] > summary:after {
+      content: " -";
+  }
+  > summary > span {
+    margin-left: 30px;
+  }
+
+  &:last-child {
+      margin-bottom: 40px;
+  }
+}
+
 .w-content {
   width: fit-content;
 }

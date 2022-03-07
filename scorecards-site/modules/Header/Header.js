@@ -54,7 +54,7 @@ export default {
         year: 'numeric', month: 'numeric', day: 'numeric',
         hour: 'numeric', minute: 'numeric', second: 'numeric',
         hour12: false,
-        timeZone: 'America/Los_Angeles'
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       };
       const response = await fetch(this.apiURL)
       const data = await response.json();

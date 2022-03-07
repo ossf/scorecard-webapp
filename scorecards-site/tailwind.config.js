@@ -226,10 +226,22 @@ module.exports = {
               fontSize: '32px',
               color: '#302825',
             },
+            '.h1': { 
+              fontSize: '46px',
+            },
+            h3: {
+              marginBottom: '30px',
+            },
+            pre: {
+              fontSize: '16px',
+              code: {
+                fontSize: '16px',
+              }
+            },
             a: {
               // change anchor color and on hover
               textDecoration: 'underline',
-                '&:hover': { // could be any. It's like extending css selector
+                '&:hover': { 
                   color: '#F7941E',
                   textDecoration: 'none',
                 },
@@ -262,6 +274,12 @@ module.exports = {
         },
         'lg': {
           css: {
+            pre: {
+              fontSize: '16px',
+              code: {
+                fontSize: '16px',
+              }
+            },
             maxWidth: '132ch',
             h2: {
               fontSize: '32px',
@@ -270,11 +288,10 @@ module.exports = {
             h3: {
               fontSize: '24px',
               color: '#302825',
-              position: 'sticky',
-              top: 0,
               margin: 0,
               padding: 0,
               zIndex: 50,
+              marginBottom: '30px',
             },
             h4: {
               fontSize: '18px',

@@ -9,15 +9,36 @@ thumbnail: /img/icon.png
 
 <section class="bg-orange prose md:prose-lg w-full">
 
-## Run the checks
+<h2 class="h1" id="run-the-checks">Run the checks</h2>
+
+## Using the GitHub Action
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<section class="highlight-section">
+<h3>Using Github Action</h3>
+
+<details><summary>A summary title </summary>
+
+*Bold:* Something here
+
+*Bold:* Needs to be bold. <sup>another</sup>
+
+*Example:* text here.
+
+> TODO() 
+> something
+> here?
+
+</details>
+</section>
 
 
-## First Heading run checks
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+<section class="highlight-section">
+<h3>Using CLI</h3>
 
 <code-group>
-<code-block title="GitHub Action">
+<code-block title="Bash" active>
 
 ```bash
 yarn create vuepress-site [optionalDirectoryName]
@@ -25,7 +46,15 @@ yarn create vuepress-site [optionalDirectoryName]
 
 </code-block>
 
-<code-block title="CLI" active>
+<code-block title="Homebrew">
+
+```bash
+npx create-vuepress-site [optionalDirectoryName]
+```
+
+</code-block>
+
+<code-block title="Docker">
 
 ```bash
 npx create-vuepress-site [optionalDirectoryName]
@@ -33,8 +62,7 @@ npx create-vuepress-site [optionalDirectoryName]
 
 </code-block>
 </code-group>
-
-
+</section>
 
 ## Sub Heading One run checks
 
@@ -79,7 +107,7 @@ mounted() {
 
 </code-block>
 
-## Learn more
+<h2 class="h1" id="learn-more">Learn more</h2>
 
 ### The importance of Security Scorecards
 ### Keeping ahead of security attacks 

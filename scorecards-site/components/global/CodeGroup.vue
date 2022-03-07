@@ -83,11 +83,8 @@ export default {
 .theme-code-group__nav {
   margin-bottom: -35px;
   background-color: #333;
-  padding-bottom: 22px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  padding-left: 10px;
-  padding-top: 10px;
 }
 .theme-code-group__ul {
   margin: auto 0;
@@ -96,6 +93,7 @@ export default {
   list-style: none;
 }
 .theme-code-group__li {
+  padding: 0 1em;
   &:before {
     display: none;
   }
@@ -105,7 +103,7 @@ export default {
   padding: 5px;
   cursor: pointer;
   background-color: transparent;
-  font-size: 0.85em;
+  font-size: 0.75em;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 600;

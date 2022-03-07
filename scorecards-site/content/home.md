@@ -88,6 +88,9 @@ mounted() {
       entries.forEach((entry) => {
         const id = entry.target.getAttribute("id");
         if (entry.isIntersecting) {
+          if(id === 'run-the-checks'){
+            alert(id);
+          }
           this.currentlyActiveToc = id;
         }
       });

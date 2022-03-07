@@ -2,6 +2,7 @@
   <nav>
     <a href="/" title="Home link" class="logo"
       ><Logo
+        v-show="showLogo"
         :class="[$route.params.slug === 'trust-security' ? 'logo-white' : 'logo-black']"
     /></a>
     <ul v-if="navList" class="pl-6">
@@ -50,6 +51,9 @@ export default {
       entries.forEach((entry) => {
         const id = entry.target.getAttribute("id");
         if (entry.isIntersecting) {
+          if (id === "run-the-checks") {
+            this.showLogo = !this.showLogo;
+          }
           this.currentlyActiveToc = id;
         }
       });

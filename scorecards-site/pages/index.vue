@@ -22,7 +22,7 @@
     <section ref="homeSection" class="md:min-h-threeQuarters">
       <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden">
         <video
-          ref="video"
+          ref="videoD"
           class="object-fit h-full w-full z-0 hidden md:block"
           autoplay
           muted
@@ -31,7 +31,7 @@
           Your browser does not support the video tag.
         </video>
         <video
-          ref="video"
+          ref="videoM"
           class="object-fit h-full w-full z-0 block md:hidden px-16"
           autoplay
           muted
@@ -41,7 +41,7 @@
         </video>
       </div>
       <div class="my-64 text-center">
-        <p class="subheading">In collaboration with</p>
+        <p class="subheading">Security Scorecards is part of the OpenSSF</p>
         <div class="flex justify-center items-center my-16 mx-auto md:w-2/4 w-full px-32">
           <div
             class="w-6/12 md:4/12 flex justify-center md:mb-0 mb-32"
@@ -152,7 +152,7 @@ export default {
             // image must be an absolute path
             {
               name: "twitter:image",
-              content: this.page.description,
+              content: "../assets/checks.png",
             },
             // Facebook OpenGraph
             { property: "og:title", content: this.page.title },
@@ -163,7 +163,7 @@ export default {
             { property: "og:type", content: "website" },
             {
               property: "og:image",
-              content: "",
+              content: "../assets/checks.png",
             },
             {
               property: "og:description",
@@ -191,28 +191,33 @@ export default {
     this.observer.disconnect();
   },
   mounted() {
-    this.importAll(require.context("../assets/logos/", true, /\.png$/));
-    const video = this.$refs.video;
+    this.importAll(require.context("../assets/logos/", true, /\.svg$/));
+    const videoD = this.$refs.videoD;
+    const videoM = this.$refs.videoM;
     let playState = null;
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          video.pause();
+          videoD.pause();
+          videoM.pause();
           playState = false;
         } else {
-          video.play();
+          videoD.play();
+          videoM.play();
           playState = true;
         }
       });
     }, this.observerOptions);
 
-    this.observer.observe(video);
+    this.observer.observe(videoD, videoM);
 
     const onVisibilityChange = () => {
       if (document.hidden || !playState) {
-        video.pause();
+        videoD.pause();
+        videoM.pause();
       } else {
-        video.play();
+        videoD.play();
+        videoM.play();
       }
     };
 
@@ -224,6 +229,7 @@ export default {
     scrollToAnchorPoint(refName) {
       const el = document.getElementById(refName);
       el.scrollIntoView({ behavior: "smooth" });
+      // this.$router.push({ hash: `#${refName}` });
     },
     importAll(r) {
       r.keys().forEach((key) => this.logos.push({ pathLong: r(key), pathShort: key }));

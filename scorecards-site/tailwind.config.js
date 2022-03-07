@@ -286,7 +286,7 @@ module.exports = {
               color: '#302825',
             },
             h3: {
-              fontSize: '24px',
+              fontSize: '32px',
               color: '#302825',
               margin: 0,
               padding: 0,
@@ -294,7 +294,7 @@ module.exports = {
               marginBottom: '30px',
             },
             h4: {
-              fontSize: '18px',
+              fontSize: '24px',
               color: '#302825',
             }
           },

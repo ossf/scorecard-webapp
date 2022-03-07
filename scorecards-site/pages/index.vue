@@ -54,7 +54,7 @@
       </div>
     </section>
     <nuxt-content
-      class="container md:flex justify-start"
+      class="container md:flex justify-start pb-132"
       ref="nuxtContent"
       :document="page"
     />

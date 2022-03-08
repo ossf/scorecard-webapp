@@ -6,8 +6,7 @@
       <div class="mx-auto w-full md:w-4/6 text-center hero-text">
         <h1>Build better security habits, one test at a time</h1>
         <p class="subheading mt-32">
-          Use Security Scorecards to quickly scan your code for 18 different security
-          vulnerabilities.
+          Quickly assess open source projects for risky practices
         </p>
         <div class="flex justify-center items-center my-32">
           <button class="btn cta mx-12" @click="scrollToAnchorPoint('run-the-checks')">
@@ -41,14 +40,14 @@
         </video>
       </div>
       <div class="my-64 text-center">
-        <p class="subheading">Security Scorecards is part of the OpenSSF</p>
+        <p class="subheading">Part of the Open Source Security Foundation</p>
         <div class="flex justify-center items-center my-16 mx-auto md:w-2/4 w-full px-32">
           <div
             class="w-6/12 md:4/12 flex justify-center md:mb-0 mb-32"
             v-for="(logo, index) in logos"
             :key="index"
           >
-            <img class="w-2/3 md:w-3/5 h-auto" :src="logo.pathLong" />
+            <a href="https://openssf.org/" class="w-2/3 md:w-3/5 h-auto"><img class="w-full h-full" :src="logo.pathLong" /></a>
           </div>
         </div>
       </div>

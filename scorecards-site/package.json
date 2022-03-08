@@ -1,5 +1,5 @@
 {
-  "name": "goost-scorecards",
+  "name": "gosst-scorecards",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -70,6 +70,6 @@
     "sass-loader": "10"
   },
   "engines": {
-    "node": "14.x.x"
+    "node": ">14.x.x"
   }
 }

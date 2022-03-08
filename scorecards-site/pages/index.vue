@@ -19,7 +19,7 @@
         </div>
       </div>
     </section>
-    <section ref="homeSection" class="md:min-h-threeQuarters">
+    <section id="video-section" ref="homeSection" class="md:min-h-threeQuarters">
       <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden">
         <video
           ref="videoD"
@@ -63,6 +63,8 @@
 
 <script>
 import { mapActions } from "vuex";
+import Vue from "vue";
+import CodeCopyButton from "../components/global/CodeCopyButton";
 
 export default {
   transition(to, from) {
@@ -220,6 +222,15 @@ export default {
         videoM.play();
       }
     };
+
+    setTimeout(() => {
+      const blocks = document.getElementsByClassName("nuxt-content-highlight");
+      for (const block of blocks) {
+        const CopyButton = Vue.extend(CodeCopyButton);
+        const component = new CopyButton().$mount();
+        block.appendChild(component.$el);
+      }
+    }, 100);
 
     document.addEventListener("visibilitychange", onVisibilityChange);
   },

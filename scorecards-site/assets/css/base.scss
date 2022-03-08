@@ -46,6 +46,27 @@ hr {
   @apply break-words;
 
   & .nuxt-content-highlight {
+    position: relative;
+
+    & > .copy {
+      @apply hidden absolute right-10 bottom-10 leading-none shadow-lg px-2 py-2 text-white bg-gray-dark text-11 uppercase rounded-md border border-white font-semibold mr-3 mb-3;
+      height: 27px;
+      width: 27px;
+
+      &:hover {
+        @apply opacity-80;
+      }
+
+      &:focus {
+        @apply outline-none bg-gray-light;
+      }
+    }
+
+    &:hover {
+      & > .copy {
+        @apply block;
+      }
+    }
 
     & code[class*="language-"],
     & pre[class*="language-"] {
@@ -120,7 +141,7 @@ details {
   & p{
     color: white;
   }
-  
+
   summary {
       list-style: none;
       position: relative;

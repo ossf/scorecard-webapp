@@ -101,6 +101,7 @@ export default {
   },
 
   content: {
+    liveEdit: false,
     markdown: {
       highlighter(rawCode, lang) {
         const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
@@ -113,18 +114,10 @@ export default {
       rehypePlugins: [
         ['rehype-add-classes', { table: 'table' }]
       ],
-      // prism: {
-      //   theme: 'prism-themes/themes/prism-material-oceanic.css'
-      // },
-      // async highlighter() {
-      //   const highlighter = await getHighlighter({
-
-      //     theme: 'nord'
-      //   })
-      //   return (rawCode, lang) => {
-      //     return highlighter.codeToHtml(rawCode, lang)
-      //   }
-      // }
+      remarkAutolinkHeadings: {
+        // Fix for accessibility
+        linkProperties: { ariaHidden: 'true', tabIndex: -1, title: 'Link to Section' },
+       }
     },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   },

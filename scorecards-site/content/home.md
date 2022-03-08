@@ -41,29 +41,37 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 <h3>Using CLI</h3>
 
 <code-group>
-<code-block title="Bash" active>
+  <code-block title="Bash" active>
 
-```bash
-yarn create vuepress-site [optionalDirectoryName]
-```
+  ```bash
+  yarn create vuepress-site [optionalDirectoryName]
+  ```
 
-</code-block>
+  </code-block>
 
-<code-block title="Homebrew">
+  <code-block title="Homebrew">
 
-```bash
-npx create-vuepress-site [optionalDirectoryName]
-```
+  ```bash
+  npx create-vuepress-site [optionalDirectoryName]
+  ```
 
-</code-block>
+  </code-block>
 
-<code-block title="Docker">
+  <code-block title="Docker">
 
-```bash
-npx create-vuepress-site [optionalDirectoryName]
-```
+  ```bash
+  # For posix platforms, e.g. linux, mac:
+  export GITHUB_AUTH_TOKEN=<your access token>
 
-</code-block>
+  # For windows:
+  set GITHUB_AUTH_TOKEN=<your access token>
+
+  brew install scorecard
+
+  scorecard --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check-branch-protection-e2e>
+  ```
+
+  </code-block>
 </code-group>
 </section>
 

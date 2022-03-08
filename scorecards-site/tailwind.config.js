@@ -234,6 +234,7 @@ module.exports = {
             },
             pre: {
               fontSize: '16px',
+              color: '#feece3',
               code: {
                 fontSize: '16px',
               }
@@ -276,6 +277,7 @@ module.exports = {
           css: {
             pre: {
               fontSize: '16px',
+              color: '#feece3',
               code: {
                 fontSize: '16px',
               }

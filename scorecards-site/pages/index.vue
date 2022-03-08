@@ -48,7 +48,11 @@
             v-for="(logo, index) in logos"
             :key="index"
           >
-            <img class="w-2/3 md:w-3/5 h-auto" :src="logo.pathLong" />
+            <img
+              class="w-2/3 md:w-3/5 h-auto"
+              :alt="`Logo ${index}`"
+              :src="logo.pathLong"
+            />
           </div>
         </div>
       </div>

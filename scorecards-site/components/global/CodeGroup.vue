@@ -35,6 +35,7 @@ export default {
   },
   watch: {
     activeCodeTabIndex(index) {
+      console.log(index);
       this.activateCodeTab(index);
     },
   },
@@ -43,15 +44,16 @@ export default {
   },
   methods: {
     changeCodeTab(index) {
+      console.log(index);
       this.activeCodeTabIndex = index;
     },
     loadTabs() {
       this.codeTabs = (this.$slots.default || [])
         .filter((slot) => Boolean(slot.componentOptions))
         .map((slot, index) => {
-          //   if (slot.componentOptions.propsData.active === "") {
-          //     this.activeCodeTabIndex = index;
-          //   }
+          if (slot.componentOptions.propsData.active === "") {
+            this.activeCodeTabIndex = index;
+          }
           this.activeCodeTabIndex = index;
           return {
             title: slot.componentOptions.propsData.title,
@@ -61,7 +63,7 @@ export default {
       if (this.activeCodeTabIndex === -1 && this.codeTabs.length > 0) {
         this.activeCodeTabIndex = 0;
       }
-      this.activateCodeTab(0);
+      this.activateCodeTab(this.activeCodeTabIndex);
     },
     activateCodeTab(index) {
       this.codeTabs.forEach((tab) => {
@@ -82,9 +84,10 @@ export default {
 }
 .theme-code-group__nav {
   margin-bottom: -35px;
-  background-color: #333;
+  background-color: black;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+  border-bottom: 2px solid #302825;
 }
 .theme-code-group__ul {
   margin: auto 0;
@@ -93,23 +96,28 @@ export default {
   list-style: none;
 }
 .theme-code-group__li {
-  padding: 0 1em;
+  padding: 5px 0;
+  margin-left: 1.1em;
   &:before {
     display: none;
   }
 }
 .theme-code-group__nav-tab {
   border: 0;
-  padding: 5px;
+  padding: 4px 10px;
   cursor: pointer;
-  background-color: transparent;
-  font-size: 0.75em;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 600;
+  background: transparent;
+  border-radius: 4px;
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  color: #feece3;
+  transition: all 0.4s ease-in-out;
 }
 .theme-code-group__nav-tab-active {
-  border-bottom: #42b983 1px solid;
+  background: #302825;
+  transition: all 0.4s ease-in-out;
 }
 .pre-blank {
   color: #42b983;

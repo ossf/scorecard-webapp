@@ -46,6 +46,28 @@ hr {
   @apply break-words;
 
   & .nuxt-content-highlight {
+    position: relative;
+
+    & > .copy {
+      @apply hidden absolute right-10 bottom-10 leading-none shadow-lg px-2 py-2 bg-gray-dark text-11 uppercase rounded-md border border-white font-semibold mr-3 mb-3;
+      height: 27px;
+      width: 27px;
+      color: #feece3;
+
+      &:hover {
+        @apply opacity-80;
+      }
+
+      &:focus {
+        @apply outline-none bg-gray-light;
+      }
+    }
+
+    &:hover {
+      & > .copy {
+        @apply block;
+      }
+    }
 
     & code[class*="language-"],
     & pre[class*="language-"] {
@@ -54,7 +76,7 @@ hr {
       word-spacing: normal;
       word-break: normal;
       word-wrap: normal;
-      color: #eee;
+      color: #feece3;
       background: #2f2f2f;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 1em;
@@ -75,6 +97,7 @@ hr {
     & code[class*="language-"] ::-moz-selection,
     & pre[class*="language-"] ::-moz-selection {
       background: #363636;
+      color: #feece3;
     }
 
     & code[class*="language-"]::selection,
@@ -82,12 +105,14 @@ hr {
     & code[class*="language-"] ::selection,
     & pre[class*="language-"] ::selection {
       background: #363636;
+      color: #feece3;
     }
 
     :not(pre) > code[class*="language-"] {
       white-space: normal;
       border-radius: 0.2em;
       padding: 0.1em;
+      color: #feece3;
     }
 
     & pre[class*="language-"] {
@@ -95,6 +120,7 @@ hr {
       position: relative;
       margin: 0.5em 0;
       padding: 1.25em 1em;
+      color: #feece3;
     }
 
     & .language-css > code,
@@ -120,7 +146,7 @@ details {
   & p{
     color: white;
   }
-  
+
   summary {
       list-style: none;
       position: relative;

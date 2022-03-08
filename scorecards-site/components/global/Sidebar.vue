@@ -51,7 +51,7 @@ export default {
       entries.forEach((entry) => {
         const id = entry.target.getAttribute("id");
         if (entry.isIntersecting) {
-          if (id === "run-the-checks") {
+          if (id === "video-section") {
             this.showLogo = !this.showLogo;
           }
           this.currentlyActiveToc = id;
@@ -62,7 +62,7 @@ export default {
     // Track all sections that have an `id` applied
     document
       .querySelectorAll(
-        ".nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
+        "#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
       )
       .forEach((section) => {
         this.observer.observe(section);

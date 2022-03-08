@@ -231,9 +231,11 @@ module.exports = {
             },
             h3: {
               marginBottom: '30px',
+              fontSize: '2.25em',
             },
             pre: {
               fontSize: '16px',
+              color: '#feece3',
               code: {
                 fontSize: '16px',
               }
@@ -276,6 +278,7 @@ module.exports = {
           css: {
             pre: {
               fontSize: '16px',
+              color: '#feece3',
               code: {
                 fontSize: '16px',
               }

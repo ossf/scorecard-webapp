@@ -231,6 +231,7 @@ module.exports = {
             },
             h3: {
               marginBottom: '30px',
+              fontSize: '2.25em',
             },
             pre: {
               fontSize: '16px',

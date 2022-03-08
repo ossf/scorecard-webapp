@@ -121,6 +121,8 @@ That’s where Security Scorecards is helping. Its focus is to understand the se
 
 *[Open Source Security and Risk Analysis Report](https://www.synopsys.com/software-integrity/resources/analyst-reports/open-source-security-risk-analysis.html?intcmp=sig-blog-ossra1) (Synopsys, 2021)
 
+![image alt text](../compromised-source.svg)
+
 ### What is Security Scorecards?
 
 #### Security Scorecards checks open source projects for security risks through a series of automated checks

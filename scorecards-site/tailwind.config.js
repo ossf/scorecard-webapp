@@ -240,6 +240,20 @@ module.exports = {
                 fontSize: '16px',
               }
             },
+            blockquote: {
+              border: 'none',
+              border: '2px solid #FF4D00',
+              borderRadius: '8px',
+              p: {
+                fontFamily: 'Public Sans',
+                fontStyle: 'normal',
+                fontWeight: 'normal',
+                fontSize: '24px',
+                lineHeight: '120%',
+                letterSpacing: '-0.03em',
+                color: '#302825',
+              }
+            },
             a: {
               // change anchor color and on hover
               textDecoration: 'underline',
@@ -291,14 +305,14 @@ module.exports = {
             h3: {
               fontSize: '32px',
               color: '#302825',
-              margin: 0,
-              padding: 0,
               zIndex: 50,
-              marginBottom: '30px',
+              marginBottom: '1.4em',
             },
             h4: {
               fontSize: '24px',
               color: '#302825',
+              lineHeight: '1.1',
+              marginBottom: '1.3em',
             }
           },
         }

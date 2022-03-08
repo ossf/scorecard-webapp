@@ -61,8 +61,8 @@ module.exports = {
       safelist: [
         /^delay-/,
         /^prose-/,
-        /^bg-/, 
-        /^text-/, 
+        /^bg-/,
+        /^text-/,
         /^border-/,
         /^md:prose-/,
         /^lg:prose-/,
@@ -226,7 +226,7 @@ module.exports = {
               fontSize: '32px',
               color: '#302825',
             },
-            '.h1': { 
+            '.h1': {
               fontSize: '46px',
             },
             h3: {
@@ -243,15 +243,15 @@ module.exports = {
             a: {
               // change anchor color and on hover
               textDecoration: 'underline',
-                '&:hover': { 
+                '&:hover': {
                   color: '#F7941E',
                   textDecoration: 'none',
                 },
             },
             table: {
-              thead:{
-                tr:{
-                  th: {
+                thead:{
+                    tr:{
+                        th: {
                     padding: '0.75em',
                     fontWeight: '400',
                     '&:first-child': {

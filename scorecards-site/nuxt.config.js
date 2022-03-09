@@ -1,9 +1,13 @@
+import addClasses from 'rehype-add-classes';
+import { getHighlighter } from 'shiki'
+import highlightjs from 'highlight.js'
+import remarkGemoji from 'remark-gemoji'
 export default {
   target: 'static',
   ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'goost-scorecards',
+    title: 'gosst-scorecards',
     htmlAttrs: {
       lang: 'en',
     },
@@ -40,10 +44,13 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['@/assets/css/base'],
+  css: ['@/assets/css/base','highlight.js/styles/nord.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '~plugins/components.client' }],
+  plugins: [
+    { src: '~plugins/components.client' },
+    { src: '~plugins/prism', mode: 'client', ssr: false }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -54,6 +61,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+
+    '@nuxtjs/google-fonts',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -92,7 +101,33 @@ export default {
   },
 
   content: {
+    liveEdit: false,
+    markdown: {
+      highlighter(rawCode, lang) {
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
+
+        // We need to create a wrapper, because
+        // the returned code from highlight.js
+        // is only the highlighted code.
+        return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`
+      },
+      rehypePlugins: [
+        ['rehype-add-classes', { table: 'table' }]
+      ],
+      remarkAutolinkHeadings: {
+        // Fix for accessibility
+        linkProperties: { ariaHidden: 'true', tabIndex: -1, title: 'Link to Section' },
+       }
+    },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
+  },
+
+  googleFonts: {
+    families: {
+      'Public Sans': [400,600],
+      'IBM Plex Mono': [400,500],
+    },
+    display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

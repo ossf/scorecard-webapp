@@ -1,47 +1,47 @@
 @mixin h1 {
   font-family: $font-sans-header-standard;
-  font-weight: $weight-medium;
-  @apply text-33;
+  font-weight: $weight-semi-bold;
+  @apply text-72;
   @apply leading-40;
 
   @include media-breakpoint-up(md) {
-    @apply text-54;
+    @apply text-72;
     @apply leading-60;
   }
 }
 
 @mixin h2 {
   font-family: $font-sans-header-standard;
-  @apply text-33;
-  font-weight: $weight-medium;
+  font-size: 32px;
+  font-weight: $weight-semi-bold;
   @apply leading-40;
 
   @include media-breakpoint-up(md) {
-    @apply text-54;
+    font-size: 36px;
     @apply leading-60;
   }
 }
 
 @mixin h3 {
   font-family: $font-sans-header-standard;
-  font-size: 25px;
-  font-weight: $weight-medium;
+  font-size: 22px;
+  font-weight: $weight-semi-bold;
   @apply leading-30;
 
   @include media-breakpoint-up(md) {
-    @apply text-36;
+    font-size: 24px;
     @apply leading-43;
   }
 }
 
 @mixin h4 {
   font-family: $font-sans-header-standard;
-  font-weight: $weight-medium;
+  font-weight: $weight-semi-bold;
   @apply leading-23;
-  @apply text-19;
+  font-size: 16px;
 
   @include media-breakpoint-up(md) {
-    @apply text-24;
+    font-size: 18px;
     @apply leading-32;
   }
 }
@@ -67,9 +67,9 @@
   line-height: 1.8rem;
 
   @include media-breakpoint-up(md) {
-    font-size: $size-medium; // 16px
+    font-size: $size-medium; // 18px
     font-weight: $weight-regular;
-    line-height: 2.4rem;
+    line-height: 3rem;
   }
 }
 
@@ -134,11 +134,11 @@
 %text--subheading {
   font-family: $font-sans-header-standard;
   @apply leading-23;
-  @apply text-19;
+
   font-weight: $weight-medium;
 
   @include media-breakpoint-up(md) {
-    @apply text-24;
+
     @apply leading-32;
   }
 }

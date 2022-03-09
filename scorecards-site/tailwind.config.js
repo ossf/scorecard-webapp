@@ -5,7 +5,7 @@
  ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
  */
 
-const baseFontSize = 10
+const baseFontSize = 11
 
 /**
  * @typedef {{
@@ -55,20 +55,31 @@ module.exports = {
       './pages/**/*.{js,vue}',
       './components/*.{js,vue}',
       './modules/**/*.{js,vue}',
+      './content/*.{md}',
     ],
     options: {
       safelist: [
         /^delay-/,
+        /^prose-/,
+        /^bg-/,
+        /^text-/,
+        /^border-/,
+        /^md:prose-/,
+        /^lg:prose-/,
         'text-center',
         'text-right',
         'text-left',
         'fixed',
         'md:text-center',
         'md:text-left',
+        'sticky',
+        'prose',
+        'top-100', 'h-400', 'w-1/3',
+        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20'
       ],
     },
   },
-  // plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography")],
   corePlugins: {
     // ...
     container: false,
@@ -108,10 +119,9 @@ module.exports = {
     fontSize: {
       ...pxToRem(
         baseFontSize,
-        128,
-        120,
         90,
         81,
+        72,
         58,
         54,
         50,
@@ -136,7 +146,7 @@ module.exports = {
     },
     colors: {
       black: {
-        DEFAULT: '#000000',
+        DEFAULT: '#302825',
         overlay: 'rgba(0, 0, 0, 0.12)',
       },
       blue: {
@@ -147,11 +157,10 @@ module.exports = {
         dark: '#2A1E71',
       },
       orange: {
-        medium: '#FFC398',
-        dark: '#793030',
+        dark: '#FF4D00'
       },
       pastel: {
-        orange: '#FFEAD7',
+        white: '#FDECE3',
         light: 'rgba(255, 234, 215, 1)',
         neutral: '#E9E9E9',
         blue: '#DDEFF1',
@@ -195,6 +204,8 @@ module.exports = {
     },
     minHeight: {
       screen: '100vh',
+      mobile: '75.5vh',
+      threeQuarters: '75vh',
       ...pxToRem(baseFontSize, 440, 400, 480, 700, 320, 180, 146),
     },
     borderRadius: {
@@ -202,12 +213,142 @@ module.exports = {
       sm: '0.125rem',
       DEFAULT: '0.25rem',
       md: '0.375rem',
-      lg: '0.5rem',
+      lg: '0.8rem',
       xl: '20px',
       full: '9999px',
       large: '12px',
     },
     extend: {
+      typography: {
+        DEFAULT: { // this is for prose class
+          css: {
+            color: '#302825', // change global color scheme
+            h2: {
+              fontSize: '46px',
+              color: '#302825',
+            },
+            '.h1': {
+              fontSize: '46px',
+            },
+            h3: {
+              marginBottom: '30px',
+              fontSize: '2.25em',
+            },
+            pre: {
+              fontSize: '16px',
+              color: '#feece3',
+              code: {
+                fontSize: '16px',
+              }
+            },
+            ol: {
+              li: {
+                '&:before': {
+                  color: '#302825',
+                },
+              }
+            },
+            blockquote: {
+              border: '2px solid #FF4D00',
+              borderRadius: '8px',
+              p: {
+                fontFamily: 'Public Sans',
+                fontStyle: 'normal',
+                fontWeight: 'normal',
+                fontSize: '24px',
+                lineHeight: '120%',
+                letterSpacing: '-0.03em',
+                color: '#302825',
+              }
+            },
+            a: {
+              // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
+              textDecoration: 'underline',
+                '&:hover': {
+                  color: '#F7941E',
+                  textDecoration: 'none',
+                },
+            },
+            table: {
+                thead:{
+                  backgroundColor: '#FDDFCF',
+                    tr:{
+                      th: {
+                        padding: '0.75em',
+                        fontWeight: '400',
+                        width: '200px',
+                        '&:first-child': {
+                          paddingLeft: '0.75em',
+                        }
+                      }
+                }
+              },
+              tbody:{
+                tr:{
+                  td: {
+                    padding: '0.75em',
+                    fontWeight: '500',
+                    fontSize: '18px',
+                    width: '200px',
+                    minHeight: '320px',
+                    '&:first-child': {
+                      paddingLeft: '0.75em',
+                    }
+                  }
+                }
+              }
+            }
+          },
+        },
+        'lg': {
+          css: {
+            a: {
+              // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
+              textDecoration: 'underline',
+                '&:hover': {
+                  color: '#F7941E',
+                  textDecoration: 'none',
+                },
+            },
+            pre: {
+              fontSize: '16px',
+              color: '#feece3',
+              code: {
+                fontSize: '16px',
+              }
+            },
+            maxWidth: '132ch',
+            h2: {
+              fontSize: '46px',
+              color: '#302825',
+            },
+            h3: {
+              fontSize: '32px',
+              color: '#302825',
+              zIndex: 50,
+              marginBottom: '0.6em',
+            },
+            h4: {
+              fontSize: '24px',
+              color: '#302825',
+              lineHeight: '1.1',
+              marginBottom: '0.6em',
+            },
+            h5: {
+                fontSize: '24px',
+                fontWeight: '400'
+            }
+          },
+        }
+      },
       width: {
         832: '832px',
       },

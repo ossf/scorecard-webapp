@@ -204,7 +204,7 @@ module.exports = {
     minHeight: {
       screen: '100vh',
       mobile: '75.5vh',
-      threeQuarters: '85vh',
+      threeQuarters: '75vh',
       ...pxToRem(baseFontSize, 440, 400, 480, 700, 320, 180, 146),
     },
     borderRadius: {
@@ -241,7 +241,6 @@ module.exports = {
               }
             },
             blockquote: {
-              border: 'none',
               border: '2px solid #FF4D00',
               borderRadius: '8px',
               p: {

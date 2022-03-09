@@ -13,68 +13,74 @@ thumbnail: /img/icon.png
 
 Security Scorecards can be used in a couple of different ways:
 
-1. Run automatically on code you own using the GitHub Action
-2. Run manually on your (or somebody else’s) project via the Command Line
-
+1. Run automatically on code you own **using the GitHub Action**
+2. Run manually on your (or somebody else’s) project **via the Command Line**
 
 ## Using the Github Action
+
 <section class="highlight-section">
 
 ### Install time: <10 mins
-<<<<<<< Updated upstream
 
 Use the action to automatically scan any code updates for security vulnerabilities. Any time someone commits a change, the action will automatically check the repo and alert you (and other maintainers) if there are problems.
 
 <details open><summary>See it in action</summary>
+
+<iframe
+      title="action video"
+      width="100%"
+      height="393"
+      allow="autoplay"
+      loop="true"
+      src="assets/github-action.mp4?autoplay=1&controls=0&loop=1&mute=1">
+  </iframe>
 
 </details>
 
 ### Installation instructions
 
 1. You need to own the repository you are installing the action to, or have admin rights to it.
-2. Authenticate your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your codescanning suite inside github using the link below:
+2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
+3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside github using the link below:
+<br/>
 
-<a href="#">Install the action</a>
-=======
+<a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta">Install the action</a>
 
-Use the action to automatically scan any code updates for security vulnerabilities. Any time someone commits a change, the action will automatically check the repo and alert you (and other maintainers) if there are problems.
-
-<details open><summary>See it in action</summary>
-
-</details>
-
-### Installation instructions
-
-1. You need to own the repository you are installing the action to, or have admin rights to it.
-2. Authenticate your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your codescanning suite inside github using the link below:
-
-<button href="#" class="btn cta">Install the action</button>
->>>>>>> Stashed changes
 </section>
 
 ## Using the CLI
+
 <section class="highlight-section">
 
+### Install time: <10mins
+
+You can use Security Scorecards on the Command Line. This enables you to:
+
+- Check someone else’s repository
+- Select which checks you want to run
+- Control how detailed your results are
+
+<details open><summary>See it in action</summary>
+
+<iframe
+      title="CLI video"
+      width="100%"
+      height="477"
+      allow="autoplay"
+      loop="true"
+      src="assets/cli.mp4?autoplay=1&controls=0&loop=1&mute=1">
+  </iframe>
+
+</details>
+
+### Install and run
+
+1. Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with 'public_repo' scope. Store the token somewhere safe.
+2. Run one of the commands below:
+
 <code-group>
-  <code-block title="Bash" active>
 
-  ```bash
-  yarn create vuepress-site [optionalDirectoryName]
-  ```
-
-  </code-block>
-
-  <code-block title="Homebrew">
-
-  ```bash
-  npx create-vuepress-site [optionalDirectoryName]
-  ```
-
-  </code-block>
-
-  <code-block title="Docker">
+  <code-block title="Homebrew" active>
 
   ```bash
   # For posix platforms, e.g. linux, mac:
@@ -89,39 +95,34 @@ Use the action to automatically scan any code updates for security vulnerabiliti
   ```
 
   </code-block>
+
+  <code-block title="Docker">
+
+  ```bash
+  docker run -e GITHUB_AUTH_TOKEN=<your access token> gcr.io/openssf/scorecard:stable --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check-branch-protection-e2e>
+  ```
+
+  </code-block>
+
+  <code-block title="Nix">
+
+  ```bash
+  export GITHUB_AUTH_TOKEN=<your access token>
+
+  nix-shell -p nixpkgs.scorecard
+
+  scorecard --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check-branch-protection-e2e>
+  ```
+
+  </code-block>
+
 </code-group>
+
+Security Scorecards also has standalone binaries and other platforms troubleshooting and custom configuration available here:
+
+<a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta">Detailed installation instructions</a>
+
 </section>
-
-<code-block title="Vue js" single active>
-
-```javascript
-<script>
-mounted() {
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const id = entry.target.getAttribute("id");
-        if (entry.isIntersecting) {
-          if(id === 'run-the-checks'){
-            alert(id);
-          }
-          this.currentlyActiveToc = id;
-        }
-      });
-    }, this.observerOptions);
-
-    // Track all sections that have an `id` applied
-    document
-      .querySelectorAll(
-        ".nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
-      )
-      .forEach((section) => {
-        this.observer.observe(section);
-      });
-  },
-</script>
-```
-
-</code-block>
 
 <h2 class="h1" id="learn-more">Learn more</h2>
 
@@ -138,8 +139,6 @@ That’s where Security Scorecards is helping. Its focus is to understand the se
 
 *[Open Source Security and Risk Analysis Report](https://www.synopsys.com/software-integrity/resources/analyst-reports/open-source-security-risk-analysis.html?intcmp=sig-blog-ossra1) (Synopsys, 2021)
 
-![image alt text](../compromised-source.svg)
-
 ### What is Security Scorecards?
 
 #### Security Scorecards checks open source projects for security risks through a series of automated checks
@@ -150,8 +149,6 @@ You can use it to proactively assess and make informed decisions about accepting
 
 Security Scorecards help you enforce best practices that can guard against:
 
-<<<<<<< Updated upstream
-=======
 <section class="grid grid-cols-1 grid-rows-1 md:grid-cols-2 md:grid-cols-2 mb-72">
 
 <div>
@@ -188,22 +185,15 @@ Security Scorecards help you enforce best practices that can guard against:
 
 </section>
 
->>>>>>> Stashed changes
 ### How it works
 
 Security Scorecards checks for vulnerabilities affecting different parts of the software supply chain including **source code**, **build**, **dependencies**, **testing**, and project **maintenance**.
 
-<<<<<<< Updated upstream
-Each automated check returns a score out of 10 and a risk level. An aggregate score of the combination of all the checks helps give a sense of the overall security posture of a project.
-
-Alongside the scores, the tool provides remediation prompts to help you fix problems and strengthen your development practices.
-=======
 Each automated check returns a **score out of 10** and a **risk level**. The risk level adds a weighting to the score, and this weighting is compiled into an **aggregate score** of the combination of all the checks helps give a sense of the overall security posture of a project.
 
 Alongside the scores, the tool provides remediation prompts to help you **fix problems** and strengthen your development practices.
 
 ![scale of risk](assets/diagram-risks.svg)
->>>>>>> Stashed changes
 
 ### The checks
 
@@ -211,9 +201,6 @@ Alongside the scores, the tool provides remediation prompts to help you **fix pr
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
-<<<<<<< Updated upstream
-You can learn more about the scoring criteria, risks, and remediation suggestions for each check in the detailed documentation.
-=======
 You can learn more about the scoring criteria, risks, and remediation suggestions for each check in the [detailed documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
 <div class="w-full items-center justify-center">
@@ -221,7 +208,6 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 ![What scorecards assesses](assets/diagram-flower.svg)
 
 </div>
->>>>>>> Stashed changes
 
 #### Holistic security practises
 
@@ -279,48 +265,36 @@ Security Scorecards can be included in the continuous integration/continuous dep
 Security Scorecards helps to make informed decisions about security risks and vulnerabilities. Using the public data, it is also possible to evaluate the security posture of over 1m of the most used OS projects.
 
 ### For the OS community
-<<<<<<< Updated upstream
-
-Security Scorecards is part of the Open Source Security Foundation (OpenSSF), a cross-industry collaboration that brings together OS security initiatives under one foundation and seeks to improve the security of OS software by building a broader community, targeted initiatives, and best practises.
-=======
 
 ![Open Source Security Foundation](assets/logos/openssf.svg)
 
 Security Scorecards is part of the [Open Source Security Foundation (OpenSSF)](https://openssf.org), a cross-industry collaboration that brings together OS security initiatives under one foundation and seeks to improve the security of OS software by building a broader community, targeted initiatives, and best practises.
->>>>>>> Stashed changes
 
 OpenSSF launched Security Scorecards in November 2020 with the intention of auto-generating a “security score” for open source projects to help users as they decide the trust, risk, and security posture for their use case.
 
 ### Get involved
-<<<<<<< Updated upstream
-
-If you want to get involved in the Scorecards community or have ideas you'd like to chat about, join the OSSF Best Practices Working Group.
-
-The project is facilitated by:
-=======
->>>>>>> Stashed changes
 
 If you want to get involved in the Scorecards community or have ideas you'd like to chat about, join the OSSF Best Practices Working Group.
 
 The project is facilitated by:
 
-<div class="w-full md:w-2/3 inline-flex gap-x-20">
+<div class="w-full md:w-2/3 inline-flex gap-x-40">
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![cisco](assets/logos/cisco.svg)
 
 </div>
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![datto](assets/logos/datto.svg)
 
 </div>
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![google](assets/logos/google.svg)
 
 </div>
 

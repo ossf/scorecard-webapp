@@ -1,13 +1,13 @@
 import addClasses from 'rehype-add-classes';
-import remarkGemoji from 'remark-gemoji'
 import { getHighlighter } from 'shiki'
 import highlightjs from 'highlight.js'
+import remarkGemoji from 'remark-gemoji'
 export default {
   target: 'static',
   ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'goost-scorecards',
+    title: 'gosst-scorecards',
     htmlAttrs: {
       lang: 'en',
     },

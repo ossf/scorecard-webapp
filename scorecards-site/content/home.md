@@ -34,9 +34,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 2. Authenticate your access to the repository with a Personal Access Token
 3. Add Security Scorecards to your codescanning suite inside github using the link below:
 
-
-<a class="btn cta-icon" href="#">Install the action</a>
-
+<a href="#">Install the action</a>
 </section>
 
 ## Using the CLI
@@ -111,8 +109,7 @@ mounted() {
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
->
-<cite style="text-align:right;display: inline-block;width:100%;">Appu Gordan, Distroless</cite>
+Appu Gordan, Distroless
 
 ### The problem
 
@@ -136,13 +133,51 @@ You can use it to proactively assess and make informed decisions about accepting
 
 Security Scorecards help you enforce best practices that can guard against:
 
+<section class="grid grid-cols-1 grid-rows-1 md:grid-cols-2 md:grid-cols-2 mb-72">
+
+<div>
+
+![malicious maintainers](assets/malicious-maintainer.svg)
+
+#### Malicious maintainers
+
+</div>
+
+<div>
+
+![build system compromises](assets/compromised-build.svg)
+
+#### Build system compromises
+
+</div>
+
+<div>
+
+![source code compromises](assets/compromised-source.svg)
+
+#### Source code compromises
+
+</div>
+
+<div>
+
+![malicious packages](assets/malicious-package.svg)
+
+#### Malicious packages
+
+</div>
+
+</section>
+
 ### How it works
 
 Security Scorecards checks for vulnerabilities affecting different parts of the software supply chain including **source code**, **build**, **dependencies**, **testing**, and project **maintenance**.
 
-Each automated check returns a score out of 10 and a risk level. An aggregate score of the combination of all the checks helps give a sense of the overall security posture of a project.
+Each automated check returns a **score out of 10** and a **risk level**. The risk level adds a weighting to the score, and this weighting is compiled into an **aggregate score** of the combination of all the checks helps give a sense of the overall security posture of a project.
 
-Alongside the scores, the tool provides remediation prompts to help you fix problems and strengthen your development practices.
+Alongside the scores, the tool provides remediation prompts to help you **fix problems** and strengthen your development practices.
+
+![scale of risk](assets/diagram-risks.svg)
 
 ### The checks
 
@@ -150,7 +185,13 @@ Alongside the scores, the tool provides remediation prompts to help you fix prob
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
-You can learn more about the scoring criteria, risks, and remediation suggestions for each check in the detailed documentation.
+You can learn more about the scoring criteria, risks, and remediation suggestions for each check in the [detailed documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
+
+<div class="w-full items-center justify-center">
+
+![What scorecards assesses](assets/diagram-flower.svg)
+
+</div>
 
 #### Holistic security practises
 
@@ -209,7 +250,9 @@ Security Scorecards helps to make informed decisions about security risks and vu
 
 ### For the OS community
 
-Security Scorecards is part of the Open Source Security Foundation (OpenSSF), a cross-industry collaboration that brings together OS security initiatives under one foundation and seeks to improve the security of OS software by building a broader community, targeted initiatives, and best practises.
+![Open Source Security Foundation](assets/logos/openssf.svg)
+
+Security Scorecards is part of the [Open Source Security Foundation (OpenSSF)](https://openssf.org), a cross-industry collaboration that brings together OS security initiatives under one foundation and seeks to improve the security of OS software by building a broader community, targeted initiatives, and best practises.
 
 OpenSSF launched Security Scorecards in November 2020 with the intention of auto-generating a “security score” for open source projects to help users as they decide the trust, risk, and security posture for their use case.
 
@@ -219,5 +262,26 @@ If you want to get involved in the Scorecards community or have ideas you'd like
 
 The project is facilitated by:
 
+<div class="w-full md:w-2/3 inline-flex gap-x-20">
+
+<div>
+
+![cisco](assets/logos/cisco.png)
+
+</div>
+
+<div>
+
+![cisco](assets/logos/cisco.png)
+
+</div>
+
+<div>
+
+![cisco](assets/logos/cisco.png)
+
+</div>
+
+</div>
 
 </section>

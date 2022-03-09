@@ -205,7 +205,7 @@ module.exports = {
     minHeight: {
       screen: '100vh',
       mobile: '75.5vh',
-      threeQuarters: '85vh',
+      threeQuarters: '75vh',
       ...pxToRem(baseFontSize, 440, 400, 480, 700, 320, 180, 146),
     },
     borderRadius: {
@@ -224,7 +224,7 @@ module.exports = {
           css: {
             color: '#302825', // change global color scheme
             h2: {
-              fontSize: '32px',
+              fontSize: '46px',
               color: '#302825',
             },
             '.h1': {
@@ -249,7 +249,6 @@ module.exports = {
               }
             },
             blockquote: {
-              border: 'none',
               border: '2px solid #FF4D00',
               borderRadius: '8px',
               p: {
@@ -328,20 +327,24 @@ module.exports = {
             },
             maxWidth: '132ch',
             h2: {
-              fontSize: '32px',
+              fontSize: '46px',
               color: '#302825',
             },
             h3: {
               fontSize: '32px',
               color: '#302825',
               zIndex: 50,
-              marginBottom: '1.4em',
+              marginBottom: '0.6em',
             },
             h4: {
               fontSize: '24px',
               color: '#302825',
               lineHeight: '1.1',
-              marginBottom: '1.3em',
+              marginBottom: '0.6em',
+            },
+            h5: {
+                fontSize: '24px',
+                fontWeight: '400'
             }
           },
         }

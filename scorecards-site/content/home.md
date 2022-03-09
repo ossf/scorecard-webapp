@@ -13,11 +13,11 @@ thumbnail: /img/icon.png
 
 Security Scorecards can be used in a couple of different ways:
 
-1. Run automatically on code you own using the GitHub Action
-2. Run manually on your (or somebody else’s) project via the Command Line
+1. Run automatically on code you own **using the GitHub Action**
+2. Run manually on your (or somebody else’s) project **via the Command Line**
 
+### Using the Github Action
 
-## Using the Github Action
 <section class="highlight-section">
 
 ### Install time: <10 mins
@@ -26,45 +26,61 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 <details open><summary>See it in action</summary>
 
+<iframe
+      title="action video"
+      width="100%"
+      height="393"
+      allow="autoplay"
+      loop="true"
+      src="assets/github-action.mp4?autoplay=1&controls=0&loop=1&mute=1">
+  </iframe>
+
 </details>
 
 ### Installation instructions
 
 1. You need to own the repository you are installing the action to, or have admin rights to it.
-2. Authenticate your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your codescanning suite inside github using the link below:
+2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
+3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside github using the link below:
+<br/>
 
-<a class="cta-icon" href="#">Install the action</a>
+<a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta">Install the action</a>
+
 </section>
 
-## Using the CLI
+### Using the CLI
+
 <section class="highlight-section">
+
+### Install time: <10mins
+
+You can use Security Scorecards on the Command Line. This enables you to:
+
+- Check someone else’s repository
+- Select which checks you want to run
+- Control how detailed your results are
+
+<details open><summary>See it in action</summary>
 
 <iframe
       title="CLI video"
       width="100%"
-      height="550"
-      src="assets/cli.mp4">
+      height="477"
+      allow="autoplay"
+      loop="true"
+      src="assets/cli.mp4?autoplay=1&controls=0&loop=1&mute=1">
   </iframe>
 
+</details>
+
+### Install and run
+
+1. Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with 'public_repo' scope. Store the token somewhere safe.
+2. Choose a language-specific quick start below, or refer to our [detailed instructions](https://github.com/ossf/scorecard#scorecards-command-line-interface)
+
 <code-group>
-  <code-block title="Bash" active>
 
-  ```bash
-  yarn create vuepress-site [optionalDirectoryName]
-  ```
-
-  </code-block>
-
-  <code-block title="Homebrew">
-
-  ```bash
-  npx create-vuepress-site [optionalDirectoryName]
-  ```
-
-  </code-block>
-
-  <code-block title="Docker">
+  <code-block title="Homebrew" active>
 
   ```bash
   # For posix platforms, e.g. linux, mac:
@@ -79,39 +95,36 @@ Use the action to automatically scan any code updates for security vulnerabiliti
   ```
 
   </code-block>
+
+  <code-block title="Docker">
+
+  ```bash
+  docker run -e GITHUB_AUTH_TOKEN=<your access token> gcr.io/openssf/scorecard:stable --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check-branch-protection-e2e>
+  ```
+
+  </code-block>
+
+  <code-block title="Nix">
+
+  ```bash
+  export GITHUB_AUTH_TOKEN=<your access token>
+
+  nix-shell -p nixpkgs.scorecard
+
+  scorecard --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check-branch-protection-e2e>
+  ```
+
+  </code-block>
+
 </code-group>
+
+Security Scorecards also has standalone binaries and other platforms troubleshooting and custom configuration available. Learn more here:
+
+<br/>
+
+<a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta">Detailed installation instructions</a>
+
 </section>
-
-<code-block title="Vue js" single active>
-
-```javascript
-<script>
-mounted() {
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const id = entry.target.getAttribute("id");
-        if (entry.isIntersecting) {
-          if(id === 'run-the-checks'){
-            alert(id);
-          }
-          this.currentlyActiveToc = id;
-        }
-      });
-    }, this.observerOptions);
-
-    // Track all sections that have an `id` applied
-    document
-      .querySelectorAll(
-        ".nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
-      )
-      .forEach((section) => {
-        this.observer.observe(section);
-      });
-  },
-</script>
-```
-
-</code-block>
 
 <h2 class="h1" id="learn-more">Learn more</h2>
 
@@ -128,11 +141,9 @@ That’s where Security Scorecards is helping. Its focus is to understand the se
 
 *[Open Source Security and Risk Analysis Report](https://www.synopsys.com/software-integrity/resources/analyst-reports/open-source-security-risk-analysis.html?intcmp=sig-blog-ossra1) (Synopsys, 2021)
 
-![image alt text](../compromised-source.svg)
-
 ### What is Security Scorecards?
 
-#### Security Scorecards checks open source projects for security risks through a series of automated checks
+##### Security Scorecards checks open source projects for security risks through a series of automated checks
 
 It was created by OS developers to help improve the health of critical projects that the community depends on.
 
@@ -188,7 +199,7 @@ Alongside the scores, the tool provides remediation prompts to help you **fix pr
 
 ### The checks
 
-#### The checks collect together security best practises and industry standards
+##### The checks collect together security best practises and industry standards
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
@@ -241,7 +252,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 ### Who it’s for
 
-Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain.
+##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
 #### For individual maintainers
 
@@ -265,27 +276,33 @@ OpenSSF launched Security Scorecards in November 2020 with the intention of auto
 
 ### Get involved
 
-If you want to get involved in the Scorecards community or have ideas you'd like to chat about, join the OSSF Best Practices Working Group.
+If you want to [connect with the Security Scorecards](https://github.com/ossf/scorecard#connect-with-the-scorecards-community) community or have ideas you'd like to chat about, we'd love to hear from you.
 
 The project is facilitated by:
 
-<div class="w-full md:w-2/3 inline-flex gap-x-20">
+<div class="w-full md:w-2/3 inline-flex items-center gap-x-40">
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![cisco](assets/logos/cisco.svg)
 
 </div>
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![datto](assets/logos/datto.svg)
 
 </div>
 
 <div>
 
-![cisco](assets/logos/cisco.png)
+![google](assets/logos/google.svg)
+
+</div>
+
+<div>
+
+& others
 
 </div>
 

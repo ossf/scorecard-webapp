@@ -24,6 +24,7 @@
           ref="videoD"
           class="object-fit h-full w-full z-0 hidden md:block"
           autoplay
+          loop
           muted
         >
           <source src="../assets/hero-video.mp4" type="video/mp4" />
@@ -33,6 +34,7 @@
           ref="videoM"
           class="object-fit h-full w-full z-0 block md:hidden px-16"
           autoplay
+          loop
           muted
         >
           <source src="../assets/hero-video-mobile.mp4" type="video/mp4" />

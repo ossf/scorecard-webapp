@@ -76,7 +76,7 @@ You can use Security Scorecards on the Command Line. This enables you to:
 ### Install and run
 
 1. Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with 'public_repo' scope. Store the token somewhere safe.
-2. Run one of the commands below:
+2. Choose a language-specific quick start below, or refer to our [detailed instructions](https://github.com/ossf/scorecard#scorecards-command-line-interface)
 
 <code-group>
 
@@ -118,7 +118,9 @@ You can use Security Scorecards on the Command Line. This enables you to:
 
 </code-group>
 
-Security Scorecards also has standalone binaries and other platforms troubleshooting and custom configuration available here:
+Security Scorecards also has standalone binaries and other platforms troubleshooting and custom configuration available. Learn more here:
+
+<br/>
 
 <a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta">Detailed installation instructions</a>
 
@@ -127,7 +129,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
-Appu Gordan, Distroless
+<div class="text-right"><cite>Appu Gordan, Distroless</cite></div>
 
 ### The problem
 
@@ -141,7 +143,7 @@ That’s where Security Scorecards is helping. Its focus is to understand the se
 
 ### What is Security Scorecards?
 
-#### Security Scorecards checks open source projects for security risks through a series of automated checks
+##### Security Scorecards checks open source projects for security risks through a series of automated checks
 
 It was created by OS developers to help improve the health of critical projects that the community depends on.
 
@@ -197,7 +199,7 @@ Alongside the scores, the tool provides remediation prompts to help you **fix pr
 
 ### The checks
 
-#### The checks collect together security best practises and industry standards
+##### The checks collect together security best practises and industry standards
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
@@ -250,7 +252,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 ### Who it’s for
 
-Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain.
+##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain.
 
 #### For individual maintainers
 
@@ -274,11 +276,11 @@ OpenSSF launched Security Scorecards in November 2020 with the intention of auto
 
 ### Get involved
 
-If you want to get involved in the Scorecards community or have ideas you'd like to chat about, join the OSSF Best Practices Working Group.
+If you want to [connect with the Security Scorecards](https://github.com/ossf/scorecard#connect-with-the-scorecards-community) community or have ideas you'd like to chat about, we'd love to hear from you.
 
 The project is facilitated by:
 
-<div class="w-full md:w-2/3 inline-flex gap-x-40">
+<div class="w-full md:w-2/3 inline-flex items-center gap-x-40">
 
 <div>
 
@@ -295,6 +297,12 @@ The project is facilitated by:
 <div>
 
 ![google](assets/logos/google.svg)
+
+</div>
+
+<div>
+
+& others
 
 </div>
 

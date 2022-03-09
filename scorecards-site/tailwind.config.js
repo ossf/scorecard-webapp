@@ -74,7 +74,8 @@ module.exports = {
         'md:text-left',
         'sticky',
         'prose',
-        'top-100', 'h-400', 'w-1/3'
+        'top-100', 'h-400', 'w-1/3',
+        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20'
       ],
     },
   },
@@ -240,6 +241,13 @@ module.exports = {
                 fontSize: '16px',
               }
             },
+            ol: {
+              li: {
+                '&:before': {
+                  color: '#302825',
+                },
+              }
+            },
             blockquote: {
               border: '2px solid #FF4D00',
               borderRadius: '8px',
@@ -255,6 +263,10 @@ module.exports = {
             },
             a: {
               // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
               textDecoration: 'underline',
                 '&:hover': {
                   color: '#F7941E',
@@ -263,21 +275,26 @@ module.exports = {
             },
             table: {
                 thead:{
+                  backgroundColor: '#FDDFCF',
                     tr:{
-                        th: {
-                    padding: '0.75em',
-                    fontWeight: '400',
-                    '&:first-child': {
-                      paddingLeft: '0.75em',
-                    }
-                  }
+                      th: {
+                        padding: '0.75em',
+                        fontWeight: '400',
+                        width: '200px',
+                        '&:first-child': {
+                          paddingLeft: '0.75em',
+                        }
+                      }
                 }
               },
               tbody:{
                 tr:{
                   td: {
                     padding: '0.75em',
-                    fontWeight: '600',
+                    fontWeight: '500',
+                    fontSize: '18px',
+                    width: '200px',
+                    minHeight: '320px',
                     '&:first-child': {
                       paddingLeft: '0.75em',
                     }
@@ -289,6 +306,18 @@ module.exports = {
         },
         'lg': {
           css: {
+            a: {
+              // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
+              textDecoration: 'underline',
+                '&:hover': {
+                  color: '#F7941E',
+                  textDecoration: 'none',
+                },
+            },
             pre: {
               fontSize: '16px',
               color: '#feece3',
@@ -305,13 +334,17 @@ module.exports = {
               fontSize: '32px',
               color: '#302825',
               zIndex: 50,
-              marginBottom: '1.4em',
+              marginBottom: '0.6em',
             },
             h4: {
               fontSize: '24px',
               color: '#302825',
               lineHeight: '1.1',
-              marginBottom: '1.3em',
+              marginBottom: '0.6em',
+            },
+            h5: {
+                fontSize: '24px',
+                fontWeight: '400'
             }
           },
         }

@@ -34,7 +34,9 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 2. Authenticate your access to the repository with a Personal Access Token
 3. Add Security Scorecards to your codescanning suite inside github using the link below:
 
-<a href="#">Install the action</a>
+
+<a class="btn cta-icon" href="#">Install the action</a>
+
 </section>
 
 ## Using the CLI
@@ -109,7 +111,8 @@ mounted() {
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
-Appu Gordan, Distroless
+>
+<cite style="text-align:right;display: inline-block;width:100%;">Appu Gordan, Distroless</cite>
 
 ### The problem
 

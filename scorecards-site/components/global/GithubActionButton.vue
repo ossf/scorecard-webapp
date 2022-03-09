@@ -1,7 +1,7 @@
 <template>
-  <div class="theme-code-block" :class="{ 'theme-code-block__active': active }">
+  <a :href="url" :title="`Link to ${title}`" class="github-action-cta">
     <slot />
-  </div>
+  </a>
 </template>
 
 <script>
@@ -12,13 +12,9 @@ export default {
       type: String,
       required: true,
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    single: {
-      type: Boolean,
-      default: false,
+    url: {
+      type: String,
+      required: true,
     },
   },
   mounted() {
@@ -30,25 +26,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.theme-code-block {
+.github-action-cta {
   display: none;
 
   & .nuxt-content-highlight > pre {
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
+    border-radius: 0;
     border-top: 2px solid #302825;
     background-color: black;
     padding: 1.1em;
-    margin-bottom: 0;
     & > code {
       padding: 0;
     }
   }
-}
-.theme-code-block__active {
-  display: block;
-}
-.theme-code-block > pre {
-  background-color: orange;
 }
 </style>

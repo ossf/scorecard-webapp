@@ -24,4 +24,10 @@
     & p{
         color: #feece3;
     }
+
+    ol li{
+        &:before {
+            color: white;
+        }
+    }
 }

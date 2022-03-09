@@ -240,6 +240,13 @@ module.exports = {
                 fontSize: '16px',
               }
             },
+            ol: {
+              li: {
+                '&:before': {
+                  color: '#302825',
+                },
+              }
+            },
             blockquote: {
               border: 'none',
               border: '2px solid #FF4D00',
@@ -256,6 +263,10 @@ module.exports = {
             },
             a: {
               // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
               textDecoration: 'underline',
                 '&:hover': {
                   color: '#F7941E',

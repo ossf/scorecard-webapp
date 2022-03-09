@@ -74,7 +74,8 @@ module.exports = {
         'md:text-left',
         'sticky',
         'prose',
-        'top-100', 'h-400', 'w-1/3'
+        'top-100', 'h-400', 'w-1/3',
+        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2'
       ],
     },
   },
@@ -275,21 +276,26 @@ module.exports = {
             },
             table: {
                 thead:{
+                  backgroundColor: '#FDDFCF',
                     tr:{
-                        th: {
-                    padding: '0.75em',
-                    fontWeight: '400',
-                    '&:first-child': {
-                      paddingLeft: '0.75em',
-                    }
-                  }
+                      th: {
+                        padding: '0.75em',
+                        fontWeight: '400',
+                        width: '150px',
+                        '&:first-child': {
+                          paddingLeft: '0.75em',
+                        }
+                      }
                 }
               },
               tbody:{
                 tr:{
                   td: {
                     padding: '0.75em',
-                    fontWeight: '600',
+                    fontWeight: '500',
+                    fontSize: '18px',
+                    width: '150px',
+                    minHeight: '320px',
                     '&:first-child': {
                       paddingLeft: '0.75em',
                     }

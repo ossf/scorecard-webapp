@@ -281,7 +281,7 @@ module.exports = {
                       th: {
                         padding: '0.75em',
                         fontWeight: '400',
-                        width: '150px',
+                        width: '200px',
                         '&:first-child': {
                           paddingLeft: '0.75em',
                         }
@@ -294,7 +294,7 @@ module.exports = {
                     padding: '0.75em',
                     fontWeight: '500',
                     fontSize: '18px',
-                    width: '150px',
+                    width: '200px',
                     minHeight: '320px',
                     '&:first-child': {
                       paddingLeft: '0.75em',

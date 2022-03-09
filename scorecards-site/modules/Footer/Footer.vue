@@ -9,9 +9,6 @@
             ]"
         /></a>
       </div>
-      <div class="w-full md:w-1/2 md:mt-0 mt-32">
-        <Navigation nav-type="social" :nav-list="socialLinks" />
-      </div>
       <p class="text-12 text-gray-dark mt-32">Copyright © 2022</p>
     </div>
   </footer>

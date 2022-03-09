@@ -224,7 +224,7 @@ module.exports = {
           css: {
             color: '#302825', // change global color scheme
             h2: {
-              fontSize: '32px',
+              fontSize: '46px',
               color: '#302825',
             },
             '.h1': {
@@ -327,7 +327,7 @@ module.exports = {
             },
             maxWidth: '132ch',
             h2: {
-              fontSize: '32px',
+              fontSize: '46px',
               color: '#302825',
             },
             h3: {

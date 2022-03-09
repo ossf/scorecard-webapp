@@ -16,7 +16,7 @@ Security Scorecards can be used in a couple of different ways:
 1. Run automatically on code you own **using the GitHub Action**
 2. Run manually on your (or somebody else’s) project **via the Command Line**
 
-## Using the Github Action
+### Using the Github Action
 
 <section class="highlight-section">
 
@@ -48,7 +48,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 </section>
 
-## Using the CLI
+### Using the CLI
 
 <section class="highlight-section">
 

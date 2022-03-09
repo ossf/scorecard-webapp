@@ -307,6 +307,18 @@ module.exports = {
         },
         'lg': {
           css: {
+            a: {
+              // change anchor color and on hover
+              '&.cta-icon': {
+                textDecoration: 'none',
+                color: '#FF4D00',
+              },
+              textDecoration: 'underline',
+                '&:hover': {
+                  color: '#F7941E',
+                  textDecoration: 'none',
+                },
+            },
             pre: {
               fontSize: '16px',
               color: '#feece3',

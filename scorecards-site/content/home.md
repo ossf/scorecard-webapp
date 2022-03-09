@@ -252,7 +252,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 ### Who it’s for
 
-##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain.
+##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
 #### For individual maintainers
 

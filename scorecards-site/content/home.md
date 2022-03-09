@@ -40,6 +40,13 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 ## Using the CLI
 <section class="highlight-section">
 
+<iframe
+      title="CLI video"
+      width="100%"
+      height="550"
+      src="assets/cli.mp4">
+  </iframe>
+
 <code-group>
   <code-block title="Bash" active>
 

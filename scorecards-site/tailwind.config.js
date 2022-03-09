@@ -75,7 +75,7 @@ module.exports = {
         'sticky',
         'prose',
         'top-100', 'h-400', 'w-1/3',
-        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2'
+        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20'
       ],
     },
   },

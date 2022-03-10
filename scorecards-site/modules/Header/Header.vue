@@ -6,7 +6,7 @@
   >
     <div class="container">
       <div class="flex flex-wrap justify-between items-start">
-        <a href="/" title="Home link" class="logo"
+        <a href="/" title="Home" class="logo"
           ><Logo
             :class="[
               $route.params.slug === 'trust-security' ? 'logo-white' : 'logo-black',

@@ -5,9 +5,9 @@
     >
       <div class="mx-auto w-full md:w-4/6 text-center hero-text">
         <h1>Build better security habits, one test at a time</h1>
-        <p class="subheading mt-32">
+        <h3 class="mt-20 pb-32">
           Quickly assess open source projects for risky practices
-        </p>
+        </h3>
         <div class="flex justify-center items-center my-32">
           <button class="btn cta mx-12" @click="scrollToAnchorPoint('run-the-checks')">
             Run the checks

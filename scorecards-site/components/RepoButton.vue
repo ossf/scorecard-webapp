@@ -15,7 +15,7 @@ export default {
   created() {},
   data() {
     return {
-      repoURL: process.env.REPO_URL,
+      repoURL: 'https://github.com/ossf/scorecard',
     };
   },
   props: {

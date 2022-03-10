@@ -7,6 +7,7 @@
       <Nuxt class="w-full" />
     </main>
     <Footer :navigation="footerNavLinks" :socialLinks="footerSocialLinks" />
+<<<<<<< Updated upstream
     <transition name="fade" :duration="{ enter: 500, leave: 500 }">
       <MobileNavigation
         v-show="mobileNavOpen"
@@ -16,6 +17,8 @@
         :nav-list="headerNavLinks"
       />
     </transition>
+=======
+>>>>>>> Stashed changes
   </div>
 </template>
 
@@ -23,15 +26,12 @@
 import Header from "@/modules/Header/Header.vue";
 // import Sidebar from "@/components/global/Sidebar.vue";
 import Footer from "@/modules/Footer/Footer.vue";
-import MobileNavigation from "@/modules/MobileNavigation/MobileNavigation.vue";
 
 export default {
   name: "MainLayout",
   components: {
     Header,
     Footer,
-    // Sidebar,
-    MobileNavigation,
   },
 
   filters: {

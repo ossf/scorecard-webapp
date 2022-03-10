@@ -1,19 +1,12 @@
-// import Headroom from 'headroom.js'
 import { mapGetters } from 'vuex'
-import Navigation from '@/modules/Navigation/Navigation.vue'
-import Logo from '@/assets/icons/logo.svg?inline'
-import NavButton from '@/assets/icons/menu-button.svg?inline'
-import NavCloseButton from '@/assets/icons/menu-button-close.svg?inline'
-import RepoButton from '@/components/RepoButton.vue'
 import CommitData from '@/components/CommitData.vue'
+import Logo from '@/assets/icons/logo.svg?inline'
+import RepoButton from '@/components/RepoButton.vue'
 
 export default {
   name: 'Header',
   components: {
-    Navigation,
     Logo,
-    NavButton,
-    NavCloseButton,
     RepoButton,
     CommitData
   },
@@ -67,7 +60,11 @@ export default {
 
       const response = await fetch(url)
       const data = await response.json();
-      this.stars = data.stargazers_count; 
+<<<<<<< Updated upstream
+      this.stars = data.stargazers_count;
+=======
+      this.stars = data.stargazers_count;
+>>>>>>> Stashed changes
     }
   },
 

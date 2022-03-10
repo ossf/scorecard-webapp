@@ -266,9 +266,13 @@ module.exports = {
                 fontWeight: 'normal',
                 fontSize: '24px',
                 lineHeight: '120%',
-                letterSpacing: '-0.03em',
                 color: '#302825',
               }
+            },
+            cite: {
+                fontSize: '18px',
+                fontStyle: 'normal',
+                fontFamily: 'IBM Plex Mono'
             },
             a: {
               // change anchor color and on hover

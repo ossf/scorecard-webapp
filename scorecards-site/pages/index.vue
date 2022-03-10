@@ -91,8 +91,6 @@ export default {
       return error({ statusCode: 404, message: "Page not found" });
     }
 
-    console.log(page);
-
     return {
       page,
       toc,

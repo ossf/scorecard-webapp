@@ -35,7 +35,6 @@ export default {
   },
   watch: {
     activeCodeTabIndex(index) {
-      console.log(index);
       this.activateCodeTab(index);
     },
   },

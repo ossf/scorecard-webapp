@@ -30,6 +30,10 @@
             color: white;
         }
     }
+
+    a:not(.cta) {
+        text-decoration: underline;
+    }
 }
 
 code {

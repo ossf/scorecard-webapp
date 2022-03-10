@@ -63,6 +63,9 @@ module.exports = {
         /^prose-/,
         /^bg-/,
         /^text-/,
+        /^gap-x-/,
+        /^gap-y-/,
+        /^gap-/,
         /^border-/,
         /^md:prose-/,
         /^lg:prose-/,
@@ -75,7 +78,7 @@ module.exports = {
         'sticky',
         'prose',
         'top-100', 'h-400', 'w-1/3',
-        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20'
+        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20','gap-x-40'
       ],
     },
   },
@@ -223,6 +226,9 @@ module.exports = {
         DEFAULT: { // this is for prose class
           css: {
             color: '#302825', // change global color scheme
+            '.cta': {
+              textDecoration: 'none',
+            },
             h2: {
               fontSize: '46px',
               color: '#302825',
@@ -246,6 +252,9 @@ module.exports = {
                 '&:before': {
                   color: '#302825',
                 },
+                a: {
+                  textDecoration: 'underline',
+                }
               }
             },
             blockquote: {
@@ -263,11 +272,7 @@ module.exports = {
             },
             a: {
               // change anchor color and on hover
-              '&.cta-icon': {
-                textDecoration: 'none',
-                color: '#FF4D00',
-              },
-              textDecoration: 'underline',
+              color: 'inherit',
                 '&:hover': {
                   color: '#F7941E',
                   textDecoration: 'none',
@@ -312,7 +317,6 @@ module.exports = {
                 textDecoration: 'none',
                 color: '#FF4D00',
               },
-              textDecoration: 'underline',
                 '&:hover': {
                   color: '#F7941E',
                   textDecoration: 'none',

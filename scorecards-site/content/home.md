@@ -81,7 +81,7 @@ You can use Security Scorecards on the Command Line. This enables you to:
 
 <code-group>
 
-  <code-block title="Homebrew" active>
+  <code-block title="Homebrew" active="true">
 
 ```bash
 # For posix platforms, e.g. linux, mac:
@@ -266,11 +266,10 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <br/>
 
-### Use cases
-
 > Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
-<div class="text-right"><cite>Harvey Tuch, Envoy</cite></div>
+<div class="text-right mb-60"><cite>Harvey Tuch, Envoy</cite></div>
 
+### Use cases
 
 ##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
@@ -332,6 +331,6 @@ OpenSSF launched Security Scorecards in November 2020 with the intention of auto
 
 Security Scorecards is part of the [OSSF Best Practices Working Group](https://github.com/ossf/wg-best-practices-os-developers).
 
-If you want to get involved in the Security Scorecards community or have ideas you'd like to chat about, [we'd love to connect]((https://github.com/ossf/scorecard#connect-with-the-scorecards-community))
+If you want to get involved in the Security Scorecards community or have ideas you'd like to chat about, [we'd love to connect](https://github.com/ossf/scorecard#connect-with-the-scorecards-community).
 
 </section>

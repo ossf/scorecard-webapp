@@ -60,11 +60,7 @@ export default {
 
       const response = await fetch(url)
       const data = await response.json();
-<<<<<<< Updated upstream
       this.stars = data.stargazers_count;
-=======
-      this.stars = data.stargazers_count;
->>>>>>> Stashed changes
     }
   },
 

@@ -115,7 +115,7 @@ export default {
     return this.page
       ? {
           title: this.page.title,
-          titleTemplate: `%s · OSSF Scorecards`,
+          titleTemplate: `OSSF Security Scorecards`,
           script: [
             {
               src: "https://identity.netlify.com/v1/netlify-identity-widget.js",
@@ -199,34 +199,6 @@ export default {
   },
   mounted() {
     this.importAll(require.context("../assets/logos/", true, /\.svg$/));
-    const videoD = this.$refs.videoD;
-    const videoM = this.$refs.videoM;
-    let playState = null;
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          videoD.pause();
-          videoM.pause();
-          playState = false;
-        } else {
-          videoD.play();
-          videoM.play();
-          playState = true;
-        }
-      });
-    }, this.observerOptions);
-
-    this.observer.observe(videoD, videoM);
-
-    const onVisibilityChange = () => {
-      if (document.hidden || !playState) {
-        videoD.pause();
-        videoM.pause();
-      } else {
-        videoD.play();
-        videoM.play();
-      }
-    };
 
     setTimeout(() => {
       const blocks = document.getElementsByClassName("nuxt-content-highlight");
@@ -236,8 +208,6 @@ export default {
         block.appendChild(component.$el);
       }
     }, 100);
-
-    document.addEventListener("visibilitychange", onVisibilityChange);
   },
 
   methods: {

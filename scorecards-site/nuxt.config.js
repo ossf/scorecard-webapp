@@ -7,7 +7,7 @@ export default {
   ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'gosst-scorecards',
+    title: 'OSSF Security Scorecards',
     htmlAttrs: {
       lang: 'en',
     },
@@ -19,9 +19,15 @@ export default {
       },
       { name: 'format-detection', content: 'telephone=no' },
       { name: 'msapplication-TileColor', content: '#da532c' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Quickly assess open source projects for risky practices'
+      },
+      { hid: 'keywords', name: 'keywords', content: 'scorecards, scorecard, openssf, slsa, sigstore, security, vulnerabilities, cve, supply chain, supply-chain' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
       { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
       {
         rel: 'icon',

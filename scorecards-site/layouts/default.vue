@@ -7,18 +7,6 @@
       <Nuxt class="w-full" />
     </main>
     <Footer :navigation="footerNavLinks" :socialLinks="footerSocialLinks" />
-<<<<<<< Updated upstream
-    <transition name="fade" :duration="{ enter: 500, leave: 500 }">
-      <MobileNavigation
-        v-show="mobileNavOpen"
-        :navState="mobileNavOpen"
-        nav-type="header"
-        :social-links="footerSocialLinks"
-        :nav-list="headerNavLinks"
-      />
-    </transition>
-=======
->>>>>>> Stashed changes
   </div>
 </template>
 

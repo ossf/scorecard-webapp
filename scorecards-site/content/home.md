@@ -191,8 +191,6 @@ Security Scorecards help you enforce best practices that can guard against:
 </section>
 
 <br/>
-<<<<<<< Updated upstream
-=======
 <br/>
 
 > It took less than 5 minutes to install. It quickly analysed the repo and identified easy ways to make the project more secure.
@@ -200,7 +198,6 @@ Security Scorecards help you enforce best practices that can guard against:
 <div class="text-right"><cite>Priya Wadhwa, Kaniko</cite></div>
 
 <br/>
->>>>>>> Stashed changes
 
 ### How it works
 
@@ -269,15 +266,11 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <br/>
 
-<<<<<<< Updated upstream
-### Who it’s for
-=======
 ### Use cases
 
 > Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
 <div class="text-right"><cite>Harvey Tuch, Envoy</cite></div>
 
->>>>>>> Stashed changes
 
 ##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 

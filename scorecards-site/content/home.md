@@ -130,7 +130,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
-<div class="text-right"><cite>Appu Gordan, Distroless</cite></div>
+<div class="text-right"><cite>Appu Gordan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
 ### The problem
 
@@ -195,7 +195,7 @@ Security Scorecards help you enforce best practices that can guard against:
 
 > It took less than 5 minutes to install. It quickly analysed the repo and identified easy ways to make the project more secure.
 
-<div class="text-right"><cite>Priya Wadhwa, Kaniko</cite></div>
+<div class="text-right"><cite>Priya Wadhwa, <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a></cite></div>
 
 <br/>
 
@@ -267,7 +267,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 <br/>
 
 > Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
-<div class="text-right mb-60"><cite>Harvey Tuch, Envoy</cite></div>
+<div class="text-right mb-60"><cite>Harvey Tuch, <a href="https://www.envoyproxy.io/">Envoy</a></cite></div>
 
 ### Use cases
 

@@ -214,8 +214,9 @@ ol {
 ul {
   @extend %text--body-1;
   list-style: none;
-  line-height: 3.2rem;
-
+   li {
+    line-height: 3.2rem;
+   }
   &.bullet {
     @extend %bullet;
   }
@@ -236,7 +237,7 @@ ul {
   font-weight: 500;
   font-size: 24px;
   line-height: 120%;
-  padding: 15px 0 15px;
+  padding: 15px 0 4px 0;
 
   &:hover {
     color: #ff4d00;

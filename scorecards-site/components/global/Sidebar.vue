@@ -5,7 +5,7 @@
         v-for="link in navList.toc"
         :key="link.id"
         :class="{
-          'pl-32': link.depth === 3,
+          'pl-18': link.depth === 3,
           'parent-li':
             link.id === 'run-the-checks' ||
             (link.id === 'learn-more' && link.depth === 2),
@@ -17,8 +17,7 @@
           :class="{
             'text-orange-dark': link.id === currentlyActiveToc,
             'text-black hover:gray-900': link.id !== currentlyActiveToc,
-            'nav-parent':
-              link.id === 'run-the-checks' || link.id === 'learn-more',
+            'nav-parent': link.id === 'run-the-checks' || link.id === 'learn-more',
           }"
           role="button"
           class="transition-colors duration-500 text-base mb-2 block toc-item"
@@ -32,54 +31,52 @@
 
 <script>
 export default {
-  name: 'SideBar',
+  name: "SideBar",
   components: {},
-  computed: {
-
-  },
+  computed: {},
   mounted() {
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const id = entry.target.getAttribute('id')
+        const id = entry.target.getAttribute("id");
         if (entry.isIntersecting) {
-          if (id === 'video-section') {
-            this.showLogo = !this.showLogo
+          if (id === "video-section") {
+            this.showLogo = !this.showLogo;
           }
-          this.currentlyActiveToc = id
+          this.currentlyActiveToc = id;
         }
-      })
-    }, this.observerOptions)
+      });
+    }, this.observerOptions);
 
     // Track all sections that have an `id` applied
     document
       .querySelectorAll(
-        '#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]'
+        "#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]"
       )
       .forEach((section) => {
-        this.observer.observe(section)
-      })
+        this.observer.observe(section);
+      });
   },
   beforeDestroy() {
-    this.observer.disconnect()
+    this.observer.disconnect();
   },
   created() {
-    this.$nuxt.$on('setActiveToc', (id) => {
-      this.currentlyActiveToc = id
-    })
-    this.getNavLinks()
+    this.$nuxt.$on("setActiveToc", (id) => {
+      this.currentlyActiveToc = id;
+    });
+    this.getNavLinks();
   },
   data() {
     return {
-      currentlyActiveToc: '',
+      currentlyActiveToc: "",
       showLogo: false,
       observer: null,
       navList: null,
       observerOptions: {
         root: this.$refs.nuxtContent,
-        rootMargin: '-50% 0% -50% 0%',
+        rootMargin: "-50% 0% -50% 0%",
         threshold: 0,
       },
-    }
+    };
   },
   props: {
     toc: {
@@ -89,18 +86,18 @@ export default {
   },
   methods: {
     tableOfContentsHeadingClick(link) {
-      this.currentlyActiveToc = link.id
+      this.currentlyActiveToc = link.id;
     },
     async getNavLinks() {
-      const globalData = await this.$content('home')
-        .only(['title', 'slug', 'toc'])
-        .fetch()
+      const globalData = await this.$content("home")
+        .only(["title", "slug", "toc"])
+        .fetch();
       if (globalData) {
-        this.navList = globalData
+        this.navList = globalData;
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped></style>

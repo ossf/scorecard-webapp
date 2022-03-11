@@ -7,31 +7,18 @@
       <Nuxt class="w-full" />
     </main>
     <Footer :navigation="footerNavLinks" :socialLinks="footerSocialLinks" />
-    <transition name="fade" :duration="{ enter: 500, leave: 500 }">
-      <MobileNavigation
-        v-show="mobileNavOpen"
-        :navState="mobileNavOpen"
-        nav-type="header"
-        :social-links="footerSocialLinks"
-        :nav-list="headerNavLinks"
-      />
-    </transition>
   </div>
 </template>
 
 <script>
 import Header from "@/modules/Header/Header.vue";
-// import Sidebar from "@/components/global/Sidebar.vue";
 import Footer from "@/modules/Footer/Footer.vue";
-import MobileNavigation from "@/modules/MobileNavigation/MobileNavigation.vue";
 
 export default {
   name: "MainLayout",
   components: {
     Header,
     Footer,
-    // Sidebar,
-    MobileNavigation,
   },
 
   filters: {

@@ -6,7 +6,7 @@ slug: home
 thumbnail: /assets/checks.png
 ---
 
-<sidebar ref="sideBar" class="sticky top-100 h-400 w-1/3 hidden md:block"></sidebar>
+<sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
 
 <section class="bg-orange prose md:prose-lg w-full">
 
@@ -17,7 +17,7 @@ Security Scorecards can be used in a couple of different ways:
 1. Run automatically on code you own **using the GitHub Action**
 2. Run manually on your (or somebody else’s) project **via the Command Line**
 
-### Using the Github Action
+### Using the GitHub Action
 
 <section class="highlight-section">
 
@@ -42,7 +42,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 1. You need to own the repository you are installing the action to, or have admin rights to it.
 2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside github using the link below:
+3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
 <br/>
 
 <a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta">Install the action</a>
@@ -81,7 +81,7 @@ You can use Security Scorecards on the Command Line. This enables you to:
 
 <code-group>
 
-  <code-block title="Homebrew" active>
+  <code-block title="Homebrew" active="true">
 
 ```bash
 # For posix platforms, e.g. linux, mac:
@@ -130,7 +130,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
-<div class="text-right"><cite>Appu Gordan, Distroless</cite></div>
+<div class="text-right"><cite>Appu Goundan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
 ### The problem
 
@@ -189,6 +189,13 @@ Security Scorecards help you enforce best practices that can guard against:
 </div>
 
 </section>
+
+<br/>
+<br/>
+
+> It took less than 5 minutes to install. It quickly analysed the repo and identified easy ways to make the project more secure.
+
+<div class="text-right"><cite>Priya Wadhwa, <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a></cite></div>
 
 <br/>
 
@@ -259,7 +266,10 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <br/>
 
-### Who it’s for
+> Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
+<div class="text-right mb-60"><cite>Harvey Tuch, <a href="https://www.envoyproxy.io/">Envoy</a></cite></div>
+
+### Use cases
 
 ##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
@@ -321,6 +331,6 @@ OpenSSF launched Security Scorecards in November 2020 with the intention of auto
 
 Security Scorecards is part of the [OSSF Best Practices Working Group](https://github.com/ossf/wg-best-practices-os-developers).
 
-If you want to get involved in the Security Scorecards community or have ideas you'd like to chat about, [we'd love to connect]((https://github.com/ossf/scorecard#connect-with-the-scorecards-community))
+If you want to get involved in the Security Scorecards community or have ideas you'd like to chat about, [we'd love to connect](https://github.com/ossf/scorecard#connect-with-the-scorecards-community).
 
 </section>

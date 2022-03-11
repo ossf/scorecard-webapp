@@ -1,7 +1,7 @@
 <template>
   <a class="relative flex flex-row justify-center w-130 h-29" :href="`${repoURL}`">
     <GithubRepoIcon class="absolute top-0 left-0" />
-    <span class="text-15 top-7 right-8 absolute">{{ stars }}</span>
+    <span class="text-16 top-7 right-1 absolute">{{ stars }}</span>
   </a>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   created() {},
   data() {
     return {
-      repoURL: process.env.REPO_URL,
+      repoURL: 'https://github.com/ossf/scorecard',
     };
   },
   props: {

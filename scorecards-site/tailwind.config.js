@@ -77,12 +77,22 @@ module.exports = {
         'md:text-left',
         'sticky',
         'prose',
-        'top-100', 'h-400', 'w-1/3',
-        'grid','grid-cols-1','grid-rows-1','md:grid-cols-2','md:grid-cols-2', 'inline-flex', 'gap-x-20','gap-x-40'
+        'min-w-max',
+        'top-100',
+        'h-400',
+        'w-1/3',
+        'grid',
+        'grid-cols-1',
+        'grid-rows-1',
+        'md:grid-cols-2',
+        'md:grid-cols-2',
+        'inline-flex',
+        'gap-x-20',
+        'gap-x-40',
       ],
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require('@tailwindcss/typography')],
   corePlugins: {
     // ...
     container: false,
@@ -160,7 +170,7 @@ module.exports = {
         dark: '#2A1E71',
       },
       orange: {
-        dark: '#FF4D00'
+        dark: '#FF4D00',
       },
       pastel: {
         white: '#FDECE3',
@@ -223,7 +233,8 @@ module.exports = {
     },
     extend: {
       typography: {
-        DEFAULT: { // this is for prose class
+        DEFAULT: {
+          // this is for prose class
           css: {
             color: '#302825', // change global color scheme
             '.cta': {
@@ -245,7 +256,8 @@ module.exports = {
               color: '#feece3',
               code: {
                 fontSize: '16px',
-              }
+                fontFamily: 'DM Mono',
+              },
             },
             ol: {
               li: {
@@ -254,8 +266,8 @@ module.exports = {
                 },
                 a: {
                   textDecoration: 'underline',
-                }
-              }
+                },
+              },
             },
             blockquote: {
               border: '2px solid #FF4D00',
@@ -266,50 +278,55 @@ module.exports = {
                 fontWeight: 'normal',
                 fontSize: '24px',
                 lineHeight: '120%',
-                letterSpacing: '-0.03em',
                 color: '#302825',
-              }
+              },
+            },
+            cite: {
+              fontSize: '18px',
+              fontStyle: 'normal',
+              fontFamily: 'DM Mono',
             },
             a: {
               // change anchor color and on hover
               color: 'inherit',
-                '&:hover': {
-                  color: '#F7941E',
-                  textDecoration: 'none',
-                },
+              '&:hover': {
+                color: '#F7941E',
+                textDecoration: 'none',
+              },
             },
             table: {
-                thead:{
-                  backgroundColor: '#FDDFCF',
-                    tr:{
-                      th: {
-                        padding: '0.75em',
-                        fontWeight: '400',
-                        width: '200px',
-                        '&:first-child': {
-                          paddingLeft: '0.75em',
-                        }
-                      }
-                }
+              thead: {
+                backgroundColor: '#FDDFCF',
+                tr: {
+                  th: {
+                    padding: '0.75em',
+                    fontWeight: '400',
+                    width: '200px',
+                    '&:first-child': {
+                      paddingLeft: '0.75em',
+                    },
+                  },
+                },
               },
-              tbody:{
-                tr:{
+              tbody: {
+                tr: {
                   td: {
                     padding: '0.75em',
                     fontWeight: '500',
                     fontSize: '18px',
-                    width: '200px',
+                    maxWidth: '200px',
+                    lineHeight: '120%',
                     minHeight: '320px',
                     '&:first-child': {
                       paddingLeft: '0.75em',
-                    }
-                  }
-                }
-              }
-            }
+                    },
+                  },
+                },
+              },
+            },
           },
         },
-        'lg': {
+        lg: {
           css: {
             a: {
               // change anchor color and on hover
@@ -317,17 +334,18 @@ module.exports = {
                 textDecoration: 'none',
                 color: '#FF4D00',
               },
-                '&:hover': {
-                  color: '#F7941E',
-                  textDecoration: 'none',
-                },
+              '&:hover': {
+                color: '#F7941E',
+                textDecoration: 'none',
+              },
             },
             pre: {
               fontSize: '16px',
               color: '#feece3',
               code: {
                 fontSize: '16px',
-              }
+                fontFamily: 'DM Mono',
+              },
             },
             maxWidth: '132ch',
             h2: {
@@ -347,11 +365,11 @@ module.exports = {
               marginBottom: '0.6em',
             },
             h5: {
-                fontSize: '24px',
-                fontWeight: '400'
-            }
+              fontSize: '24px',
+              fontWeight: '400',
+            },
           },
-        }
+        },
       },
       width: {
         832: '832px',

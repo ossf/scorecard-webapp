@@ -1,7 +1,4 @@
-import addClasses from 'rehype-add-classes';
-import { getHighlighter } from 'shiki'
 import highlightjs from 'highlight.js'
-import remarkGemoji from 'remark-gemoji'
 export default {
   target: 'static',
   ssr: false,
@@ -49,7 +46,7 @@ export default {
     ],
     script: [
       {
-        type: 'text/javascript', 
+        type: 'text/javascript',
         src: '//gc.zgo.at/count.js',
         'data-goatcounter': 'https://MYCODE.goatcounter.com/count',
         async: true,
@@ -151,7 +148,7 @@ export default {
   googleFonts: {
     families: {
       'Public Sans': [400,600],
-      'IBM Plex Mono': [400,500],
+      'DM Mono': [400,500],
     },
     display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   },

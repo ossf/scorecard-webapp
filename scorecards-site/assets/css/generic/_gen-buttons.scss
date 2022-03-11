@@ -24,11 +24,9 @@
 }
 
 .cta {
-  width: 188px;
-  height: 58px;
-  padding: 18px 16px;
+  padding: 18px 20px;
   color: white;
-  background: #FF4D00;
+  background: #ff4d00;
   border-radius: 8px;
   font-family: Public Sans;
   font-style: normal;
@@ -37,8 +35,8 @@
   line-height: 91%;
   transition: all 0.4s ease-in-out;
 
-  &:hover{
-    background-color: #B64616;
+  &:hover {
+    background-color: #b64616;
     transition: all 0.4s ease-in-out;
   }
 }
@@ -48,7 +46,7 @@
   height: 58px;
   padding: 16px 12px;
   color: white;
-  border: 1px solid #FF4D00;
+  border: 1px solid #ff4d00;
   border-radius: 8px;
   font-family: 'Public Sans';
   font-style: normal;
@@ -60,8 +58,8 @@
   display: inline-block;
   text-align: center;
 
-  &:hover{
-    background-color: #B64616;
+  &:hover {
+    background-color: #b64616;
     transition: all 0.4s ease-in-out;
   }
 }

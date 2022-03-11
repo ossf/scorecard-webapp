@@ -3,6 +3,7 @@
   font-weight: $weight-semi-bold;
   @apply text-72;
   @apply leading-40;
+  letter-spacing: -0.01em;
 
   @include media-breakpoint-up(md) {
     @apply text-72;
@@ -15,6 +16,7 @@
   font-size: 32px;
   font-weight: $weight-semi-bold;
   @apply leading-40;
+  letter-spacing: -0.01em;
 
   @include media-breakpoint-up(md) {
     font-size: 36px;
@@ -27,6 +29,7 @@
   font-size: 22px;
   font-weight: $weight-semi-bold;
   @apply leading-30;
+  letter-spacing: -0.01em;
 
   @include media-breakpoint-up(md) {
     font-size: 24px;
@@ -38,6 +41,7 @@
   font-family: $font-sans-header-standard;
   font-weight: $weight-semi-bold;
   @apply leading-23;
+  letter-spacing: -0.01em;
   font-size: 16px;
 
   @include media-breakpoint-up(md) {
@@ -50,12 +54,12 @@
   font-family: $font-sans-header-standard;
   font-size: 1.2rem;
   font-weight: $weight-medium;
-  letter-spacing: 0.082rem;
+  letter-spacing: -0.01em;
   line-height: 1.8rem;
 
   @include media-breakpoint-up(md) {
     font-size: $size-small; // 14px
-    letter-spacing: 0.05rem;
+    letter-spacing: -0.01em;
     line-height: 1.8rem;
   }
 }
@@ -65,6 +69,7 @@
   font-size: $size-small;
   font-weight: $weight-regular;
   line-height: 1.8rem;
+  letter-spacing: -0.01em;
 
   @include media-breakpoint-up(md) {
     font-size: $size-medium; // 18px

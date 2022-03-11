@@ -238,6 +238,7 @@ module.exports = {
           css: {
             color: '#302825', // change global color scheme
             '.cta': {
+              color: '#ff4d00',
               textDecoration: 'none',
             },
             h2: {

@@ -6,7 +6,7 @@ slug: home
 thumbnail: /assets/checks.png
 ---
 
-<sidebar ref="sideBar" class="sticky top-100 h-400 w-1/3 hidden md:block"></sidebar>
+<sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
 
 <section class="bg-orange prose md:prose-lg w-full">
 
@@ -17,7 +17,7 @@ Security Scorecards can be used in a couple of different ways:
 1. Run automatically on code you own **using the GitHub Action**
 2. Run manually on your (or somebody else’s) project **via the Command Line**
 
-### Using the Github Action
+### Using the GitHub Action
 
 <section class="highlight-section">
 
@@ -42,7 +42,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 1. You need to own the repository you are installing the action to, or have admin rights to it.
 2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside github using the link below:
+3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
 <br/>
 
 <a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta">Install the action</a>
@@ -130,7 +130,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
-<div class="text-right"><cite>Appu Gordan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
+<div class="text-right"><cite>Appu Goundan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
 ### The problem
 

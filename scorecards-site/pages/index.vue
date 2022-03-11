@@ -4,10 +4,10 @@
       class="flex justify-center items-center relative min-h-mobile md:min-h-threeQuarters"
     >
       <div class="mx-auto w-full md:w-4/6 text-center hero-text">
-        <h1>Build better security habits, one test at a time</h1>
-        <h3 class="mt-20 pb-32">
+        <h1>Build better security habits,<br/> one test at a time</h1>
+        <div class="pt-20 pb-32 text-22">
           Quickly assess open source projects for risky practices
-        </h3>
+        </div>
         <div class="flex justify-center items-center my-32">
           <button class="btn cta mx-12" @click="scrollToAnchorPoint('run-the-checks')">
             Run the checks

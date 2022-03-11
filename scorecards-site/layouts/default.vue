@@ -12,7 +12,6 @@
 
 <script>
 import Header from "@/modules/Header/Header.vue";
-// import Sidebar from "@/components/global/Sidebar.vue";
 import Footer from "@/modules/Footer/Footer.vue";
 
 export default {

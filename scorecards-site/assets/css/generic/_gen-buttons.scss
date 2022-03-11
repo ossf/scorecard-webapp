@@ -25,16 +25,40 @@
 
 .cta {
   position: relative;
-  padding: 17px 50px 17px 16px;
-  color: #ff4d00;
-  border: 1px solid #ff4d00;
+  padding: 16px 12px;
+  color: white;
+  min-width: 188px;
+  background-color:#ff4d00;
   border-radius: 8px;
   font-family: Public Sans;
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 91%;
   transition: all 0.4s ease-in-out;
+
+  &:hover {
+    background-color: #b64616;
+    transition: all 0.4s ease-in-out;
+  }
+}
+
+.cta-icon {
+  position: relative;
+  padding: 17px 50px 17px 16px;
+  color: #ff4d00;
+  border: 1px solid #ff4d00;
+  border-radius: 8px;
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.4s ease-in-out;
+  margin: 15px 0;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 
   &:after {
     content: '';
@@ -47,31 +71,7 @@
   }
 
   &:hover {
-    background-color: #b64616;
-    transition: all 0.4s ease-in-out;
-  }
-}
-
-.cta-icon {
-  position: relative;
-  width: 188px;
-  height: 58px;
-  padding: 16px 12px;
-  color: white;
-  border: 1px solid #ff4d00;
-  border-radius: 8px;
-  font-family: 'Public Sans';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 1;
-  transition: all 0.4s ease-in-out;
-  margin: 15px 0;
-  display: inline-block;
-  text-align: center;
-
-  &:hover {
-    background-color: #b64616;
+    background-color: black;
     transition: all 0.4s ease-in-out;
   }
   

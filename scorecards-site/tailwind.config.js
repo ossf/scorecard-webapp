@@ -237,7 +237,7 @@ module.exports = {
           // this is for prose class
           css: {
             color: '#302825', // change global color scheme
-            '.cta': {
+            '.cta-icon': {
               color: '#ff4d00',
               textDecoration: 'none',
             },
@@ -291,7 +291,7 @@ module.exports = {
               // change anchor color and on hover
               color: 'inherit',
               '&:hover': {
-                color: '#F7941E',
+                color: '#FF4D00',
                 textDecoration: 'none',
               },
             },
@@ -336,7 +336,7 @@ module.exports = {
                 color: '#FF4D00',
               },
               '&:hover': {
-                color: '#F7941E',
+                color: '#FF4D00',
                 textDecoration: 'none',
               },
             },

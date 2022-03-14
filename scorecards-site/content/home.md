@@ -45,7 +45,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
 <br/>
 
-<a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta">Install the action</a>
+<a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta-icon">Install the action</a>
 
 </section>
 
@@ -123,7 +123,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 
 <br/>
 
-<a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta">Detailed installation instructions</a>
+<a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta-icon">Detailed installation instructions</a>
 
 </section>
 

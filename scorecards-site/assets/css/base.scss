@@ -163,13 +163,27 @@ details {
   }
 
   summary::after {
-      content: ' +';
+      content: '';
+      background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0V24' stroke='%23FF4D00'/%3E%3Cpath d='M24 12L-3.57628e-07 12' stroke='%23FF4D00'/%3E%3C/svg%3E");
       color: #FF4D00;
+      position: absolute;
+      right: 0px;
+      height: 25px;
+      width: 25px;
+      background-repeat: no-repeat;
       @apply text-25;
       line-height: 1;
   }
   &[open] > summary:after {
-      content: " -";
+    content: '';
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='1' viewBox='0 0 24 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 0.5L-3.57628e-07 0.499999' stroke='%23FF4D00'/%3E%3C/svg%3E%0A");
+    color: #FF4D00;
+    position: absolute;
+    right: 0px;
+    top: 12px;
+    height: 25px;
+    width: 25px;
+    background-repeat: no-repeat;
   }
   > summary > span {
     margin-left: 30px;

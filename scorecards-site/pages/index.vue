@@ -19,7 +19,7 @@
       </div>
     </section>
     <section id="video-section" ref="homeSection" class="md:min-h-threeQuarters">
-      <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden">
+      <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden bg-black">
         <video
           ref="videoD"
           class="object-fit h-full w-full z-0 hidden md:block"

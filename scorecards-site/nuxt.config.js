@@ -147,7 +147,7 @@ export default {
 
   googleFonts: {
     families: {
-      'Public Sans': [400,600],
+      'Public Sans': [400,600,700],
       'DM Mono': [400,500],
     },
     display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'

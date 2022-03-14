@@ -6,7 +6,9 @@ slug: home
 thumbnail: /assets/checks.png
 ---
 
-<sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
+<div>
+    <sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
+</div>
 
 <section class="bg-orange prose md:prose-lg w-full">
 
@@ -81,7 +83,7 @@ You can use Security Scorecards on the Command Line. This enables you to:
 
 <code-group>
 
-  <code-block title="Homebrew" active="true">
+  <code-block title="Homebrew" active>
 
 ```bash
 # For posix platforms, e.g. linux, mac:

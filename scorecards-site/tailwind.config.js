@@ -271,15 +271,19 @@ module.exports = {
               },
             },
             blockquote: {
-              border: '2px solid #FF4D00',
-              borderRadius: '8px',
+                border: '2px solid #FF4D00',
+                borderRadius: '8px',
+                padding: '20px 32px 20px 20px',
               p: {
                 fontFamily: 'Public Sans',
                 fontStyle: 'normal',
                 fontWeight: 'normal',
                 fontSize: '24px',
                 lineHeight: '120%',
+                letterSpacing: '-0.02em',
                 color: '#302825',
+                padding: '0',
+                margin: '0'
               },
             },
             cite: {
@@ -352,22 +356,27 @@ module.exports = {
             h2: {
               fontSize: '46px',
               color: '#302825',
+              lineHeight: '115%',
+              letterSpacing: '-0.03em',
             },
             h3: {
               fontSize: '32px',
               color: '#302825',
               zIndex: 50,
               marginBottom: '0.6em',
+              letterSpacing: '-0.02em',
             },
             h4: {
               fontSize: '24px',
               color: '#302825',
               lineHeight: '1.1',
               marginBottom: '0.6em',
+              letterSpacing: '-0.02em',
             },
             h5: {
               fontSize: '24px',
               fontWeight: '400',
+              letterSpacing: '-0.02em',
             },
           },
         },

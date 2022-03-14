@@ -84,6 +84,7 @@ module.exports = {
         'min-w-max',
         'top-100',
         'h-400',
+        'mr-80',
         'w-1/3',
         'grid',
         'grid-cols-1',

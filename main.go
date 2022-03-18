@@ -50,6 +50,11 @@ import (
 	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
+type ScorecardOutput struct {
+	SarifOutput string
+	JsonOutput  string
+}
+
 // verifySignature receives the scorecard analysis payload, looks up its associated tlog entry and
 // certificate, and extracts the repository's workflow file to ensure its legitimacy.
 func verifySignature(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +66,15 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Unmarshal body
+	var scorecardOutput ScorecardOutput
+	err = json.Unmarshal(reqBody, &scorecardOutput)
+	if err != nil {
+		http.Error(w, "error unmarshalling request body", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
 	// Get most recent Rekor entry uuid.
 	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
 	if err != nil {
@@ -68,7 +82,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, reqBody)
+	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(scorecardOutput.SarifOutput))
 	if err != nil || len(uuids) == 0 {
 		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -146,9 +160,48 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	// Verify scorecard workflow.
 	verified := verifyScorecardWorkflow(workflowContent)
-	fmt.Println(verified)
+
+	// Get scorecard score from json input.
+	jsonScore := struct {
+		Score float32 `json:"score"`
+	}{}
+
+	json.Unmarshal([]byte(scorecardOutput.JsonOutput), &jsonScore)
+	score := jsonScore.Score
+
+	fmt.Println(verified, score)
 
 	// Save blob to GCS
+	// storageclient, err := storage.NewClient(ctx)
+	// fmt.Println(err, storageclient)
+	// scbucket := storageclient.Bucket("ossf-scorecard-results")
+	// fmt.Println(scbucket)
+	// wc := scbucket.Object(repoPath).NewWriter(ctx)
+	// fmt.Println(wc)
+
+	// bucket, err := blob.OpenBucket(ctx, "ossf-scorecard-results")
+	// if err != nil {
+	// 	http.Error(w, "error opening GCS bucket", http.StatusInternalServerError)
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// defer bucket.Close()
+	// blobWriter, err := bucket.NewWriter(ctx, repoPath, nil)
+	// if err != nil {
+	// 	http.Error(w, "error opening GCS bucket writer", http.StatusInternalServerError)
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// if _, err = blobWriter.Write(reqBody); err != nil {
+	// 	http.Error(w, "error writing to GCS bucket", http.StatusInternalServerError)
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// if err := blobWriter.Close(); err != nil {
+	// 	http.Error(w, "error closing GCS bucket", http.StatusInternalServerError)
+	// 	fmt.Println(err)
+	// 	return
+	// }
 
 	// Next: badging...
 }

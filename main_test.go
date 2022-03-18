@@ -15,9 +15,13 @@ func TestVerifySignature(t *testing.T) {
 	// Using a scorecard results file from a previous run that was successfully signed.
 	// This isn't expected to pass verifyScorecardWorkflow because the workflow it was
 	// generated from contains extra steps to call cosign.
-	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+	sarifpayload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+	jsonpayload, _ := ioutil.ReadFile("testdata/scorecard-results.json")
+	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
+	payloadbytes, err := json.Marshal(payload)
+	assert.Equal(t, err, nil)
 
-	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payload))
+	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
 	r.Header = http.Header{"Repository": []string{"rohankh532/scorecard-OIDC-test"}, "Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
@@ -27,9 +31,13 @@ func TestVerifySignature(t *testing.T) {
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
-	payload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+	sarifpayload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
+	jsonpayload, _ := ioutil.ReadFile("testdata/scorecard-results.json")
+	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
+	payloadbytes, err := json.Marshal(payload)
+	assert.Equal(t, err, nil)
 
-	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payload))
+	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
 	r.Header = http.Header{"Repository": []string{"rohankh532/invalid-repo"}, "Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 

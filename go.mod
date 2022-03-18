@@ -16,6 +16,23 @@ require (
 )
 
 require (
+	github.com/bombsimon/logrusr/v2 v2.0.1 // indirect
+	github.com/bradleyfalzon/ghinstallation/v2 v2.0.4 // indirect
+	github.com/containerd/typeurl v1.0.2 // indirect
+	github.com/google/go-github/v38 v38.1.0 // indirect
+	github.com/google/go-github/v41 v41.0.0 // indirect
+	github.com/google/wire v0.5.0 // indirect
+	github.com/h2non/filetype v1.1.3 // indirect
+	github.com/jszwec/csvutil v1.6.0 // indirect
+	github.com/moby/buildkit v0.8.3 // indirect
+	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/ossf/scorecard/v4 v4.1.0 // indirect
+	github.com/shurcooL/githubv4 v0.0.0-20201206200315-234843c633fa // indirect
+	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
+	mvdan.cc/sh/v3 v3.4.2 // indirect
+)
+
+require (
 	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.3.0 // indirect
 	cloud.google.com/go/iam v0.1.1 // indirect
@@ -141,6 +158,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20220114050600-8b9d41f48198 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/ossf/scorecard/v2 v2.2.8
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -170,6 +188,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
+	gocloud.dev v0.24.1-0.20211119014450-028788aaaa4c
 	golang.org/x/crypto v0.0.0-20220213190939-1e6e3497d506 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect

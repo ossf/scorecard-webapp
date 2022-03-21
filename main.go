@@ -62,7 +62,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "error reading http request body", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
@@ -71,7 +71,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &scorecardOutput)
 	if err != nil {
 		http.Error(w, "error unmarshalling request body", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
@@ -79,13 +79,13 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
 	if err != nil {
 		http.Error(w, "error initializing Rekor client", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(scorecardOutput.SarifOutput))
 	if err != nil || len(uuids) == 0 {
 		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	uuid := uuids[len(uuids)-1] // ignore past entries.
@@ -94,7 +94,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	entry, err := verifyTLogEntry(ctx, rekorClient, uuid)
 	if err != nil {
 		http.Error(w, "error verifying tlog entry", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
@@ -102,7 +102,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {
 		http.Error(w, "error extracting certificate from entry", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	if len(certs) > 1 {
@@ -147,14 +147,14 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, ".github/workflows/scorecards.yml", opts)
 	if err != nil {
 		http.Error(w, "error downloading workflow contents from repo", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
 	workflowContent, err := contents.GetContent()
 	if err != nil {
 		http.Error(w, "error decoding workflow contents", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	err = verifyScorecardWorkflow(workflowContent)
 	if err != nil {
 		http.Error(w, "workflow could not be verified", http.StatusNotAcceptable)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 

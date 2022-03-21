@@ -35,6 +35,7 @@ import (
 	"github.com/google/trillian/merkle/logverifier"
 	"github.com/google/trillian/merkle/rfc6962"
 	"github.com/gorilla/mux"
+	"github.com/ossf/scorecard/v4/cron/data"
 	"github.com/rhysd/actionlint"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
@@ -178,37 +179,13 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(score)
 
 	// TODO: Save blob to GCS
-
-	// storageclient, err := storage.NewClient(ctx)
-	// fmt.Println(err, storageclient)
-	// scbucket := storageclient.Bucket("ossf-scorecard-results")
-	// fmt.Println(scbucket)
-	// wc := scbucket.Object(repoPath).NewWriter(ctx)
-	// fmt.Println(wc)
-
-	// bucket, err := blob.OpenBucket(ctx, "ossf-scorecard-results")
-	// if err != nil {
-	// 	http.Error(w, "error opening GCS bucket", http.StatusInternalServerError)
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// defer bucket.Close()
-	// blobWriter, err := bucket.NewWriter(ctx, repoPath, nil)
-	// if err != nil {
-	// 	http.Error(w, "error opening GCS bucket writer", http.StatusInternalServerError)
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// if _, err = blobWriter.Write(reqBody); err != nil {
-	// 	http.Error(w, "error writing to GCS bucket", http.StatusInternalServerError)
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// if err := blobWriter.Close(); err != nil {
-	// 	http.Error(w, "error closing GCS bucket", http.StatusInternalServerError)
-	// 	fmt.Println(err)
-	// 	return
-	// }
+	bucketURL := "gs://ossf-scorecard-results"
+	err = data.WriteToBlobStore(ctx, bucketURL, repoName, []byte(fmt.Sprintf("%f", score)))
+	if err != nil {
+		http.Error(w, "error writing to GCS bucket", http.StatusNotAcceptable)
+		log.Println(err)
+		return
+	}
 
 	// Next: badging...
 }
@@ -294,7 +271,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	steps := analysisJob.Steps
 
 	if steps == nil || len(steps) > 4 {
-		return errors.New("workflow has an invalid number of steps")
+		return fmt.Errorf("workflow has an invalid number of steps: %d", len(steps))
 	}
 
 	// Verify that steps are valid (checkout, scorecard-action, upload-artifact, upload-sarif).
@@ -307,9 +284,10 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"actions/checkout",
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
-			"github/codeql-action/upload-sarif":
+			"github/codeql-action/upload-sarif",
+			"rohankh532/scorecard-action": // TODO: remove later, for debugging
 		default:
-			return errors.New("workflow has invalid step names")
+			return fmt.Errorf("workflow has invalid step name: %s", stepName)
 		}
 	}
 

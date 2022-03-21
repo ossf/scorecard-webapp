@@ -187,7 +187,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Next: badging...
+	// Next: badging..
 }
 
 func getScore(w http.ResponseWriter, r *http.Request) {

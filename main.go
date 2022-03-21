@@ -133,8 +133,8 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	repoName := repoPath[strings.Index(repoPath, "/")+1:]
 
 	// Verify that the repository and branch of the cert and request are equal.
-	reqRepo := r.Header["Repository"]
-	reqBranch := r.Header["Branch"]
+	reqRepo := r.Header["X-Repository"]
+	reqBranch := r.Header["X-Branch"]
 	if len(reqRepo) == 0 || len(reqBranch) == 0 || reqRepo[0] != repoPath || reqBranch[0] != repoRef {
 		http.Error(w, "repository and branch of cert doesn't match that of request", http.StatusInternalServerError)
 		return

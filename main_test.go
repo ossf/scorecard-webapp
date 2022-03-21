@@ -22,7 +22,7 @@ func TestVerifySignature(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
-	r.Header = http.Header{"Repository": []string{"rohankh532/scorecard-OIDC-test"}, "Branch": []string{"refs/heads/main"}}
+	r.Header = http.Header{"X-Repository": []string{"rohankh532/scorecard-OIDC-test"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
 	verifySignature(w, r)
@@ -38,7 +38,7 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
-	r.Header = http.Header{"Repository": []string{"rohankh532/invalid-repo"}, "Branch": []string{"refs/heads/main"}}
+	r.Header = http.Header{"X-Repository": []string{"rohankh532/invalid-repo"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
 	verifySignature(w, r)

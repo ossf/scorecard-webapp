@@ -82,6 +82,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+	// TODO: also process the jsonoutput
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(scorecardOutput.SarifOutput))
 	if err != nil || len(uuids) == 0 {
 		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
@@ -176,7 +177,8 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(score)
 
-	// Save blob to GCS
+	// TODO: Save blob to GCS
+
 	// storageclient, err := storage.NewClient(ctx)
 	// fmt.Println(err, storageclient)
 	// scbucket := storageclient.Bucket("ossf-scorecard-results")

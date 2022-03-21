@@ -159,7 +159,12 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Verify scorecard workflow.
-	verified := verifyScorecardWorkflow(workflowContent)
+	err = verifyScorecardWorkflow(workflowContent)
+	if err != nil {
+		http.Error(w, "workflow could not be verified", http.StatusNotAcceptable)
+		fmt.Println(err)
+		return
+	}
 
 	// Get scorecard score from json input.
 	jsonScore := struct {
@@ -169,7 +174,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal([]byte(scorecardOutput.JsonOutput), &jsonScore)
 	score := jsonScore.Score
 
-	fmt.Println(verified, score)
+	fmt.Println(score)
 
 	// Save blob to GCS
 	// storageclient, err := storage.NewClient(ctx)
@@ -241,53 +246,53 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func verifyScorecardWorkflow(workflowContent string) bool {
+func verifyScorecardWorkflow(workflowContent string) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil {
-		return false
+		return fmt.Errorf("actionlint errors parsing workflow: %v", lintErrs)
 	}
 
 	// Extract main job
 	jobs := workflow.Jobs
 	if len(jobs) != 1 {
-		return false
+		return errors.New("number of jobs isn't 1")
 	}
 	analysisJob := jobs["analysis"]
 	if analysisJob == nil {
-		return false
+		return errors.New("workflow doens't have analysis job")
 	}
 
 	// Verify that there is no container or services.
 	if analysisJob.Container != nil || len(analysisJob.Services) > 0 {
-		return false
+		return errors.New("workflow contains container or service")
 	}
 
 	// Verify that the workflow runs on ubuntu-latest and nothing else.
 	if analysisJob.RunsOn != nil {
 		labels := analysisJob.RunsOn.Labels
 		if len(labels) == 0 || len(labels) > 1 || labels[0].Value != "ubuntu-latest" {
-			return false
+			return errors.New("workflow doesn't run solely on ubuntu-latest")
 		}
 	} else {
-		return false
+		return errors.New("no RunsOn found in workflow")
 	}
 
 	// Verify that there are no env vars set.
 	if analysisJob.Env != nil {
-		return false
+		return errors.New("workflow contains env vars")
 	}
 
 	// Verify that there are no defaults set.
 	if analysisJob.Defaults != nil {
-		return false
+		return errors.New("workflow has defaults set")
 	}
 
 	// Get steps in job.
 	steps := analysisJob.Steps
 
 	if steps == nil || len(steps) > 4 {
-		return false
+		return errors.New("workflow has an invalid number of steps")
 	}
 
 	// Verify that steps are valid (checkout, scorecard-action, upload-artifact, upload-sarif).
@@ -302,11 +307,11 @@ func verifyScorecardWorkflow(workflowContent string) bool {
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif":
 		default:
-			return false
+			return errors.New("workflow has invalid step names")
 		}
 	}
 
-	return true
+	return nil
 }
 
 // Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/pkg/cosign/tlog.go#L247

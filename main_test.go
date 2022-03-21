@@ -27,7 +27,8 @@ func TestVerifySignature(t *testing.T) {
 
 	verifySignature(w, r)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	// Only the invalid workflow file error code is allowed
+	assert.Equal(t, http.StatusNotAcceptable, w.Code)
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
@@ -48,8 +49,8 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 
 func TestVerifyValidWorkflow(t *testing.T) {
 	workflowContent, _ := ioutil.ReadFile("testdata/workflow-valid.yml")
-	res := verifyScorecardWorkflow(string(workflowContent))
-	assert.Equal(t, res, true)
+	err := verifyScorecardWorkflow(string(workflowContent))
+	assert.Equal(t, err, nil)
 }
 
 func TestVerifyInvalidWorkflows(t *testing.T) {
@@ -68,8 +69,8 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 
 	for _, workflowFile := range workflowFiles {
 		workflowContent, _ := ioutil.ReadFile(workflowFile)
-		res := verifyScorecardWorkflow(string(workflowContent))
-		assert.Equal(t, res, false)
+		err := verifyScorecardWorkflow(string(workflowContent))
+		assert.NotEqual(t, err, nil)
 	}
 }
 

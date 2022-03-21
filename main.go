@@ -180,7 +180,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Save blob to GCS
 	bucketURL := "gs://ossf-scorecard-results"
-	err = data.WriteToBlobStore(ctx, bucketURL, repoName, []byte(fmt.Sprintf("%f", score)))
+	err = data.WriteToBlobStore(ctx, bucketURL, repoPath, []byte(fmt.Sprintf("%f", score)))
 	if err != nil {
 		http.Error(w, "error writing to GCS bucket", http.StatusNotAcceptable)
 		log.Println(err)

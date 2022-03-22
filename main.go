@@ -205,6 +205,7 @@ func getScore(w http.ResponseWriter, r *http.Request) {
 	orgName := r.URL.Query()["orgName"]
 	repoName := r.URL.Query()["repoName"]
 	filePath := fmt.Sprintf("%s/%s/%s/score.txt", host, orgName, repoName)
+	log.Printf("Querying GCS bucket for: %s", filePath)
 
 	scoreBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
 	if err != nil {

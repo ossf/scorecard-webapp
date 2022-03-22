@@ -28,6 +28,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -178,8 +179,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	// Save scorecard results (results.sarif, results.json, score.txt) to GCS
 	bucketURL := "gs://ossf-scorecard-results"
-	repoRefEscaped := strings.Replace(repoRef, "/", "\\", -1)
-	folderPath := fmt.Sprintf("%s/%s/%s", "github", repoPath, repoRefEscaped)
+	folderPath := fmt.Sprintf("%s/%s", "github.com", repoPath)
 	scorePath := fmt.Sprintf("%s/score.txt", folderPath)
 	sarifPath := fmt.Sprintf("%s/results.sarif", folderPath)
 	jsonPath := fmt.Sprintf("%s/results.json", folderPath)
@@ -199,11 +199,31 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 }
 
 func getScore(w http.ResponseWriter, r *http.Request) {
-	scorecardData := struct{ Score int }{Score: 1}
+	ctx := context.Background()
+	bucketURL := "gs://ossf-scorecard-results"
+	host := r.URL.Query()["host"]
+	orgName := r.URL.Query()["orgName"]
+	repoName := r.URL.Query()["repoName"]
+	filePath := fmt.Sprintf("%s/%s/%s/score.txt", host, orgName, repoName)
+
+	scoreBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
+	if err != nil {
+		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+	score, err := strconv.Atoi(string(scoreBytes))
+	if err != nil {
+		http.Error(w, "error converting score ", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	scorecardData := struct{ Score int }{Score: score}
 	jData, err := json.Marshal(scorecardData)
 	if err != nil {
 		http.Error(w, "error marshalling struct", http.StatusInternalServerError)
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 

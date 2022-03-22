@@ -75,7 +75,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/projects/github.com/org/repo", nil)
+	r, _ := http.NewRequest("GET", "/projects/github.com/rohankh532/scorecard-OIDC-test", nil)
 	w := httptest.NewRecorder()
 
 	getScore(w, r)
@@ -86,7 +86,6 @@ func TestGetScore(t *testing.T) {
 	err := json.Unmarshal(res, &scorecardData)
 	assert.Equal(t, err, nil)
 
-	// Endpoint currently always returns 1.
-	expectedData := struct{ Score int }{Score: 1}
-	assert.Equal(t, scorecardData, expectedData)
+	// Verify that a number was retrieved.
+	assert.True(t, scorecardData.Score != 0)
 }

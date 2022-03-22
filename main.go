@@ -171,11 +171,11 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	// Get scorecard score from json input.
 	jsonScore := struct {
-		Score float32 `json:"score"`
+		Score float64 `json:"score"`
 	}{}
 
 	json.Unmarshal([]byte(scorecardOutput.JsonOutput), &jsonScore)
-	score := int(jsonScore.Score)
+	score := jsonScore.Score
 
 	// Save scorecard results (results.sarif, results.json, score.txt) to GCS
 	bucketURL := "gs://ossf-scorecard-results"
@@ -199,6 +199,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 }
 
 func getScore(w http.ResponseWriter, r *http.Request) {
+	// Get params to build GCS filepath.
 	ctx := context.Background()
 	bucketURL := "gs://ossf-scorecard-results"
 	host := mux.Vars(r)["host"]
@@ -207,20 +208,25 @@ func getScore(w http.ResponseWriter, r *http.Request) {
 	filePath := fmt.Sprintf("%s/%s/%s/score.txt", host, orgName, repoName)
 	log.Printf("Querying GCS bucket for: %s", filePath)
 
+	// Query GCS bucket.
 	scoreBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
 	if err != nil {
 		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
-	score, err := strconv.Atoi(string(scoreBytes))
+
+	log.Println("score: ", scoreBytes)
+
+	// Parse score from response.
+	score, err := strconv.ParseFloat(string(scoreBytes), 32)
 	if err != nil {
-		http.Error(w, "error converting score ", http.StatusInternalServerError)
+		http.Error(w, "error converting score to float ", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
 
-	scorecardData := struct{ Score int }{Score: score}
+	scorecardData := struct{ Score float64 }{Score: score}
 	jData, err := json.Marshal(scorecardData)
 	if err != nil {
 		http.Error(w, "error marshalling struct", http.StatusInternalServerError)

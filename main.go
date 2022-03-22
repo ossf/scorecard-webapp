@@ -201,11 +201,14 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 func getScore(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	bucketURL := "gs://ossf-scorecard-results"
-	host := r.URL.Query()["host"]
-	orgName := r.URL.Query()["orgName"]
-	repoName := r.URL.Query()["repoName"]
+	fmt.Println(mux.Vars(r))
+	host := mux.Vars(r)["host"]
+	orgName := mux.Vars(r)["orgName"]
+	repoName := mux.Vars(r)["repoName"]
+	fmt.Println(host, orgName, repoName)
 	filePath := fmt.Sprintf("%s/%s/%s/score.txt", host, orgName, repoName)
 	log.Printf("Querying GCS bucket for: %s", filePath)
+	fmt.Println(filePath)
 
 	scoreBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
 	if err != nil {

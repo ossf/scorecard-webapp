@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -75,8 +76,16 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/projects/github.com/rohankh532/scorecard-OIDC-test", nil)
+	r, _ := http.NewRequest("GET", "/projects", nil)
 	w := httptest.NewRecorder()
+
+	vars := map[string]string{
+		"host":     "github.com",
+		"orgName":  "rohankh532",
+		"repoName": "scorecard-OIDC-test",
+	}
+
+	r = mux.SetURLVars(r, vars)
 
 	getScore(w, r)
 

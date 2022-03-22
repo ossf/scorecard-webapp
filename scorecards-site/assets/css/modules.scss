@@ -1,0 +1,43 @@
+// ==================================
+//  SETTINGS
+// ==================================
+@import 'settings/settings';
+
+// ==================================
+//  HELPER UTILITIES
+// ==================================
+@import 'utilities/utilities';
+
+.highlight-section {
+  background-color: #302825;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  color: #feece3;
+
+  & h2,
+  h3,
+  h4 {
+    color: #feece3;
+    margin-bottom: 30px;
+    margin-top: 0;
+  }
+
+  & p {
+    color: #feece3;
+  }
+
+  ol li {
+    &:before {
+      color: white;
+    }
+
+    a:not(.cta) {
+      text-decoration: underline;
+    }
+  }
+
+  code {
+    white-space: pre-wrap !important;
+  }
+}

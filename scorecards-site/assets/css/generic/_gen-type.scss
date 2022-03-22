@@ -1,0 +1,277 @@
+// Base copy
+@at-root html {
+  font-size: 62.5%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.15;
+  padding: env(safe-area-inset);
+  -webkit-text-size-adjust: 100%;
+}
+
+@at-root body {
+  font-family: $font-sans;
+  font-size: 16px;
+  color: $c-black;
+  -webkit-font-feature-settings: 'kern' 1;
+  -moz-font-feature-settings: 'kern' 1;
+  -o-font-feature-settings: 'kern' 1;
+  font-feature-settings: 'kern' 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Headings
+h1,
+.h1 {
+  @include h1;
+}
+
+h2,
+.h2 {
+  @include h2;
+}
+
+h3,
+.h3 {
+  @include h3;
+}
+
+h4,
+.h4,
+h5,
+h6 {
+  @include h4;
+  // apply text-purple-dark;
+}
+
+.hero-text h1 {
+  font-size: clamp(40px, 14vw, 72px);
+  font-style: normal;
+  font-weight: 700;
+
+  color: $c-black;
+  line-height: 105%;
+  letter-spacing: -0.05em;
+  text-align: center;
+}
+
+.h {
+  font-family: $font-sans-header-standard;
+  font-weight: $weight-medium;
+}
+
+.subheading {
+  @extend %text--subheading;
+
+  & p {
+    @extend %text--subheading;
+  }
+}
+
+p {
+  @extend %text--body-1;
+
+  &.subheading {
+    @extend %text--subheading;
+    color: $c-heading;
+  }
+}
+
+li {
+  a {
+    text-decoration: none;
+  }
+}
+
+a {
+  position: relative;
+  @extend %text--link;
+  transition: 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  width: fit-content;
+  font-size: inherit;
+  text-decoration: underline;
+
+  &[disabled='disabled'],
+  &.disabled {
+    cursor: default;
+    color: white;
+
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  &.inline {
+    @extend %inline--link;
+  }
+}
+
+// Paragraph styles
+
+// markdown hack
+
+.nuxt-content {
+  & .f-header.text-24 {
+    // apply text-24;
+  }
+
+  &.quote {
+    &:before {
+      content: '\0022';
+    }
+    &:after {
+      content: '\0022';
+    }
+  }
+}
+
+.markdown {
+  h4 {
+    @apply text-24;
+    @apply leading-32;
+    margin-bottom: 2rem;
+  }
+  p {
+    margin-bottom: 2rem;
+    white-space: pre-line;
+  }
+}
+
+.table {
+  border-collapse: separate;
+  border: 1px solid #7c6153;
+  border-radius: 8px;
+  overflow: hidden;
+  border-spacing: 0;
+
+  td,
+  th {
+    border-left: solid black 1px;
+    border-top: solid black 1px;
+  }
+
+  th {
+    border-top: none;
+  }
+
+  td:first-child,
+  th:first-child {
+    border-left: none;
+  }
+
+  & thead {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 125%;
+    border-bottom: 1px solid #7c6153;
+  }
+
+  & tbody {
+    font-family: 'Public sans';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 125%;
+    & tr {
+      border-bottom: 1px solid #7c6153;
+    }
+  }
+}
+
+blockquote,
+.blockquote {
+  @include h4;
+  display: block;
+}
+
+ol {
+  @extend %text--body-1;
+  counter-reset: numbered-list;
+  list-style: none;
+  padding-left: 30px;
+
+  li {
+    counter-increment: numbered-list;
+    margin-bottom: 10px;
+    position: relative;
+
+    &:before {
+      @extend %text--body-1;
+      content: '0' counter(numbered-list) '.';
+      font-family: $font-sans;
+      left: -30px;
+      position: absolute;
+      top: 0;
+      width: 20px;
+    }
+  }
+}
+
+ul {
+  @extend %text--body-1;
+  list-style: none;
+   li {
+    line-height: 3.2rem;
+   }
+  &.bullet {
+    @extend %bullet;
+  }
+}
+
+// tocs
+
+.parent-li {
+  padding: 0;
+}
+
+.toc-item {
+  font-size: 1.6rem;
+}
+
+.nav-parent {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  padding: 15px 0 4px 0;
+  letter-spacing: -0.02em;
+
+  &:hover {
+    color: #ff4d00;
+    &:before {
+      @apply opacity-100;
+      transition: all 400ms cubic-bezier(0.77, 0, 0.175, 1);
+      left: -10px;
+      top: 10px;
+    }
+    &:after {
+      @apply opacity-100;
+      transition: all 400ms cubic-bezier(0.77, 0, 0.175, 1);
+      right: 1px;
+      bottom: 1px;
+    }
+  }
+  &:before {
+    content: '\FF62';
+    color: #ff4d00;
+    position: absolute;
+    left: -5px;
+    top: 10px;
+    width: 0%;
+    @apply opacity-0;
+    transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  &:after {
+    content: '\FF63';
+    color: #ff4d00;
+    position: absolute;
+    right: 5px;
+    bottom: 10px;
+    width: 0%;
+    @apply opacity-0;
+    transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+  }
+}

@@ -1,0 +1,124 @@
+.button {
+  @extend %button;
+
+  &--transparent-border {
+    border: solid 2px black;
+    @apply rounded-full;
+    @apply bg-white;
+  }
+}
+
+.markdown-text {
+  p a {
+    // apply text-16;
+    // apply leading-22;
+    // apply text-gray-medium;
+    font-weight: 500;
+    // apply flex items-center justify-start;
+    padding-right: 40px;
+    position: relative;
+    transition: all 0.4s ease-in-out;
+    animation-delay: 0.1s;
+    transform: translateX(0px);
+  }
+}
+
+.cta {
+  position: relative;
+  padding: 16px 12px;
+  color: white;
+  min-width: 188px;
+  background-color:#ff4d00;
+  border-radius: 8px;
+  font-family: Public Sans;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 91%;
+  transition: all 0.4s ease-in-out;
+
+  &:hover {
+    background-color: #b64616;
+    transition: all 0.4s ease-in-out;
+  }
+}
+
+.cta-icon {
+  position: relative;
+  padding: 17px 50px 17px 16px;
+  color: #ff4d00;
+  border: 1px solid #ff4d00;
+  border-radius: 8px;
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.4s ease-in-out;
+  margin: 15px 0;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    width: 23px;
+    height: 23px;
+    background-image: url("data:image/svg+xml,%3Csvg width='23' height='24' viewBox='0 0 23 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M22 1.06982H22.5V0.569824H22V1.06982ZM21.6007 0.762005L0.333948 22.0288L1.04105 22.7359L22.3078 1.46911L21.6007 0.762005ZM0 1.56982H22V0.569824H0V1.56982ZM21.5 1.06982V23.0698H22.5V1.06982H21.5Z' fill='%23FF4D00'/%3E%3C/svg%3E%0A");
+  }
+
+  &:hover {
+    background-color: black;
+    transition: all 0.4s ease-in-out;
+  }
+  
+}
+
+.inline--button {
+  &-grey {
+    @apply text-gray-dark;
+    transition: all 0.2s ease-in-out;
+    animation-delay: 0.1s;
+    & svg {
+      transition: all 0.2s ease-in-out;
+      animation-delay: 0.1s;
+      transform: translateX(0px);
+    }
+    &:hover {
+      color: $c-purple;
+      & svg {
+        transform: translateX(5px);
+        transition: all 0.2s ease-in-out;
+        animation-delay: 0.1s;
+        path {
+          stroke: $c-purple;
+        }
+      }
+    }
+  }
+
+  &-white {
+    color: white;
+    transition: all 0.2s ease-in-out;
+    animation-delay: 0.1s;
+    & svg {
+      transition: all 0.2s ease-in-out;
+      animation-delay: 0.1s;
+      transform: translateX(0px);
+    }
+    &:hover {
+      color: $c-purple;
+      & svg {
+        transform: translateX(5px);
+        transition: all 0.2s ease-in-out;
+        animation-delay: 0.1s;
+        path {
+          stroke: $c-purple;
+        }
+      }
+    }
+  }
+}

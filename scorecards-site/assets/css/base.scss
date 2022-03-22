@@ -1,0 +1,368 @@
+/* stylelint-disable */
+// ==================================
+//  VARIABLES, MIXINS AND FUNCTIONS
+// ==================================
+@use 'sass:math';
+// tailwindcss style
+// @import 'tailwindcss/base';
+// @import 'tailwindcss/components';
+// @import 'tailwindcss/utilities';
+@import 'modules';
+@import '_mixins';
+
+// ==================================
+//  HELPER CLASSES
+// ==================================
+@import './helpers/helpers';
+
+// ==================================
+//  GENERIC
+// ==================================
+@import 'generic/gen-fonts';
+@import 'generic/gen-type';
+@import 'generic/gen-animations';
+@import 'generic/gen-buttons';
+@import 'generic/gen-forms';
+@import 'generic/gen-colors';
+@import 'generic/gen-modals';
+
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// TODO: Seperate this out into respective global css files
+
+#nav {
+  padding: 30px;
+}
+
+hr {
+  border-top: 1px solid $c-black;
+  opacity: 0.1;
+}
+
+.nuxt-content {
+  @apply break-words;
+
+  & .nuxt-content-highlight {
+    position: relative;
+
+    & > .copy {
+      @apply hidden absolute right-10 bottom-10 leading-none shadow-lg px-2 py-2 bg-gray-dark text-11 uppercase rounded-md border border-white font-semibold mr-3 mb-3;
+      height: 27px;
+      width: 27px;
+      color: #feece3;
+
+      &:hover {
+        @apply opacity-80;
+      }
+
+      &:focus {
+        @apply outline-none bg-gray-light;
+      }
+    }
+
+    &:hover {
+      & > .copy {
+        @apply block;
+      }
+    }
+
+    & code[class*="language-"],
+    & pre[class*="language-"] {
+      text-align: left;
+      white-space: pre;
+      word-spacing: normal;
+      word-break: normal;
+      word-wrap: normal;
+      color: #feece3;
+      background: #2f2f2f;
+      font-family: 'DM Mono', monospace;
+      font-size: 1em;
+      line-height: 1.5em;
+
+      -moz-tab-size: 4;
+      -o-tab-size: 4;
+      tab-size: 4;
+
+      -webkit-hyphens: none;
+      -moz-hyphens: none;
+      -ms-hyphens: none;
+      hyphens: none;
+    }
+
+    & code[class*="language-"]::-moz-selection,
+    & pre[class*="language-"]::-moz-selection,
+    & code[class*="language-"] ::-moz-selection,
+    & pre[class*="language-"] ::-moz-selection {
+      background: #363636;
+      color: #feece3;
+    }
+
+    & code[class*="language-"]::selection,
+    & pre[class*="language-"]::selection,
+    & code[class*="language-"] ::selection,
+    & pre[class*="language-"] ::selection {
+      background: #363636;
+      color: #feece3;
+    }
+
+    :not(pre) > code[class*="language-"] {
+      white-space: normal;
+      border-radius: 0.2em;
+      padding: 0.1em;
+      color: #feece3;
+    }
+
+    & pre[class*="language-"] {
+      overflow: auto;
+      position: relative;
+      margin: 0.5em 0;
+      padding: 1.25em 1em;
+      color: #feece3;
+    }
+
+    & .language-css > code,
+    & .language-sass > code,
+    & .language-scss > code {
+      color: #fd9170;
+    }
+
+  }
+}
+
+details {
+  // Simulate a 1px border with same behavior as "border-collapse: collapse".
+  border: 1px solid #FF4D00;
+  border-radius: 5px;
+  display: block;
+  padding: calc($spacer-xl / 3) calc($spacer-xl / 2);
+  margin-bottom: 3rem;
+  &[open] > summary {
+    margin-bottom: $spacer-l;
+  }
+
+  & p{
+    color: white;
+  }
+
+  summary {
+      list-style: none;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding-left: 0px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #FF4D00;
+      @apply text-16;
+  }
+  summary::-webkit-details-marker {
+      display: none;
+  }
+
+  summary::after {
+      content: '';
+      background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0V24' stroke='%23FF4D00'/%3E%3Cpath d='M24 12L-3.57628e-07 12' stroke='%23FF4D00'/%3E%3C/svg%3E");
+      color: #FF4D00;
+      position: absolute;
+      right: 0px;
+      height: 25px;
+      width: 25px;
+      background-repeat: no-repeat;
+      @apply text-25;
+      line-height: 1;
+  }
+  &[open] > summary:after {
+    content: '';
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='1' viewBox='0 0 24 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 0.5L-3.57628e-07 0.499999' stroke='%23FF4D00'/%3E%3C/svg%3E%0A");
+    color: #FF4D00;
+    position: absolute;
+    right: 0px;
+    top: 12px;
+    height: 25px;
+    width: 25px;
+    background-repeat: no-repeat;
+  }
+  > summary > span {
+    margin-left: 30px;
+  }
+
+  &:last-child {
+      margin-bottom: 40px;
+  }
+}
+
+.w-content {
+  width: fit-content;
+}
+
+.img-mask {
+  //Place on container element for image component
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.disabled {
+  color: white;
+  opacity: 0.75;
+  pointer-events: none;
+  width: auto;
+}
+
+.absolute-center {
+  position: absolute !important;
+  right: 50%;
+  top: 50%;
+}
+
+.dotted--divider {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: auto;
+    right: auto;
+    border-left: dotted 5px #6349ff;
+    width: 17px;
+    height: 85px;
+  }
+}
+
+.custom-dot {
+  position: relative;
+
+  &:before {
+    background-color: $c-blue;
+    border-radius: 50%;
+    content: '';
+    display: inline-block;
+    height: 6px;
+    transition: 200ms cubic-bezier(0.77, 0, 0.175, 1);
+    width: 6px;
+
+    @include media-breakpoint-up(md) {
+      height: 12px;
+      width: 12px;
+    }
+  }
+
+  &.dots-white {
+    &:before {
+      background-color: $c-white;
+    }
+  }
+}
+
+.slick-active {
+  .custom-dot {
+    &:before {
+      border-radius: 8px;
+      width: 18px;
+
+      @include media-breakpoint-up(md) {
+        width: 25px;
+      }
+    }
+  }
+}
+
+.slick-dots {
+  bottom: -50px !important;
+}
+
+.custom-dot {
+  position: relative;
+  &:before {
+    transition: 200ms cubic-bezier(0.77, 0, 0.175, 1);
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+    content: '';
+    display: inline-block;
+    background-color: $c-white;
+  }
+
+  .subheading {
+    font-size: 1.3rem;
+  }
+}
+
+.card-style {
+  @include media-breakpoint-down(md) {
+    border-radius: 30px 30px 0 0;
+    margin-top: -30px;
+    position: relative;
+  }
+}
+
+.stat_banner {
+  @include media-breakpoint-up(lg) {
+    border-radius: 40px;
+  }
+}
+
+.alert-success {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+
+  height: 50px;
+  width: fit-content;
+
+  padding: 0 15px;
+
+  margin: 0 auto 15px;
+
+  border: 1px solid $c-blue;
+  border-radius: 10px;
+
+  color: $c-blue;
+
+  &-verify {
+    border: 1px solid $c-green;
+    padding: 0 15px;
+    border-radius: 10px;
+    margin: 0 auto 15px;
+    color: $c-green;
+    height: 50px;
+    width: fit-content;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close {
+    border: 1px solid $c-blue;
+    border-radius: 100%;
+
+    width: 25px;
+    height: 25px;
+
+    margin-left: 15px;
+
+    font-size: 2.5rem;
+    line-height: 0;
+  }
+}
+
+.overflow-x-scroll {
+  &:after {
+    content: '';
+    display: block;
+    position: fixed;
+    right: 0;
+    top: auto;
+    width: 30%;
+    height: 100%;
+    @apply bg-gradient-to-l;
+    @apply from-white;
+  }
+}

@@ -168,25 +168,15 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get scorecard score from json input.
-	jsonScore := struct {
-		Score float64 `json:"score"`
-	}{}
-
-	json.Unmarshal([]byte(scorecardOutput.JsonOutput), &jsonScore)
-	score := jsonScore.Score
-
 	// Save scorecard results (results.sarif, results.json, score.txt) to GCS
 	bucketURL := "gs://ossf-scorecard-results"
 	folderPath := fmt.Sprintf("%s/%s", "github.com", repoPath)
-	scorePath := fmt.Sprintf("%s/score.txt", folderPath)
 	sarifPath := fmt.Sprintf("%s/results.sarif", folderPath)
 	jsonPath := fmt.Sprintf("%s/results.json", folderPath)
 
-	err1 := data.WriteToBlobStore(ctx, bucketURL, scorePath, []byte(fmt.Sprintf("%f", score)))
-	err2 := data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
-	err3 := data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
-	if err1 != nil || err2 != nil || err3 != nil {
+	err1 := data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
+	err2 := data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
+	if err1 != nil || err2 != nil {
 		http.Error(w, "error writing to GCS bucket", http.StatusNotAcceptable)
 		log.Println(err)
 		return

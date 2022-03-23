@@ -75,7 +75,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	}
 }
 
-func TestGetScore(t *testing.T) {
+func TestGetResults(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/projects", nil)
 	w := httptest.NewRecorder()
 
@@ -87,14 +87,8 @@ func TestGetScore(t *testing.T) {
 
 	r = mux.SetURLVars(r, vars)
 
-	getScore(w, r)
+	// Verify that corresponding results to this repo are found.
+	getResults(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
 
-	scorecardData := struct{ Score int }{}
-
-	res := w.Body.Bytes()
-	err := json.Unmarshal(res, &scorecardData)
-	assert.Equal(t, err, nil)
-
-	// Verify that a number was retrieved.
-	assert.True(t, scorecardData.Score != 0)
 }

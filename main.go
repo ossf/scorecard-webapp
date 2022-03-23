@@ -28,7 +28,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -198,44 +197,27 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func getScore(w http.ResponseWriter, r *http.Request) {
+func getResults(w http.ResponseWriter, r *http.Request) {
 	// Get params to build GCS filepath.
 	ctx := context.Background()
 	bucketURL := "gs://ossf-scorecard-results"
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
-	filePath := fmt.Sprintf("%s/%s/%s/score.txt", host, orgName, repoName)
+	filePath := fmt.Sprintf("%s/%s/%s/results.json", host, orgName, repoName)
 	log.Printf("Querying GCS bucket for: %s", filePath)
 
 	// Query GCS bucket.
-	scoreBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
+	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
 	if err != nil {
 		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
 
-	log.Println("score: ", scoreBytes)
-
-	// Parse score from response.
-	score, err := strconv.ParseFloat(string(scoreBytes), 32)
-	if err != nil {
-		http.Error(w, "error converting score to float ", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-
-	scorecardData := struct{ Score float64 }{Score: score}
-	jData, err := json.Marshal(scorecardData)
-	if err != nil {
-		http.Error(w, "error marshalling struct", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-
+	// Write results json to response.
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jData)
+	w.Write(resultsBytes)
 }
 
 func main() {
@@ -243,7 +225,7 @@ func main() {
 
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", homepage)
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", getScore).Methods("GET")
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", getResults).Methods("GET")
 	r.HandleFunc("/verify", verifySignature).Methods("POST")
 	http.Handle("/", r)
 

@@ -1,9 +1,10 @@
+import highlightjs from 'highlight.js'
 export default {
   target: 'static',
   ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'goost-scorecards',
+    title: 'OSSF Security Scorecards',
     htmlAttrs: {
       lang: 'en',
     },
@@ -15,9 +16,15 @@ export default {
       },
       { name: 'format-detection', content: 'telephone=no' },
       { name: 'msapplication-TileColor', content: '#da532c' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Quickly assess open source projects for risky practices'
+      },
+      { hid: 'keywords', name: 'keywords', content: 'scorecards, scorecard, openssf, slsa, sigstore, security, vulnerabilities, cve, supply chain, supply-chain' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
       { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
       {
         rel: 'icon',
@@ -37,13 +44,36 @@ export default {
         href: '/apple-touch-icon.png',
       },
     ],
+    script: [
+      {
+        type: 'text/javascript',
+        src: '//gc.zgo.at/count.js',
+        'data-goatcounter': 'https://MYCODE.goatcounter.com/count',
+        async: true,
+      },
+      {
+        type: 'text/javascript',
+        innerHTML:`
+          window.goatcounter = {no_onload: true}
+
+          window.addEventListener("hashchange", function(e) {
+              window.goatcounter.count({
+                  path: location.pathname + location.search + location.hash,
+              })
+          })`
+      }
+    ],
+    __dangerouslyDisableSanitizers: ['script']
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['@/assets/css/base'],
+  css: ['@/assets/css/base','highlight.js/styles/nord.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '~plugins/components.client' }],
+  plugins: [
+    { src: '~plugins/components.client' },
+    { src: '~plugins/prism', mode: 'client', ssr: false }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -54,6 +84,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+
+    '@nuxtjs/google-fonts',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -92,7 +124,33 @@ export default {
   },
 
   content: {
+    liveEdit: false,
+    markdown: {
+      highlighter(rawCode, lang) {
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
+
+        // We need to create a wrapper, because
+        // the returned code from highlight.js
+        // is only the highlighted code.
+        return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`
+      },
+      rehypePlugins: [
+        ['rehype-add-classes', { table: 'table' }]
+      ],
+      remarkAutolinkHeadings: {
+        // Fix for accessibility
+        linkProperties: { ariaHidden: 'true', tabIndex: -1, title: 'Link to Section' },
+       }
+    },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
+  },
+
+  googleFonts: {
+    families: {
+      'Public Sans': [400,600,700],
+      'DM Mono': [400,500],
+    },
+    display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

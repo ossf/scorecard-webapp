@@ -1,4 +1,4 @@
-# goost-scorecards
+# gosst-scorecards
 
 ## Build Setup
 

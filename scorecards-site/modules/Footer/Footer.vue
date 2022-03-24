@@ -1,21 +1,25 @@
 <template>
-  <footer class="footer py-32 md:py-64 bg-pastel-orange">
-    <div class="flex flex-wrap justify-between items-start container">
-      <div class="w-full md:w-1/2">
-        <Logo />
-        <Navigation nav-type="footer" :nav-list="navigation" />
+  <footer class="footer py-32 md:py-64">
+    <div
+      class="flex flex-col flex-flex-wrap justify-between items-start container"
+    >
+      <a href="/" title="Home link" class="logo mb-24"
+        ><Logo
+          :class="[
+            $route.params.slug === 'trust-security'
+              ? 'logo-white'
+              : 'logo-black',
+          ]"
+      /></a>
+      <div class="text-14 mb-12">
+        © 2022 The Linux Foundation, under the terms of the Apache License 2.0.
       </div>
-      <div class="w-full md:w-1/2 md:mt-0 mt-32">
-        <Navigation nav-type="social" :nav-list="socialLinks" />
+      <div class="text-14">
+        <strong>Privacy statement: </strong> We use <a href="https://www.goatcounter.com/">GoatCounter</a> to help us improve our website by
+        collecting and reporting information on how it's used. We do not store
+        advertising or tracking cookies. The information we collect does not
+        identify anyone and does not track an individual's use of the site.
       </div>
-      <p class="text-12 text-gray-dark mt-32">
-        Copyright © 2021 The Linux Foundation®. All rights reserved. The Linux
-        Foundation has registered trademarks and uses trademarks. For a list of
-        trademarks of The Linux Foundation, please see our Trademark Usage page.
-        Linux is a registered trademark of Linus Torvalds. Privacy Policy and
-        Terms of Use. Forms on this site are protected by reCAPTCHA and the
-        Google Privacy Policy and Terms of Service apply.
-      </p>
     </div>
   </footer>
 </template>

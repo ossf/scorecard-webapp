@@ -109,6 +109,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(certs) > 1 {
 		http.Error(w, "multiple certificates found for the entry", http.StatusInternalServerError)
+		log.Println("error: multiple certificates found for the entry")
 		return
 	}
 	cert := certs[0]
@@ -127,6 +128,7 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 
 	if len(repoRef) == 0 || len(repoPath) == 0 {
 		http.Error(w, "error extracting repo ref or path from certificate", http.StatusInternalServerError)
+		log.Println("error: repoRef or repoPath are empty")
 		return
 	}
 
@@ -142,11 +144,35 @@ func verifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Make github client.
+	client := github.NewClient(nil)
+
+	// Get all workflows in the repository.
+	workflows, _, err := client.Actions.ListWorkflows(ctx, ownerName, repoName, nil)
+	if err != nil {
+		http.Error(w, "error listing workflows from repo", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	wkflws := workflows.Workflows
+	wkflwPath := ""
+	for _, wkflw := range wkflws {
+		if *wkflw.Name == "Scorecards supply-chain security" {
+			wkflwPath = *wkflw.Path
+			break
+		}
+	}
+	if wkflwPath == "" {
+		http.Error(w, "error finding scorecard workflow in repository", http.StatusInternalServerError)
+		log.Println("error finding scorecard workflow in repository")
+		return
+	}
+
 	// Get workflow file from repo reference.
 	// TODO: use GITHUB_TOKEN from workflow to make the api call.
-	client := github.NewClient(nil)
 	opts := &github.RepositoryContentGetOptions{Ref: repoRef}
-	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, ".github/workflows/scorecards.yml", opts)
+	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, wkflwPath, opts)
 	if err != nil {
 		http.Error(w, "error downloading workflow contents from repo", http.StatusInternalServerError)
 		log.Println(err)

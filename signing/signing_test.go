@@ -1,4 +1,4 @@
-package main
+package signing
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,8 +15,8 @@ func TestVerifySignature(t *testing.T) {
 	// Using a scorecard results file from a previous run that was successfully signed.
 	// This isn't expected to pass verifyScorecardWorkflow because the workflow it was
 	// generated from contains extra steps to call cosign.
-	sarifpayload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
-	jsonpayload, _ := ioutil.ReadFile("testdata/scorecard-results.json")
+	sarifpayload, _ := ioutil.ReadFile("../testdata/validSig-invalidWkflw.sarif")
+	jsonpayload, _ := ioutil.ReadFile("../testdata/scorecard-results.json")
 	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
@@ -26,15 +25,15 @@ func TestVerifySignature(t *testing.T) {
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/scorecard-OIDC-test"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
-	verifySignature(w, r)
+	VerifySignature(w, r)
 
 	// Only the invalid workflow file error code is allowed
 	assert.Equal(t, http.StatusNotAcceptable, w.Code)
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
-	sarifpayload, _ := ioutil.ReadFile("testdata/validSig-invalidWkflw.sarif")
-	jsonpayload, _ := ioutil.ReadFile("testdata/scorecard-results.json")
+	sarifpayload, _ := ioutil.ReadFile("../testdata/validSig-invalidWkflw.sarif")
+	jsonpayload, _ := ioutil.ReadFile("../testdata/scorecard-results.json")
 	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
@@ -43,29 +42,29 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/invalid-repo"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
-	verifySignature(w, r)
+	VerifySignature(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestVerifyValidWorkflow(t *testing.T) {
-	workflowContent, _ := ioutil.ReadFile("testdata/workflow-valid.yml")
+	workflowContent, _ := ioutil.ReadFile("../testdata/workflow-valid.yml")
 	err := verifyScorecardWorkflow(string(workflowContent))
 	assert.Equal(t, err, nil)
 }
 
 func TestVerifyInvalidWorkflows(t *testing.T) {
 	workflowFiles := []string{
-		"testdata/workflow-invalid-formatting.yml",
-		"testdata/workflow-invalid-jobs.yml",
-		"testdata/workflow-invalid-analysisjob.yml",
-		"testdata/workflow-invalid-container.yml",
-		"testdata/workflow-invalid-services.yml",
-		"testdata/workflow-invalid-runson.yml",
-		"testdata/workflow-invalid-envvars.yml",
-		"testdata/workflow-invalid-manysteps.yml",
-		"testdata/workflow-invalid-diffsteps.yml",
-		"testdata/workflow-invalid-defaults.yml",
+		"../testdata/workflow-invalid-formatting.yml",
+		"../testdata/workflow-invalid-jobs.yml",
+		"../testdata/workflow-invalid-analysisjob.yml",
+		"../testdata/workflow-invalid-container.yml",
+		"../testdata/workflow-invalid-services.yml",
+		"../testdata/workflow-invalid-runson.yml",
+		"../testdata/workflow-invalid-envvars.yml",
+		"../testdata/workflow-invalid-manysteps.yml",
+		"../testdata/workflow-invalid-diffsteps.yml",
+		"../testdata/workflow-invalid-defaults.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {
@@ -75,20 +74,20 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	}
 }
 
-func TestGetResults(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/projects", nil)
-	w := httptest.NewRecorder()
+// func TestGetResults(t *testing.T) {
+// 	r, _ := http.NewRequest("GET", "/projects", nil)
+// 	w := httptest.NewRecorder()
 
-	vars := map[string]string{
-		"host":     "github.com",
-		"orgName":  "rohankh532",
-		"repoName": "scorecard-OIDC-test",
-	}
+// 	vars := map[string]string{
+// 		"host":     "github.com",
+// 		"orgName":  "rohankh532",
+// 		"repoName": "scorecard-OIDC-test",
+// 	}
 
-	r = mux.SetURLVars(r, vars)
+// 	r = mux.SetURLVars(r, vars)
 
-	// Verify that corresponding results to this repo are found.
-	getResults(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
+// 	// Verify that corresponding results to this repo are found.
+// 	GetResults(w, r)
+// 	assert.Equal(t, http.StatusOK, w.Code)
 
-}
+// }

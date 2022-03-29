@@ -6,7 +6,7 @@ require github.com/stretchr/testify v1.7.0
 
 require (
 	github.com/go-openapi/runtime v0.23.2
-	github.com/google/go-github/v42 v42.0.0
+	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/trillian v1.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/rhysd/actionlint v1.6.9
@@ -16,20 +16,11 @@ require (
 )
 
 require (
-	github.com/bombsimon/logrusr/v2 v2.0.1 // indirect
-	github.com/bradleyfalzon/ghinstallation/v2 v2.0.4 // indirect
-	github.com/containerd/typeurl v1.0.2 // indirect
-	github.com/google/go-github/v38 v38.1.0 // indirect
-	github.com/google/go-github/v41 v41.0.0 // indirect
+	github.com/frankban/quicktest v1.13.1 // indirect
+	github.com/google/go-github/v42 v42.0.0 // indirect
 	github.com/google/wire v0.5.0 // indirect
-	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/jszwec/csvutil v1.6.0 // indirect
-	github.com/moby/buildkit v0.8.3 // indirect
-	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/ossf/scorecard/v4 v4.1.0 // indirect
-	github.com/shurcooL/githubv4 v0.0.0-20201206200315-234843c633fa // indirect
-	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
-	mvdan.cc/sh/v3 v3.4.2 // indirect
+	github.com/rogpeppe/go-internal v1.8.1-0.20210923151022-86f73c517451 // indirect
 )
 
 require (
@@ -188,7 +179,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	gocloud.dev v0.24.1-0.20211119014450-028788aaaa4c
+	gocloud.dev v0.24.1-0.20211119014450-028788aaaa4c // indirect
 	golang.org/x/crypto v0.0.0-20220213190939-1e6e3497d506 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect

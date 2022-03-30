@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/ossf/scorecard/v2/cron/data"
@@ -23,7 +24,11 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
 	filePath := fmt.Sprintf("%s/%s/%s/results.json", host, orgName, repoName)
-	log.Printf("Querying GCS bucket for: %s", filePath)
+
+	// Sanitize input and log query.
+	escapedFilePath := strings.Replace(filePath, "\n", "", -1)
+	escapedFilePath = strings.Replace(escapedFilePath, "\r", "", -1)
+	log.Printf("Querying GCS bucket for: %s", escapedFilePath)
 
 	// Query GCS bucket.
 	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)

@@ -1,0 +1,195 @@
+{
+    "date":"2022-03-07",
+    "repo":{
+       "name":"github.com/ossf/scorecard",
+       "commit":"e128c3de82607e1b285185da9c76a5262255b180"
+    },
+    "scorecard":{
+       "version":"4.1.0",
+       "commit":"33f80c93dc79f860d874857c511c4d26d399609d"
+    },
+    "score":8.4,
+    "checks":[
+       {
+          "details":null,
+          "score":10,
+          "reason":"no binaries found in the repo",
+          "name":"Binary-Artifacts",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#binary-artifacts",
+             "short":"Determines if the project has generated executable (binary) artifacts in the source repository."
+          }
+       },
+       {
+          "details":null,
+          "score":8,
+          "reason":"branch protection is not maximal on development and all release branches",
+          "name":"Branch-Protection",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#branch-protection",
+             "short":"Determines if the default and release branches are protected with GitHub's branch protection settings."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"30 out of 30 merged PRs checked by a CI test -- score normalized to 10",
+          "name":"CI-Tests",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#ci-tests",
+             "short":"Determines if the project runs tests before pull requests are merged."
+          }
+       },
+       {
+          "details":null,
+          "score":2,
+          "reason":"badge detected: in_progress",
+          "name":"CII-Best-Practices",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#cii-best-practices",
+             "short":"Determines if the project has a CII Best Practices Badge."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"all last 30 commits are reviewed through GitHub",
+          "name":"Code-Review",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#code-review",
+             "short":"Determines if the project requires code review before pull requests (aka merge requests) are merged."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"26 different companies found -- score normalized to 10",
+          "name":"Contributors",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#contributors",
+             "short":"Determines if the project has a set of contributors from multiple organizations (e.g., companies)."
+          }
+       },
+       {
+          "details":null,
+          "score":0,
+          "reason":"dangerous workflow patterns detected",
+          "name":"Dangerous-Workflow",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#dangerous-workflow",
+             "short":"Determines if the project's GitHub Action workflows avoid dangerous patterns."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"update tool detected",
+          "name":"Dependency-Update-Tool",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#dependency-update-tool",
+             "short":"Determines if the project uses a dependency update tool."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"project is fuzzed in OSS-Fuzz",
+          "name":"Fuzzing",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#fuzzing",
+             "short":"Determines if the project uses fuzzing."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"license file detected",
+          "name":"License",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#license",
+             "short":"Determines if the project has defined a license."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"30 commit(s) out of 30 and 28 issue activity out of 30 found in the last 90 days -- score normalized to 10",
+          "name":"Maintained",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#maintained",
+             "short":"Determines if the project is \"actively maintained\"."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"publishing workflow detected",
+          "name":"Packaging",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#packaging",
+             "short":"Determines if the project is published as a package that others can easily download, install, easily update, and uninstall."
+          }
+       },
+       {
+          "details":null,
+          "score":9,
+          "reason":"dependency not pinned by hash detected -- score normalized to 9",
+          "name":"Pinned-Dependencies",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#pinned-dependencies",
+             "short":"Determines if the project has declared and pinned its dependencies."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"SAST tool is run on all commits",
+          "name":"SAST",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#sast",
+             "short":"Determines if the project uses static code analysis."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"security policy file detected",
+          "name":"Security-Policy",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#security-policy",
+             "short":"Determines if the project has published a security policy."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"5 out of 5 artifacts are signed -- score normalized to 10",
+          "name":"Signed-Releases",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#signed-releases",
+             "short":"Determines if the project cryptographically signs release artifacts."
+          }
+       },
+       {
+          "details":null,
+          "score":6,
+          "reason":"non read-only tokens detected in GitHub workflows",
+          "name":"Token-Permissions",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#token-permissions",
+             "short":"Determines if the project's workflows follow the principle of least privilege."
+          }
+       },
+       {
+          "details":null,
+          "score":10,
+          "reason":"no vulnerabilities detected",
+          "name":"Vulnerabilities",
+          "documentation":{
+             "url":"https://github.com/ossf/scorecard/blob/33f80c93dc79f860d874857c511c4d26d399609d/docs/checks.md#vulnerabilities",
+             "short":"Determines if the project has open, known unfixed vulnerabilities."
+          }
+       }
+    ],
+    "metadata":null
+ }

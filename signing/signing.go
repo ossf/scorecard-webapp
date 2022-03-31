@@ -29,7 +29,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	resultsFile = filepath.Clean(resultsFile)
 	escapedFilePath := strings.Replace(resultsFile, "\n", "", -1)
 	escapedFilePath = strings.Replace(escapedFilePath, "\r", "", -1)
-	matched, err := filepath.Match(escapedFilePath, "*/*/*/results.json")
+	matched, err := filepath.Match("*/*/*/results.json", escapedFilePath)
 	if err != nil || !matched {
 		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
 		log.Println(matched, err)

@@ -16,6 +16,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -38,9 +39,16 @@ func main() {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	if _, err := fmt.Fprintf(w, "Hello world!!"+
-		" This site is still under construction."+
-		" Please check back again later."); err != nil {
+	endpts := struct {
+		Get_repo_results string `json:"get_repo_results"`
+	}{
+		Get_repo_results: "https://api.securityscorecards.dev/projects{/host}{/owner}{/repository}",
+	}
+	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
 		log.Printf("error during Write: %v", err)
 	}
 }

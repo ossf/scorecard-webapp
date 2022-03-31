@@ -5,29 +5,21 @@ import (
 	"context"
 	"crypto/x509"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
-	"github.com/google/trillian/merkle/logverifier"
-	"github.com/google/trillian/merkle/rfc6962"
 	"github.com/ossf/scorecard/v2/cron/data"
 	"github.com/rhysd/actionlint"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
 	"github.com/sigstore/cosign/pkg/cosign"
-	"github.com/sigstore/cosign/pkg/cosign/bundle"
-	"github.com/sigstore/cosign/pkg/cosign/tuf"
-	"github.com/sigstore/rekor/pkg/generated/client"
-	"github.com/sigstore/rekor/pkg/generated/client/entries"
 	"github.com/sigstore/rekor/pkg/generated/models"
 	"github.com/sigstore/rekor/pkg/types"
 	hashedrekord "github.com/sigstore/rekor/pkg/types/hashedrekord/v0.0.1"
@@ -70,14 +62,22 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	// TODO: also process the jsonoutput
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(scorecardOutput.SarifOutput))
 	if err != nil || len(uuids) == 0 {
-		http.Error(w, "error fetching tlog entries", http.StatusInternalServerError)
+		http.Error(w, "error finding tlog entries corresponding to payload", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
 	uuid := uuids[len(uuids)-1] // ignore past entries.
 
+	// Get tlog entry from the UUID.
+	entry, err := cosign.GetTlogEntry(ctx, rekorClient, uuid)
+	if err != nil {
+		http.Error(w, "error fetching tlog entry", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
 	// Verify tlog entry to make sure it is actually in the log.
-	entry, err := verifyTLogEntry(ctx, rekorClient, uuid)
+	err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
 	if err != nil {
 		http.Error(w, "error verifying tlog entry", http.StatusInternalServerError)
 		log.Println(err)
@@ -264,70 +264,6 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 
 	return nil
-}
-
-// Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/pkg/cosign/tlog.go#L247
-func verifyTLogEntry(ctx context.Context, rekorClient *client.Rekor, uuid string) (*models.LogEntryAnon, error) {
-	params := entries.NewGetLogEntryByUUIDParamsWithContext(ctx)
-	params.EntryUUID = uuid
-
-	lep, err := rekorClient.Entries.GetLogEntryByUUID(params)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(lep.Payload) != 1 {
-		return nil, errors.New("UUID value can not be extracted")
-	}
-	e := lep.Payload[params.EntryUUID]
-	if e.Verification == nil || e.Verification.InclusionProof == nil {
-		return nil, errors.New("inclusion proof not provided")
-	}
-
-	hashes := [][]byte{}
-	for _, h := range e.Verification.InclusionProof.Hashes {
-		hb, _ := hex.DecodeString(h)
-		hashes = append(hashes, hb)
-	}
-
-	rootHash, err := hex.DecodeString(*e.Verification.InclusionProof.RootHash)
-	if err != nil {
-		return nil, errors.New("error decoding root hash string")
-	}
-	leafHash, err := hex.DecodeString(params.EntryUUID)
-	if err != nil {
-		return nil, errors.New("error decoding leaf hash string")
-	}
-
-	v := logverifier.New(rfc6962.DefaultHasher)
-	if err := v.VerifyInclusionProof(*e.Verification.InclusionProof.LogIndex, *e.Verification.InclusionProof.TreeSize, hashes, rootHash, leafHash); err != nil {
-		return nil, err
-	}
-
-	// Verify rekor's signature over the SET.
-	payload := bundle.RekorPayload{
-		Body:           e.Body,
-		IntegratedTime: *e.IntegratedTime,
-		LogIndex:       *e.LogIndex,
-		LogID:          *e.LogID,
-	}
-
-	rekorPubKeys, err := cosign.GetRekorPubs(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var entryVerError error
-	for _, pubKey := range rekorPubKeys {
-		entryVerError = cosign.VerifySET(payload, []byte(e.Verification.SignedEntryTimestamp), pubKey.PubKey)
-		// Return once the SET is verified successfully.
-		if entryVerError == nil {
-			if pubKey.Status != tuf.Active {
-				fmt.Fprintf(os.Stderr, "**Info** Successfully verified Rekor entry using an expired verification key\n")
-			}
-			return &e, nil
-		}
-	}
-	return nil, err
 }
 
 // Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/cmd/cosign/cli/verify/verify_blob.go#L321

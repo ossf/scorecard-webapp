@@ -84,6 +84,8 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//
+
 	// Extract certificate and get repo reference & path.
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {

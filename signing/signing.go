@@ -2,9 +2,9 @@ package signing
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -23,15 +23,22 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
-	filePath := fmt.Sprintf("%s/%s/%s/results.json", host, orgName, repoName)
+	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
 
 	// Sanitize input and log query.
-	escapedFilePath := strings.Replace(filePath, "\n", "", -1)
+	resultsFile = filepath.Clean(resultsFile)
+	escapedFilePath := strings.Replace(resultsFile, "\n", "", -1)
 	escapedFilePath = strings.Replace(escapedFilePath, "\r", "", -1)
+	matched, err := filepath.Match(escapedFilePath, "*/*/*/results.json")
+	if err != nil || !matched {
+		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
+		log.Println(matched, err)
+		return
+	}
 	log.Printf("Querying GCS bucket for: %s", escapedFilePath)
 
 	// Query GCS bucket.
-	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, filePath)
+	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFile)
 	if err != nil {
 		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
 		log.Println(err)

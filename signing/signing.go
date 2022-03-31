@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/ossf/scorecard/v2/cron/data"
@@ -27,15 +26,13 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	// Sanitize input and log query.
 	resultsFile = filepath.Clean(resultsFile)
-	escapedFilePath := strings.Replace(resultsFile, "\n", "", -1)
-	escapedFilePath = strings.Replace(escapedFilePath, "\r", "", -1)
-	matched, err := filepath.Match("*/*/*/results.json", escapedFilePath)
+	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
 	if err != nil || !matched {
 		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
 		log.Println(matched, err)
 		return
 	}
-	log.Printf("Querying GCS bucket for: %s", escapedFilePath)
+	log.Printf("Querying GCS bucket for: %s", resultsFile)
 
 	// Query GCS bucket.
 	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFile)

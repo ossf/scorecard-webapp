@@ -40,9 +40,9 @@ func main() {
 
 func homepage(w http.ResponseWriter, r *http.Request) {
 	endpts := struct {
-		Get_repo_results string `json:"get_repo_results"`
+		GetRepoResults string `json:"get_repo_results"`
 	}{
-		Get_repo_results: "https://api.securityscorecards.dev/projects{/host}{/owner}{/repository}",
+		GetRepoResults: "https://api.securityscorecards.dev/projects{/host}{/owner}{/repository}",
 	}
 	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
 	if err != nil {

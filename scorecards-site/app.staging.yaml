@@ -3,8 +3,6 @@ env: flex
 
 service: scorecard-staging
 
-automatic_scaling:
-  min_instances: 1
 resources:
   cpu: 4
   memory_gb: 3.5
@@ -26,4 +24,4 @@ handlers:
 
 env_variables:
   HOST: '0.0.0.0'
-  VUE_APP_FRONTEND: 'https://scorecard-staging-openssf.uc.r.appspot.com'
+  VUE_APP_FRONTEND: 'https://scorecard-staging-dot-openssf.uc.r.appspot.com'

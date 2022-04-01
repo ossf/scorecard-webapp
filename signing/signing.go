@@ -11,8 +11,7 @@ import (
 )
 
 type ScorecardOutput struct {
-	SarifOutput string
-	JsonOutput  string
+	JsonOutput string
 }
 
 func GetResults(w http.ResponseWriter, r *http.Request) {

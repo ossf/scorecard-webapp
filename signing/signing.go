@@ -25,17 +25,17 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
 
 	// Sanitize input and log query.
-	resultsFile = filepath.Clean(resultsFile)
-	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
+	resultsFileCleaned := filepath.Clean(resultsFile)
+	matched, err := filepath.Match("*/*/*/results.json", resultsFileCleaned)
 	if err != nil || !matched {
 		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
 		log.Println(matched, err)
 		return
 	}
-	log.Printf("Querying GCS bucket for: %s", resultsFile)
+	log.Printf("Querying GCS bucket for: %s", resultsFileCleaned)
 
 	// Query GCS bucket.
-	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFile)
+	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFileCleaned)
 	if err != nil {
 		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
 		log.Println(err)

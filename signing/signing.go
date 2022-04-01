@@ -29,7 +29,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
 	if err != nil || !matched {
 		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
-		log.Println(matched, err)
+		log.Println("matched filepath?", matched, err)
 		return
 	}
 	resultsFileEscaped := strings.Replace(resultsFile, "\n", "", -1)

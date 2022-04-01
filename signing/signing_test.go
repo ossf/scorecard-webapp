@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetResults(t *testing.T) {
+func TestValidGetResults(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/projects", nil)
 	w := httptest.NewRecorder()
 
@@ -24,5 +24,41 @@ func TestGetResults(t *testing.T) {
 	// Verify that corresponding results to this repo are found.
 	GetResults(w, r)
 	assert.Equal(t, http.StatusOK, w.Code)
+
+}
+
+func TestInvalidGetResults(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/projects", nil)
+	w := httptest.NewRecorder()
+
+	varMaps := [...]map[string]string{
+		{
+			"host":     "github.com",
+			"orgName":  "sfasdasdasdasdsadsafsaf",
+			"repoName": "adasdsafasfsafasf",
+		},
+		{
+			"host":     "../github.com",
+			"orgName":  "rohankh532",
+			"repoName": "scorecard-OIDC-test",
+		},
+		{
+			"host":     "malicious/github.com",
+			"orgName":  "rohankh532",
+			"repoName": "scorecard-OIDC-test",
+		},
+		{
+			"host":     "malicious\\/github.com",
+			"orgName":  "rohankh532",
+			"repoName": "scorecard-OIDC-test",
+		},
+	}
+
+	for _, varMap := range varMaps {
+		// Verify that the url sanitization fails.
+		r = mux.SetURLVars(r, varMap)
+		GetResults(w, r)
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	}
 
 }

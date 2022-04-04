@@ -43,7 +43,7 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Unmarshal body
+	// Unmarshal request body.
 	var scorecardOutput ScorecardOutput
 	err = json.Unmarshal(reqBody, &scorecardOutput)
 	if err != nil {
@@ -52,71 +52,23 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get most recent Rekor entry uuid.
-	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
-	if err != nil {
-		http.Error(w, "error initializing Rekor client", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-	// TODO: also process the jsonoutput
-	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(scorecardOutput.SarifOutput))
-	if err != nil || len(uuids) == 0 {
-		http.Error(w, "error finding tlog entries corresponding to payload", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-	uuid := uuids[len(uuids)-1] // ignore past entries.
-
-	// Get tlog entry from the UUID.
-	entry, err := cosign.GetTlogEntry(ctx, rekorClient, uuid)
-	if err != nil {
-		http.Error(w, "error fetching tlog entry", http.StatusInternalServerError)
-		log.Println(err)
+	// Lookup results payload to get the repo info from the corresponding entry & cert.
+	sarifRepoPath, sarifRepoRef, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))
+	jsonRepoPath, jsonRepoRef, err2 := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
+	if err1 != nil || err2 != nil {
+		http.Error(w, "error looking up payloads and processing/verifying entries & certs", http.StatusInternalServerError)
+		log.Printf("sarif: %v, json: %v", err1, err2)
 		return
 	}
 
-	// Verify tlog entry to make sure it is actually in the log.
-	err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
-	if err != nil {
-		http.Error(w, "error verifying tlog entry", http.StatusInternalServerError)
-		log.Println(err)
+	// Verify that the sarif results and json results are from the same repo and ref.
+	if sarifRepoPath != jsonRepoPath || sarifRepoRef != jsonRepoRef {
+		http.Error(w, "sarif and json results correspond to different repos/refs.", http.StatusInternalServerError)
 		return
 	}
 
-	//
-
-	// Extract certificate and get repo reference & path.
-	certs, err := extractCerts(entry)
-	if err != nil || len(certs) == 0 {
-		http.Error(w, "error extracting certificate from entry", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-	if len(certs) > 1 {
-		http.Error(w, "multiple certificates found for the entry", http.StatusInternalServerError)
-		log.Println("error: multiple certificates found for the entry")
-		return
-	}
-	cert := certs[0]
-	var repoRef string
-	var repoPath string
-	for _, ext := range cert.Extensions {
-		// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
-		// TODO: retrieve these by name.
-		if ext.Id.String() == "1.3.6.1.4.1.57264.1.6" {
-			repoRef = string(ext.Value)
-		}
-		if ext.Id.String() == "1.3.6.1.4.1.57264.1.5" {
-			repoPath = string(ext.Value)
-		}
-	}
-
-	if len(repoRef) == 0 || len(repoPath) == 0 {
-		http.Error(w, "error extracting repo ref or path from certificate", http.StatusInternalServerError)
-		log.Println("error: repoRef or repoPath are empty")
-		return
-	}
+	repoPath := sarifRepoPath
+	repoRef := sarifRepoRef
 
 	// Split repo path into owner and repo name.
 	ownerName := repoPath[:strings.Index(repoPath, "/")]
@@ -186,8 +138,8 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	sarifPath := fmt.Sprintf("%s/results.sarif", folderPath)
 	jsonPath := fmt.Sprintf("%s/results.json", folderPath)
 
-	err1 := data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
-	err2 := data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
+	err1 = data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
+	err2 = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
 	if err1 != nil || err2 != nil {
 		http.Error(w, "error writing to GCS bucket", http.StatusNotAcceptable)
 		log.Println(err1, err2)
@@ -197,6 +149,59 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	// Write response.
 	w.Write([]byte(fmt.Sprintf("Successfully verified and uploaded scorecard results for repo %s on branch %s", []byte(repoName), []byte(repoRef))))
 	w.WriteHeader(http.StatusOK)
+}
+
+func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef string, err error) {
+	// Get most recent Rekor entry uuid.
+	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
+	if err != nil {
+		return "", "", fmt.Errorf("error initializing Rekor client: %v", err)
+	}
+	// TODO: also process the jsonoutput
+	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(payload))
+	if err != nil || len(uuids) == 0 {
+		return "", "", fmt.Errorf("error finding tlog entries corresponding to payload: %v", err)
+	}
+	uuid := uuids[len(uuids)-1] // ignore past entries.
+
+	// Get tlog entry from the UUID.
+	entry, err := cosign.GetTlogEntry(ctx, rekorClient, uuid)
+	if err != nil {
+		return "", "", fmt.Errorf("error fetching tlog entry: %v", err)
+	}
+
+	// Verify tlog entry to make sure it is actually in the log.
+	err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
+	if err != nil {
+		return "", "", fmt.Errorf("error verifying tlog entry: %v", err)
+	}
+
+	// Extract certificate and get repo reference & path.
+	certs, err := extractCerts(entry)
+	if err != nil || len(certs) == 0 {
+		return "", "", fmt.Errorf("error extracting certificate from entry: %v", err)
+	}
+	if len(certs) > 1 {
+		return "", "", fmt.Errorf("multiple certificates found for the entry: %v", err)
+	}
+
+	cert := certs[0]
+	for _, ext := range cert.Extensions {
+		// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
+		// TODO: retrieve these by name.
+		if ext.Id.String() == "1.3.6.1.4.1.57264.1.6" {
+			repoRef = string(ext.Value)
+		}
+		if ext.Id.String() == "1.3.6.1.4.1.57264.1.5" {
+			repoPath = string(ext.Value)
+		}
+	}
+
+	if len(repoRef) == 0 || len(repoPath) == 0 {
+		return "", "", fmt.Errorf("error extracting repo ref or path from certificate %v", err)
+	}
+
+	return repoPath, repoRef, nil
 }
 
 func verifyScorecardWorkflow(workflowContent string) error {

@@ -1,4 +1,3 @@
-import { mapGetters } from 'vuex'
 import CommitData from '@/components/CommitData.vue'
 import Logo from '@/assets/icons/logo.svg?inline'
 import RepoButton from '@/components/RepoButton.vue'
@@ -13,34 +12,15 @@ export default {
   data: () => ({
     globalHeader: null,
     globalHeaderMenu: null,
-    scrollPos: '',
-    isScrolling: false,
     apiURL: "https://api.github.com/repos/ossf/scorecard/commits?per_page=3&sha=",
     branches: ["main"],
     currentBranch: "main",
     commits: null,
     stars: null,
-    latestCommit: null,
-    navOpen: {
-      type: Boolean,
-      default: false,
-    },
+    latestCommit: null
   }),
-
-  computed: mapGetters({
-    bg: 'settings/bg',
-    text: 'settings/textColor',
-  }),
-
-  props: {
-    navigation: Array,
-    socialLinks: Array,
-  },
 
   methods: {
-    openNavDrawer() {
-      this.$nuxt.$emit('openNavigation', true)
-    },
     async fetchData() {
       // TODO: store this is state/cache so we do not have to load every time
       const options = {
@@ -70,11 +50,5 @@ export default {
   },
 
   mounted() {
-    window.addEventListener('scroll', this.getScrollPos)
-    // this.initHeadroom()
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.getScrollPos)
   },
 }

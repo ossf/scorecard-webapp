@@ -15,12 +15,14 @@ export default {
   created() {},
   data() {
     return {
-      repoURL: 'https://github.com/ossf/scorecard',
+      repoURL: "https://github.com/ossf/scorecard",
     };
   },
   props: {
-    commits: null,
-    stars: null,
+    stars: {
+      type: Number,
+      default: null,
+    },
   },
   methods: {},
 };

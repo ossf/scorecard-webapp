@@ -10,15 +10,6 @@ export default {
 
   computed: {},
 
-  watch: {
-    $route() {},
-  },
-
-  props: {
-    navigation: Array,
-    socialLinks: Array,
-  },
-
   methods: {},
 
   mounted() {},

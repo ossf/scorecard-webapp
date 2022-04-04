@@ -42,7 +42,8 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 	endpts := struct {
 		GetRepoResults string `json:"get_repo_results"`
 	}{
-		GetRepoResults: "https://api.securityscorecards.dev/projects{/host}{/owner}{/repository}",
+		// TODO: make this domain specific.
+		GetRepoResults: "/projects{/host}{/owner}{/repository}",
 	}
 	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
 	if err != nil {

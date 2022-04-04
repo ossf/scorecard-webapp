@@ -12,11 +12,9 @@ import (
 )
 
 func TestVerifySignature(t *testing.T) {
-	// Using a scorecard results file from a previous run that was successfully signed.
-	// This isn't expected to pass verifyScorecardWorkflow because the workflow it was
-	// generated from contains extra steps to call cosign.
-	sarifpayload, _ := ioutil.ReadFile("../testdata/validSig-invalidWkflw.sarif")
-	jsonpayload, _ := ioutil.ReadFile("../testdata/scorecard-results.json")
+	// Should pass entry, cert, and workflow verification but fail GCS upload.
+	sarifpayload, _ := ioutil.ReadFile("../testdata/results/results.sarif")
+	jsonpayload, _ := ioutil.ReadFile("../testdata/results/results.json")
 	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
@@ -27,13 +25,13 @@ func TestVerifySignature(t *testing.T) {
 
 	VerifySignature(w, r)
 
-	// Only the invalid workflow file error code is allowed
-	assert.Equal(t, http.StatusNotAcceptable, w.Code)
+	// Only the GCS upload error code is allowed
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
-	sarifpayload, _ := ioutil.ReadFile("../testdata/validSig-invalidWkflw.sarif")
-	jsonpayload, _ := ioutil.ReadFile("../testdata/scorecard-results.json")
+	sarifpayload, _ := ioutil.ReadFile("../testdata/results/results.sarif")
+	jsonpayload, _ := ioutil.ReadFile("../testdata/results/results.json")
 	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)

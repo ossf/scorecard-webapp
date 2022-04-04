@@ -53,8 +53,8 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
-	sarifRepoPath, sarifRepoRef, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))
-	jsonRepoPath, jsonRepoRef, err2 := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
+	sarifRepoPath, sarifRepoRef, workflowPath, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))
+	jsonRepoPath, jsonRepoRef, _, err2 := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
 	if err1 != nil || err2 != nil {
 		http.Error(w, "error looking up payloads and processing/verifying entries & certs", http.StatusInternalServerError)
 		log.Printf("sarif: %v, json: %v", err1, err2)
@@ -82,35 +82,11 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Make github client.
-	client := github.NewClient(nil)
-
-	// Get all workflows in the repository.
-	workflows, _, err := client.Actions.ListWorkflows(ctx, ownerName, repoName, nil)
-	if err != nil {
-		http.Error(w, "error listing workflows from repo", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-
-	wkflws := workflows.Workflows
-	wkflwPath := ""
-	for _, wkflw := range wkflws {
-		if *wkflw.Name == "Scorecards supply-chain security" {
-			wkflwPath = *wkflw.Path
-			break
-		}
-	}
-	if wkflwPath == "" {
-		http.Error(w, "error finding scorecard workflow in repository", http.StatusInternalServerError)
-		log.Println("error finding scorecard workflow in repository")
-		return
-	}
-
 	// Get workflow file from repo reference.
 	// TODO: use GITHUB_TOKEN from workflow to make the api call.
+	client := github.NewClient(nil)
 	opts := &github.RepositoryContentGetOptions{Ref: repoRef}
-	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, wkflwPath, opts)
+	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, workflowPath, opts)
 	if err != nil {
 		http.Error(w, "error downloading workflow contents from repo", http.StatusInternalServerError)
 		log.Println(err)
@@ -127,7 +103,7 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	// Verify scorecard workflow.
 	err = verifyScorecardWorkflow(workflowContent)
 	if err != nil {
-		http.Error(w, "workflow could not be verified", http.StatusNotAcceptable)
+		http.Error(w, "workflow could not be verified", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
@@ -141,7 +117,7 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	err1 = data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
 	err2 = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
 	if err1 != nil || err2 != nil {
-		http.Error(w, "error writing to GCS bucket", http.StatusNotAcceptable)
+		http.Error(w, "error writing to GCS bucket", http.StatusUnauthorized)
 		log.Println(err1, err2)
 		return
 	}
@@ -151,41 +127,42 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef string, err error) {
+func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, workflowPath string, err error) {
 	// Get most recent Rekor entry uuid.
 	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
 	if err != nil {
-		return "", "", fmt.Errorf("error initializing Rekor client: %v", err)
+		return "", "", "", fmt.Errorf("error initializing Rekor client: %v", err)
 	}
 
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(payload))
 	if err != nil || len(uuids) == 0 {
-		return "", "", fmt.Errorf("error finding tlog entries corresponding to payload: %v", err)
+		return "", "", "", fmt.Errorf("error finding tlog entries corresponding to payload: %v", err)
 	}
 	uuid := uuids[len(uuids)-1] // ignore past entries.
 
 	// Get tlog entry from the UUID.
 	entry, err := cosign.GetTlogEntry(ctx, rekorClient, uuid)
 	if err != nil {
-		return "", "", fmt.Errorf("error fetching tlog entry: %v", err)
+		return "", "", "", fmt.Errorf("error fetching tlog entry: %v", err)
 	}
 
 	// Verify tlog entry to make sure it is actually in the log.
 	err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
 	if err != nil {
-		return "", "", fmt.Errorf("error verifying tlog entry: %v", err)
+		return "", "", "", fmt.Errorf("error verifying tlog entry: %v", err)
 	}
 
 	// Extract certificate and get repo reference & path.
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {
-		return "", "", fmt.Errorf("error extracting certificate from entry: %v", err)
+		return "", "", "", fmt.Errorf("error extracting certificate from entry: %v", err)
 	}
 	if len(certs) > 1 {
-		return "", "", fmt.Errorf("multiple certificates found for the entry: %v", err)
+		return "", "", "", fmt.Errorf("multiple certificates found for the entry: %v", err)
 	}
 
 	cert := certs[0]
+
 	for _, ext := range cert.Extensions {
 		// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
 		// TODO: retrieve these by name.
@@ -198,10 +175,27 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef strin
 	}
 
 	if len(repoRef) == 0 || len(repoPath) == 0 {
-		return "", "", fmt.Errorf("error extracting repo ref or path from certificate %v", err)
+		return "", "", "", fmt.Errorf("error extracting repo ref or path from certificate %v", err)
 	}
 
-	return repoPath, repoRef, nil
+	// Get workflow job ref from the certificate.
+	certURIs := cert.URIs
+	if len(certURIs) == 0 {
+		return "", "", "", errors.New("error: certificate has no URIs")
+	}
+	workflowRef := certURIs[0].Path
+	if len(workflowRef) == 0 {
+		return "", "", "", errors.New("error: workflow path is empty")
+	}
+
+	// Remove repo path from workflow filepath.
+	ind := strings.Index(workflowRef, repoPath) + len(repoPath) + 1
+	workflowPath = workflowRef[ind:]
+
+	// Remove repo ref tag from workflow filepath.
+	workflowPath = workflowPath[:strings.Index(workflowPath, "@")]
+
+	return repoPath, repoRef, workflowPath, nil
 }
 
 func verifyScorecardWorkflow(workflowContent string) error {

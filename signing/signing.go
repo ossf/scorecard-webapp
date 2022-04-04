@@ -157,7 +157,7 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef strin
 	if err != nil {
 		return "", "", fmt.Errorf("error initializing Rekor client: %v", err)
 	}
-	// TODO: also process the jsonoutput
+
 	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(payload))
 	if err != nil || len(uuids) == 0 {
 		return "", "", fmt.Errorf("error finding tlog entries corresponding to payload: %v", err)

@@ -63,6 +63,9 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"../testdata/workflow-invalid-manysteps.yml",
 		"../testdata/workflow-invalid-diffsteps.yml",
 		"../testdata/workflow-invalid-defaults.yml",
+		"../testdata/workflow-invalid-global-perm.yml",
+		"../testdata/workflow-invalid-global-env.yml",
+		"../testdata/workflow-invalid-global-defaults.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {

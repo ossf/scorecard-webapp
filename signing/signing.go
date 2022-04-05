@@ -205,6 +205,16 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return fmt.Errorf("actionlint errors parsing workflow: %v", lintErrs)
 	}
 
+	// Verify that there are no global env vars or defaults.
+	if workflow.Env != nil || workflow.Defaults != nil {
+		return errors.New("workflow contains global env vars or defaults")
+	}
+
+	// Verify that the only global permission set is read-all.
+	if workflow.Permissions.All.Value != "read-all" {
+		return errors.New("workflow permission isn't read-all")
+	}
+
 	// Extract main job
 	jobs := workflow.Jobs
 	if len(jobs) != 1 {
@@ -230,12 +240,12 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		}
 	}
 
-	// Verify that there are no env vars set.
+	// Verify that there are no job env vars set.
 	if analysisJob.Env != nil {
 		return errors.New("workflow contains env vars")
 	}
 
-	// Verify that there are no defaults set.
+	// Verify that there are no job defaults set.
 	if analysisJob.Defaults != nil {
 		return errors.New("workflow has defaults set")
 	}

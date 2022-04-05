@@ -221,13 +221,13 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 
 	// Verify that the workflow runs on ubuntu-latest and nothing else.
-	if analysisJob.RunsOn != nil {
+	if analysisJob.RunsOn == nil {
+		return errors.New("no RunsOn found in workflow")
+	} else {
 		labels := analysisJob.RunsOn.Labels
 		if len(labels) == 0 || len(labels) > 1 || labels[0].Value != "ubuntu-latest" {
 			return errors.New("workflow doesn't run solely on ubuntu-latest")
 		}
-	} else {
-		return errors.New("no RunsOn found in workflow")
 	}
 
 	// Verify that there are no env vars set.

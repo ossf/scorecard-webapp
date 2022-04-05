@@ -55,7 +55,6 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	workflowFiles := []string{
 		"../testdata/workflow-invalid-formatting.yml",
 		"../testdata/workflow-invalid-jobs.yml",
-		"../testdata/workflow-invalid-analysisjob.yml",
 		"../testdata/workflow-invalid-container.yml",
 		"../testdata/workflow-invalid-services.yml",
 		"../testdata/workflow-invalid-runson.yml",

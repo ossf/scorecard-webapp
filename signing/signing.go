@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -215,43 +216,45 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("workflow permission isn't read-all")
 	}
 
-	// Extract main job
-	jobs := workflow.Jobs
+	// Extract main (analysis) job
+	jobsMap := workflow.Jobs
+	jobs := reflect.ValueOf(jobsMap).MapKeys()
+
 	if len(jobs) != 1 {
 		return errors.New("number of jobs isn't 1")
 	}
-	analysisJob := jobs["analysis"]
-	if analysisJob == nil {
-		return errors.New("workflow doens't have analysis job")
+	job := jobsMap[jobs[0].String()]
+	if job == nil {
+		return errors.New("workflow doens't have a main job")
 	}
 
-	// Verify that there is no container or services.
-	if analysisJob.Container != nil || len(analysisJob.Services) > 0 {
+	// Verify that there is no job container or services.
+	if job.Container != nil || len(job.Services) > 0 {
 		return errors.New("workflow contains container or service")
 	}
 
 	// Verify that the workflow runs on ubuntu-latest and nothing else.
-	if analysisJob.RunsOn == nil {
+	if job.RunsOn == nil {
 		return errors.New("no RunsOn found in workflow")
 	} else {
-		labels := analysisJob.RunsOn.Labels
+		labels := job.RunsOn.Labels
 		if len(labels) == 0 || len(labels) > 1 || labels[0].Value != "ubuntu-latest" {
 			return errors.New("workflow doesn't run solely on ubuntu-latest")
 		}
 	}
 
 	// Verify that there are no job env vars set.
-	if analysisJob.Env != nil {
+	if job.Env != nil {
 		return errors.New("workflow contains env vars")
 	}
 
 	// Verify that there are no job defaults set.
-	if analysisJob.Defaults != nil {
+	if job.Defaults != nil {
 		return errors.New("workflow has defaults set")
 	}
 
 	// Get steps in job.
-	steps := analysisJob.Steps
+	steps := job.Steps
 
 	if steps == nil || len(steps) > 4 {
 		return fmt.Errorf("workflow has an invalid number of steps: %d", len(steps))

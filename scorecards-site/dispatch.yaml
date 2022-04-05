@@ -1,0 +1,5 @@
+dispatch:
+  - url: "securityscorecards.dev/*"
+    service: scorecard-prod
+  - url: "www.securityscorecards.dev/*"
+    service: scorecard-prod

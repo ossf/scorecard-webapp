@@ -1,0 +1,3 @@
+dispatch:
+  - url: "api.securityscorecards.dev/*"
+    service: scorecard-api-prod

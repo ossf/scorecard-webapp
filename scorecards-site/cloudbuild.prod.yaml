@@ -1,4 +1,6 @@
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['app', 'deploy', 'scorecards-site/app.prod.yaml']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['app', 'deploy', 'scorecards-site/dispatch.yaml']
 timeout: '1600s'

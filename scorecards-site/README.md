@@ -1,4 +1,4 @@
-# gosst-scorecards
+# scorecards
 
 ## Build Setup
 
@@ -17,7 +17,23 @@ $ yarn start
 $ yarn generate
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+## Tests
+
+### Unit
+
+We use unit tests and they can be run with `yarn run test` with coverage upon test run `yarn run test --coverage`.
+
+All tests are under `./test` and you can add anything using `*.spec.js` to create a test.
+
+To see the coverage open up `./coverage/lcov-report/index.html` if you need it.
+
+### E2E
+
+We use Cypress to test e2e integrations and a walking test report through the whole site.
+
+E2E tests belong in `./cypress/integration/*` and our 1 page test is here -> `./cypress/integration/index.spec.js`
+
+To run this use `yarn run e2e`
 
 ## Special Directories
 
@@ -60,9 +76,3 @@ This directory contains your static files. Each file inside this directory is ma
 Example: `/static/robots.txt` is mapped as `/robots.txt`.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).

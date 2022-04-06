@@ -84,9 +84,25 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get workflow file from repo reference.
+	// Get the corresponding GitHub repository.
 	// TODO: use GITHUB_TOKEN from workflow to make the api call.
 	client := github.NewClient(nil)
+	repo, resp, err := client.Repositories.Get(ctx, ownerName, repoName)
+	if err != nil {
+		http.Error(w, "error getting repository", http.StatusInternalServerError)
+		log.Println(err, resp)
+		return
+	}
+
+	// Verify that the branch from the results files is the repo's default branch.
+	defaultBranch := "refs/heads/" + repo.GetDefaultBranch()
+	if defaultBranch != repoRef {
+		http.Error(w, "branch of cert isn't the repo's default branch", http.StatusInternalServerError)
+		log.Println(defaultBranch, repoRef)
+		return
+	}
+
+	// Get workflow file from cert commit SHA.
 	opts := &github.RepositoryContentGetOptions{Ref: repoSHA}
 	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, workflowPath, opts)
 	if err != nil {

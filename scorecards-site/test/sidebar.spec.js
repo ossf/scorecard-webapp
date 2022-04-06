@@ -34,6 +34,7 @@ describe('Sidebar.vue', () => {
         ]
     }
 
+
   it('does render a nav', async () => {
     const wrapper = mount(Sidebar, {
         mocks: {

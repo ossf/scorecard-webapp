@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     changeCodeTab(index) {
-      console.log(index);
       this.activeCodeTabIndex = index;
     },
     loadTabs() {

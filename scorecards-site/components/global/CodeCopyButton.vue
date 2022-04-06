@@ -1,5 +1,5 @@
 <template>
-  <button ref="copy" class="copy">
+  <button role="button" ref="copy" class="copy">
     <IconClipboardCheck v-if="state === 'copied'" class="w-26 h-26 mx-auto" />
     <IconClipboardCopy v-else class="w-26 h-26 mx-auto" />
   </button>
@@ -7,8 +7,8 @@
 
 <script>
 import Clipboard from "clipboard";
-import IconClipboardCheck from "../../assets/icons/icon-clipboard-check.svg?inline";
-import IconClipboardCopy from "../../assets/icons/icon-clipboard-copy.svg?inline";
+import IconClipboardCheck from "@/assets/icons/icon-clipboard-check.svg?inline";
+import IconClipboardCopy from "@/assets/icons/icon-clipboard-copy.svg?inline";
 export default {
   data() {
     return {

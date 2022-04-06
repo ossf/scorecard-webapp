@@ -2,6 +2,7 @@ package signing
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -14,6 +15,9 @@ import (
 type ScorecardOutput struct {
 	JsonOutput string
 }
+
+var errorPullingBucket = errors.New("error pulling from GCS bucket")
+var errorVerifyingFilepath = errors.New("error verifying filepath format")
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
 	// Get params to build GCS filepath.
@@ -28,7 +32,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	resultsFile = filepath.Clean(resultsFile)
 	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
 	if err != nil || !matched {
-		http.Error(w, "error verifying filepath format", http.StatusInternalServerError)
+		http.Error(w, errorVerifyingFilepath.Error(), http.StatusInternalServerError)
 		log.Println("matched filepath?", matched, err)
 		return
 	}
@@ -39,7 +43,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	// Query GCS bucket.
 	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
 	if err != nil {
-		http.Error(w, "error pulling from GCS bucket", http.StatusInternalServerError)
+		http.Error(w, errorPullingBucket.Error(), http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}

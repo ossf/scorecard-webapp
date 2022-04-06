@@ -50,6 +50,6 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
-		log.Printf("error during Write: %v", err)
+		log.Fatal(err)
 	}
 }

@@ -22,9 +22,9 @@ func TestValidGetResults(t *testing.T) {
 
 	r = mux.SetURLVars(r, vars)
 
-	// Verify that corresponding results to this repo are found.
+	// Should fail connecting to GCS but pass filepath screening.
 	GetResults(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 
 }
 

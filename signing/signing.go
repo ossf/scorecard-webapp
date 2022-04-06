@@ -20,35 +20,40 @@ var errorPullingBucket = errors.New("error pulling from GCS bucket")
 var errorVerifyingFilepath = errors.New("error verifying filepath format")
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
-	// Get params to build GCS filepath.
-	ctx := context.Background()
-	bucketURL := "gs://ossf-scorecard-results"
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
+	results, err := getResults(host, orgName, repoName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println("error getting scorecard results:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(results)
+}
+
+func getResults(host, orgName, repoName string) (results []byte, err error) {
+	// Get params to build GCS filepath.
+	ctx := context.Background()
+	bucketURL := "gs://ossf-scorecard-results"
 	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
 
 	// Sanitize input and log query.
 	resultsFile = filepath.Clean(resultsFile)
 	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
 	if err != nil || !matched {
-		http.Error(w, errorVerifyingFilepath.Error(), http.StatusInternalServerError)
-		log.Println("matched filepath?", matched, err)
-		return
+		return nil, errorVerifyingFilepath
 	}
 	resultsFileEscaped := strings.Replace(resultsFile, "\n", "", -1)
 	resultsFileEscaped = strings.Replace(resultsFileEscaped, "\r", "", -1)
 	log.Printf("Querying GCS bucket for: %s", resultsFileEscaped)
 
 	// Query GCS bucket.
-	resultsBytes, err := data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
+	results, err = data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
 	if err != nil {
-		http.Error(w, errorPullingBucket.Error(), http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return nil, errorPullingBucket
 	}
-
-	// Write results json to response.
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(resultsBytes)
+	return results, nil
 }

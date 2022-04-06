@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import RepoButton from '@/components/RepoButton.vue'
+import RepoButton from '@/components/repo-button.vue'
 
 describe('RepoButton.vue', () => {
   it('renders props.stars when passed', () => {

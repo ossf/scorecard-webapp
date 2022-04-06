@@ -3,7 +3,7 @@
     <div class="container">
       <div class="flex flex-wrap justify-between items-start">
         <a href="/" title="Home" class="logo"><Logo /></a>
-        <CommitData class="hidden md:flex" :latestCommit="latestCommit" />
+        <Commit class="hidden md:flex" :latestCommit="latestCommit" />
         <RepoButton :stars="stars" :commits="commits" />
       </div>
     </div>

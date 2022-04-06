@@ -1,13 +1,13 @@
-import CommitData from '@/components/CommitData.vue'
 import Logo from '@/assets/icons/logo.svg?inline'
-import RepoButton from '@/components/RepoButton.vue'
+import RepoButton from '@/components/repo-button.vue'
+import Commit from '@/components/commit-data.vue'
 
 export default {
   name: 'Header',
   components: {
     Logo,
     RepoButton,
-    CommitData
+    Commit
   },
   data: () => ({
     globalHeader: null,

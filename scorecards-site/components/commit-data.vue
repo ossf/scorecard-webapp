@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: "Test",
+  name: "CommitData",
   created() {},
   data() {
     return {};

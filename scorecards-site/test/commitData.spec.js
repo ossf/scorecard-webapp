@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
-import CommitData from '@/components/CommitData.vue'
+import CommitData from '@/components/commit-data.vue'
 
-describe('CommitData.vue', () => {
+describe('commit-data.vue', () => {
   it('has p with data', () => {
     const wrapper = shallowMount(CommitData)
     expect(wrapper.find('p')).toBeTruthy()

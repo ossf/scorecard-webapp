@@ -48,7 +48,7 @@ export default {
       {
         type: 'text/javascript',
         src: '//gc.zgo.at/count.js',
-        'data-goatcounter': 'https://MYCODE.goatcounter.com/count',
+        'data-goatcounter': 'https://securityscorecards.goatcounter.com/count',
         async: true,
       },
       {

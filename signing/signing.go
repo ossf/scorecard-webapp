@@ -24,9 +24,15 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
 	results, err := getResults(host, orgName, repoName)
-	if err != nil {
+
+	if err == errorVerifyingFilepath {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println("error getting scorecard results:", err)
+		log.Println("error verifying filepath:", err)
+		return
+	}
+	if err == errorPullingBucket {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Println("error finding file in GCS bucket:", err)
 		return
 	}
 

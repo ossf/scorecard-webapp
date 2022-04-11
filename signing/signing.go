@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/ossf/scorecard/v2/cron/data"
@@ -52,12 +51,15 @@ func getResults(host, orgName, repoName string) (results []byte, err error) {
 	if err != nil || !matched {
 		return nil, errorVerifyingFilepath
 	}
-	resultsFileEscaped := strings.Replace(resultsFile, "\n", "", -1)
-	resultsFileEscaped = strings.Replace(resultsFileEscaped, "\r", "", -1)
-	log.Printf("Querying GCS bucket for: %s", resultsFileEscaped)
+
+	if len(resultsFile) >= 256 {
+		return nil, errors.New("filepath is greater than the Linux maximum of 256")
+	}
+
+	log.Printf("Querying GCS bucket for: %s", resultsFile) //nolint
 
 	// Query GCS bucket.
-	results, err = data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
+	results, err = data.GetBlobContent(ctx, bucketURL, resultsFile)
 	if err != nil {
 		return nil, errorPullingBucket
 	}

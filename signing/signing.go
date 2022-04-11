@@ -3,6 +3,7 @@ package signing
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -26,12 +27,12 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	if err == errorVerifyingFilepath {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println("error verifying filepath:", err)
+		log.Printf("err: %v", err)
 		return
 	}
 	if err == errorPullingBucket {
 		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Println("error finding file in GCS bucket:", err)
+		log.Printf("err: %v", err)
 		return
 	}
 
@@ -53,10 +54,10 @@ func getResults(host, orgName, repoName string) (results []byte, err error) {
 	}
 
 	if len(resultsFile) >= 256 {
-		return nil, errors.New("filepath is greater than the Linux maximum of 256")
+		return nil, fmt.Errorf("filepath (%v) is greater than the Linux maximum of 256", resultsFile[:256])
 	}
 
-	log.Printf("Querying GCS bucket for: %s", resultsFile) //nolint
+	log.Printf("Querying GCS bucket for: %s", resultsFile)
 
 	// Query GCS bucket.
 	results, err = data.GetBlobContent(ctx, bucketURL, resultsFile)

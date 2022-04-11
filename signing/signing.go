@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
@@ -170,7 +171,7 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 		return "", "", "", "", fmt.Errorf("error verifying tlog entry: %v", err)
 	}
 
-	// Extract certificate and get repo reference & path.
+	// Extract certificate.
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {
 		return "", "", "", "", fmt.Errorf("error extracting certificate from entry: %v", err)
@@ -181,6 +182,12 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 
 	cert := certs[0]
 
+	// Verify that cert isn't expired.
+	if err = cosign.CheckExpiry(cert, time.Unix(*entry.IntegratedTime, 0)); err != nil {
+		return "", "", "", "", fmt.Errorf("cosign certificate is expired: %v", err)
+	}
+
+	// Get repo reference & path from cert.
 	for _, ext := range cert.Extensions {
 		// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
 		// TODO: retrieve these by name.

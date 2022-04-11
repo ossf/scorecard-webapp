@@ -1,0 +1,4 @@
+runtime: go
+env: flex
+
+service: scorecard-api-staging

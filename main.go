@@ -16,29 +16,40 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/ossf/scorecard-webapp/signing"
 )
 
 func main() {
-	http.HandleFunc("/", httpHandler)
 	fmt.Printf("Starting HTTP server on port 8080 ...\n")
+
+	r := mux.NewRouter().StrictSlash(true)
+	r.HandleFunc("/", homepage)
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", signing.GetResults).Methods("GET")
+	http.Handle("/", r)
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func httpHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte("Hello world!" +
-			" This site is still under construction." +
-			" Please check back again later.")); err != nil {
-			log.Printf("error during Write: %v", err)
-		}
-	default:
-		http.Error(w, "only GET method is allowed", http.StatusMethodNotAllowed)
+func homepage(w http.ResponseWriter, r *http.Request) {
+	endpts := struct {
+		GetRepoResults string `json:"get_repo_results"`
+	}{
+		// TODO: make this domain specific.
+		GetRepoResults: "/projects{/host}{/owner}{/repository}",
+	}
+	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
+		log.Fatal(err)
 	}
 }

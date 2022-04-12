@@ -43,13 +43,6 @@ export default {
         sizes: '180x180',
         href: '/apple-touch-icon.png',
       },
-    ],
-    script: [
-      {
-        type: 'text/javascript',
-        src: '//gc.zgo.at/count.js',
-        'data-goatcounter': 'https://securityscorecards.goatcounter.com/count'
-      }
     ]
   },
 

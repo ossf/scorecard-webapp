@@ -56,19 +56,37 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Grab parameters.
+	reqRepo := r.Header["X-Repository"]
+	reqBranch := r.Header["X-Branch"]
+	if len(reqRepo) == 0 || len(reqBranch) == 0 {
+		http.Error(w, "error: empty parameters", http.StatusInternalServerError)
+		return
+	}
+
+	err = verifySignature(ctx, scorecardOutput, reqRepo[0], reqBranch[0])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+	}
+
+	// Write response.
+	w.Write([]byte(fmt.Sprintf("Successfully verified and uploaded scorecard results for repo %s on branch %s", reqRepo[0], reqBranch[0])))
+}
+
+var errorWritingBucket = errors.New("error writing to GCS bucket")
+
+func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRepo, reqBranch string) error {
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
 	sarifRepoPath, sarifRepoRef, sarifRepoSHA, workflowPath, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))
 	jsonRepoPath, jsonRepoRef, jsonRepoSHA, _, err2 := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
 	if err1 != nil || err2 != nil {
-		http.Error(w, "error looking up payloads and processing/verifying entries & certs", http.StatusInternalServerError)
-		log.Printf("sarif: %v, json: %v", err1, err2)
-		return
+		return fmt.Errorf("error looking up sarif: %v, or looking up json: %v", err1, err2)
 	}
 
 	// Verify that the sarif results and json results are from the same repo, ref, and SHA.
 	if sarifRepoPath != jsonRepoPath || sarifRepoRef != jsonRepoRef || sarifRepoSHA != jsonRepoSHA {
-		http.Error(w, "sarif and json results correspond to different repos/refs/SHAs.", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("sarif and json results correspond to different repos/refs/SHAs")
 	}
 
 	repoPath := sarifRepoPath
@@ -80,53 +98,40 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	repoName := repoPath[strings.Index(repoPath, "/")+1:]
 
 	// Verify that the repository and branch of the cert and request are equal.
-	reqRepo := r.Header["X-Repository"]
-	reqBranch := r.Header["X-Branch"]
-	if len(reqRepo) == 0 || len(reqBranch) == 0 || reqRepo[0] != repoPath || reqBranch[0] != repoRef {
-		http.Error(w, "repository and branch of cert doesn't match that of request", http.StatusInternalServerError)
-		return
+	if len(reqRepo) == 0 || len(reqBranch) == 0 || reqRepo != repoPath || reqBranch != repoRef {
+		return fmt.Errorf("repository and branch of cert doesn't match that of request")
 	}
 
 	// Get the corresponding GitHub repository.
 	// TODO: use GITHUB_TOKEN from workflow to make the api call.
 	client := github.NewClient(nil)
-	repo, resp, err := client.Repositories.Get(ctx, ownerName, repoName)
+	repo, _, err := client.Repositories.Get(ctx, ownerName, repoName)
 	if err != nil {
-		http.Error(w, "error getting repository", http.StatusInternalServerError)
-		log.Println(err, resp)
-		return
+		return fmt.Errorf("error getting repository: %v", err)
 	}
 
 	// Verify that the branch from the results files is the repo's default branch.
 	defaultBranch := "refs/heads/" + repo.GetDefaultBranch()
 	if defaultBranch != repoRef {
-		http.Error(w, "branch of cert isn't the repo's default branch", http.StatusInternalServerError)
-		log.Println(defaultBranch, repoRef)
-		return
+		return fmt.Errorf("branch of cert isn't the repo's default branch")
 	}
 
 	// Get workflow file from cert commit SHA.
 	opts := &github.RepositoryContentGetOptions{Ref: repoSHA}
 	contents, _, _, err := client.Repositories.GetContents(ctx, ownerName, repoName, workflowPath, opts)
 	if err != nil {
-		http.Error(w, "error downloading workflow contents from repo", http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return fmt.Errorf("error downloading workflow contents from repo: %v", err)
 	}
 
 	workflowContent, err := contents.GetContent()
 	if err != nil {
-		http.Error(w, "error decoding workflow contents", http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return fmt.Errorf("error decoding workflow contents: %v", err)
 	}
 
 	// Verify scorecard workflow.
 	err = verifyScorecardWorkflow(workflowContent)
 	if err != nil {
-		http.Error(w, "workflow could not be verified", http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return fmt.Errorf("workflow could not be verified: %v", err)
 	}
 
 	// Save scorecard results (results.sarif, results.json, score.txt) to GCS
@@ -138,14 +143,10 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) {
 	err1 = data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
 	err2 = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
 	if err1 != nil || err2 != nil {
-		http.Error(w, "error writing to GCS bucket", http.StatusUnauthorized)
-		log.Println(err1, err2)
-		return
+		return fmt.Errorf(errorWritingBucket.Error()+": %v, %v", err1, err2)
+		// return fmt.Errorf("error writing to GCS bucket: %v, %v", err1, err2)
 	}
-
-	// Write response.
-	w.Write([]byte(fmt.Sprintf("Successfully verified and uploaded scorecard results for repo %s on branch %s", []byte(repoName), []byte(repoRef))))
-	w.WriteHeader(http.StatusOK)
+	return nil
 }
 
 func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repoSHA, workflowPath string, err error) {

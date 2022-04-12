@@ -28,7 +28,8 @@ func TestVerifySignature(t *testing.T) {
 	VerifySignature(w, r)
 
 	// Only the GCS upload error code is allowed
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	err_msg := strings.TrimSuffix(w.Body.String(), "\n")
+	assert.True(t, strings.HasPrefix(err_msg, errorWritingBucket.Error()))
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {

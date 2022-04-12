@@ -16,6 +16,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,6 +31,7 @@ func main() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", homepage)
 	r.HandleFunc("/verify", signing.VerifySignature).Methods("POST")
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", signing.GetResults).Methods("GET")
 	http.Handle("/", r)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -38,9 +40,17 @@ func main() {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	if _, err := fmt.Fprintf(w, "Hello world!!"+
-		" This site is still under construction."+
-		" Please check back again later."); err != nil {
-		log.Printf("error during Write: %v", err)
+	endpts := struct {
+		GetRepoResults string `json:"get_repo_results"`
+	}{
+		// TODO: make this domain specific.
+		GetRepoResults: "/projects{/host}{/owner}{/repository}",
+	}
+	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
+		log.Fatal(err)
 	}
 }

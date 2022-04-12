@@ -11,12 +11,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
+	"github.com/gorilla/mux"
 	"github.com/ossf/scorecard/v2/cron/data"
 	"github.com/rhysd/actionlint"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
@@ -355,4 +357,57 @@ func extractCerts(e *models.LogEntryAnon) ([]*x509.Certificate, error) {
 	}
 
 	return certs, err
+}
+
+var errorPullingBucket = errors.New("error pulling from GCS bucket")
+var errorVerifyingFilepath = errors.New("error verifying filepath format")
+
+func GetResults(w http.ResponseWriter, r *http.Request) {
+	host := mux.Vars(r)["host"]
+	orgName := mux.Vars(r)["orgName"]
+	repoName := mux.Vars(r)["repoName"]
+	results, err := getResults(host, orgName, repoName)
+
+	if err == errorVerifyingFilepath {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("err: %v", err)
+		return
+	}
+	if err == errorPullingBucket {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Printf("err: %v", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(results)
+}
+
+func getResults(host, orgName, repoName string) (results []byte, err error) {
+	// Get params to build GCS filepath.
+	ctx := context.Background()
+	bucketURL := "gs://ossf-scorecard-results"
+	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
+
+	// Sanitize input and log query.
+	resultsFile = filepath.Clean(resultsFile)
+	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
+	if err != nil || !matched {
+		return nil, errorVerifyingFilepath
+	}
+
+	if len(resultsFile) >= 256 {
+		return nil, fmt.Errorf("filepath (%v) is greater than the Linux maximum of 256", resultsFile[:256])
+	}
+
+	resultsFileEscaped := strings.Replace(resultsFile, "\n", "", -1)
+	resultsFileEscaped = strings.Replace(resultsFileEscaped, "\r", "", -1)
+	log.Printf("Querying GCS bucket for: %s", resultsFileEscaped)
+
+	// Query GCS bucket.
+	results, err = data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
+	if err != nil {
+		return nil, errorPullingBucket
+	}
+	return results, nil
 }

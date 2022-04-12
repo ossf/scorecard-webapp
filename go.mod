@@ -3,11 +3,17 @@ module github.com/ossf/scorecard-webapp
 go 1.17
 
 require (
-	github.com/google/go-github/v42 v42.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/ossf/scorecard/v2 v2.2.8
-	github.com/rhysd/actionlint v1.6.10
-	github.com/sigstore/cosign v1.6.1-0.20220331192006-ac682db9511c
+)
+
+require (
+	github.com/go-openapi/runtime v0.23.3
+	github.com/google/go-github/v42 v42.0.0
+	github.com/rhysd/actionlint v1.6.11
+	github.com/sigstore/cosign v1.7.1
+	github.com/sigstore/rekor v0.5.0
+	github.com/sigstore/sigstore v1.2.1-0.20220401110139-0e610e39782f
 	github.com/stretchr/testify v1.7.1
 )
 
@@ -17,9 +23,9 @@ require (
 	cloud.google.com/go/iam v0.1.1 // indirect
 	cloud.google.com/go/kms v1.4.0 // indirect
 	cloud.google.com/go/storage v1.21.0 // indirect
-	github.com/Azure/azure-sdk-for-go v62.3.0+incompatible // indirect
+	github.com/Azure/azure-sdk-for-go v63.0.0+incompatible // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
-	github.com/Azure/go-autorest/autorest v0.11.24 // indirect
+	github.com/Azure/go-autorest/autorest v0.11.25 // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.18 // indirect
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.11 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.5 // indirect
@@ -35,7 +41,7 @@ require (
 	github.com/armon/go-metrics v0.3.10 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
-	github.com/aws/aws-sdk-go v1.43.24 // indirect
+	github.com/aws/aws-sdk-go v1.43.30 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.14.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.14.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.9.0 // indirect
@@ -72,7 +78,6 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/loads v0.21.1 // indirect
-	github.com/go-openapi/runtime v0.23.3 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/strfmt v0.21.2 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
@@ -110,7 +115,7 @@ require (
 	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/vault/api v1.4.1 // indirect
+	github.com/hashicorp/vault/api v1.5.0 // indirect
 	github.com/hashicorp/vault/sdk v0.4.1 // indirect
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -123,6 +128,7 @@ require (
 	github.com/jszwec/csvutil v1.5.1 // indirect
 	github.com/klauspost/compress v1.14.2 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/letsencrypt/boulder v0.0.0-20220331220046-b23ab962616e // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -151,8 +157,6 @@ require (
 	github.com/sassoftware/relic v0.0.0-20210427151427-dfb082b79b74 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.3.1 // indirect
 	github.com/shibumi/go-pathspec v1.3.0 // indirect
-	github.com/sigstore/rekor v0.5.0 // indirect
-	github.com/sigstore/sigstore v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.8.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
@@ -165,8 +169,9 @@ require (
 	github.com/tent/canonical-json-go v0.0.0-20130607151641-96e4ba3a7613 // indirect
 	github.com/thales-e-security/pool v0.0.2 // indirect
 	github.com/theupdateframework/go-tuf v0.0.0-20220211205608-f0c3294f63b9 // indirect
+	github.com/titanous/rocacheck v0.0.0-20171023193734-afe73141d399 // indirect
 	github.com/vbatts/tar-split v0.11.2 // indirect
-	github.com/xanzy/go-gitlab v0.60.0 // indirect
+	github.com/xanzy/go-gitlab v0.61.0 // indirect
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
@@ -178,7 +183,7 @@ require (
 	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220328115105-d36c6a25d886 // indirect
+	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65 // indirect

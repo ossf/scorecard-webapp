@@ -70,7 +70,7 @@ export default {
           tab.elm.classList.remove("theme-code-block__active");
         }
       });
-      if (this.codeTabs[index].elm) {
+      if (this.codeTabs[index]) {
         this.codeTabs[index].elm.classList.add("theme-code-block__active");
       }
     },

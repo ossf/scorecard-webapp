@@ -36,46 +36,51 @@ type ScorecardOutput struct {
 	JsonOutput  string
 }
 
-// verifySignature receives the scorecard analysis payload, looks up its associated tlog entry and
-// certificate, and extracts the repository's workflow file to ensure its legitimacy.
-func VerifySignature(w http.ResponseWriter, r *http.Request) {
+func VerifySignatureHandler(w http.ResponseWriter, r *http.Request) {
+	err := VerifySignature(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func VerifySignature(w http.ResponseWriter, r *http.Request) error {
 	ctx := context.Background()
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "error reading http request body", http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return fmt.Errorf("error reading http request body: %v", err)
 	}
 
 	// Unmarshal request body.
 	var scorecardOutput ScorecardOutput
 	err = json.Unmarshal(reqBody, &scorecardOutput)
 	if err != nil {
-		http.Error(w, "error unmarshalling request body", http.StatusInternalServerError)
-		log.Println(err)
-		return
+		return fmt.Errorf("error unmarshalling request body: %v", err)
 	}
 
 	// Grab parameters.
 	reqRepo := r.Header["X-Repository"]
 	reqBranch := r.Header["X-Branch"]
 	if len(reqRepo) == 0 || len(reqBranch) == 0 {
-		http.Error(w, "error: empty parameters", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("error: empty parameters")
 	}
 
 	err = verifySignature(ctx, scorecardOutput, reqRepo[0], reqBranch[0])
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println(err)
+		return err
 	}
 
 	// Write response.
 	w.Write([]byte(fmt.Sprintf("Successfully verified and uploaded scorecard results for repo %s on branch %s", reqRepo[0], reqBranch[0])))
+
+	return nil
 }
 
 var errorWritingBucket = errors.New("error writing to GCS bucket")
 
+// verifySignature receives the scorecard analysis payload, looks up its associated tlog entry and
+// certificate, and extracts the repository's workflow file to ensure its legitimacy.
 func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRepo, reqBranch string) error {
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
 	sarifRepoPath, sarifRepoRef, sarifRepoSHA, workflowPath, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))

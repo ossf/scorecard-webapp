@@ -25,7 +25,7 @@ func TestVerifySignature(t *testing.T) {
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/scorecard-OIDC-test"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
-	VerifySignature(w, r)
+	VerifySignatureHandler(w, r)
 
 	// Only the GCS upload error code is allowed
 	err_msg := strings.TrimSuffix(w.Body.String(), "\n")
@@ -43,7 +43,7 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/invalid-repo"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
-	VerifySignature(w, r)
+	VerifySignatureHandler(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

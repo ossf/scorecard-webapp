@@ -57,7 +57,6 @@ func TestVerifyValidWorkflow(t *testing.T) {
 func TestVerifyInvalidWorkflows(t *testing.T) {
 	workflowFiles := []string{
 		"../testdata/workflow-invalid-formatting.yml",
-		"../testdata/workflow-invalid-jobs.yml",
 		"../testdata/workflow-invalid-container.yml",
 		"../testdata/workflow-invalid-services.yml",
 		"../testdata/workflow-invalid-runson.yml",
@@ -73,7 +72,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	for _, workflowFile := range workflowFiles {
 		workflowContent, _ := ioutil.ReadFile(workflowFile)
 		err := verifyScorecardWorkflow(string(workflowContent))
-		assert.NotEqual(t, err, nil)
+		assert.NotEqual(t, err, nil, workflowFile)
 	}
 }
 

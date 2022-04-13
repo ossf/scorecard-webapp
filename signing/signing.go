@@ -242,7 +242,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 
 	// Verify that the only global permission set is read-all.
-	if workflow.Permissions.All.Value != "read-all" {
+	if workflow.Permissions.All.Value != "read" && workflow.Permissions.All.Value != "read-all" {
 		return errors.New("workflow permission isn't read-all")
 	}
 
@@ -250,13 +250,10 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	jobsMap := workflow.Jobs
 	jobs := reflect.ValueOf(jobsMap).MapKeys()
 
-	if len(jobs) != 1 {
-		return errors.New("number of jobs isn't 1")
+	if len(jobs) == 0 {
+		return errors.New("workflow has no jobs")
 	}
 	job := jobsMap[jobs[0].String()]
-	if job == nil {
-		return errors.New("workflow doens't have a main job")
-	}
 
 	// Verify that there is no job container or services.
 	if job.Container != nil || len(job.Services) > 0 {

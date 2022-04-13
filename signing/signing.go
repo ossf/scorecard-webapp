@@ -265,8 +265,12 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("no RunsOn found in workflow")
 	} else {
 		labels := job.RunsOn.Labels
-		if len(labels) == 0 || len(labels) > 1 || labels[0].Value != "ubuntu-latest" {
-			return errors.New("workflow doesn't run solely on ubuntu-latest")
+		if len(labels) == 0 || len(labels) > 1 {
+			return errors.New("workflow doesn't have only 1 virtual environment")
+		}
+		jobEnv := labels[0].Value
+		if jobEnv != "ubuntu-latest" && jobEnv != "ubuntu-20.04" && jobEnv != "ubuntu-18.04" {
+			return errors.New("workflow doesn't run on ubuntu")
 		}
 	}
 

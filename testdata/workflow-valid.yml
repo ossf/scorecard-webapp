@@ -21,6 +21,7 @@ jobs:
       security-events: write
       actions: read
       contents: read
+      id-token: write # needed for keyless signing
     
     steps:
       - name: "Checkout code"

@@ -10,7 +10,8 @@ on:
   workflow_dispatch:
 
 defaults:
-  runs-on: ubuntu-latest
+  run:
+    shell: bash
 
 # Declare default permissions as read only.
 permissions: read-all

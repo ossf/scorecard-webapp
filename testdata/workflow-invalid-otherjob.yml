@@ -12,7 +12,6 @@ on:
 # Declare default permissions as read only.
 permissions: read-all
 
-
 jobs:
   analysis:
     name: Scorecards analysis
@@ -22,9 +21,7 @@ jobs:
       security-events: write
       actions: read
       contents: read
-    defaults:
-      run:
-        shell: bash
+      id-token: write # needed for keyless signing
     
     steps:
       - name: "Checkout code"
@@ -60,3 +57,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@5f532563584d71fdef14ee64d17bafb34f751ce5 # v1.0.26
         with:
           sarif_file: results.sarif
+
+  analysis2:
+    name: random
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # needed for keyless signing
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        with:
+          persist-credentials: false

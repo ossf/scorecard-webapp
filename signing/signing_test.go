@@ -67,6 +67,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"../testdata/workflow-invalid-global-perm.yml",
 		"../testdata/workflow-invalid-global-env.yml",
 		"../testdata/workflow-invalid-global-defaults.yml",
+		"../testdata/workflow-invalid-otherjob.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {

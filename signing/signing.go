@@ -12,7 +12,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"time"
 
@@ -248,28 +247,47 @@ func verifyScorecardWorkflow(workflowContent string) error {
 
 	// Verify that the only global permission set is read-all.
 	if workflow.Permissions.All.Value != "read" && workflow.Permissions.All.Value != "read-all" {
-		return errors.New("workflow permission isn't read-all")
+		return errors.New("workflow global permission isn't read-all")
 	}
 
-	// Extract main (analysis) job
-	jobsMap := workflow.Jobs
-	jobs := reflect.ValueOf(jobsMap).MapKeys()
-
-	if len(jobs) == 0 {
-		return errors.New("workflow has no jobs")
+	// Find the job with a step that calls scorecard-action.
+	var scorecardJob *actionlint.Job
+	for _, job := range workflow.Jobs {
+		scorecardStepFound := false
+		if !scorecardStepFound {
+			for _, step := range job.Steps {
+				stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
+				stepName = stepName[:strings.Index(stepName, "@")]                                    // get rid of commit sha.
+				if stepName == "ossf/scorecard-action" || stepName == "rohankh532/scorecard-action" { // TODO: remove rohankh532 later.
+					scorecardJob = job
+					scorecardStepFound = true
+					break
+				}
+			}
+		}
+		// Make sure other jobs don't have id-token permissions.
+		if !scorecardStepFound && job.Permissions != nil {
+			idToken := job.Permissions.Scopes["id-token"]
+			if idToken != nil && idToken.Value.Value == "write" {
+				return errors.New("workflow has a non-scorecard job with id-token permissions")
+			}
+		}
 	}
-	job := jobsMap[jobs[0].String()]
+
+	if scorecardJob == nil {
+		return errors.New("workflow has no job calling ossf/scorecard-action")
+	}
 
 	// Verify that there is no job container or services.
-	if job.Container != nil || len(job.Services) > 0 {
+	if scorecardJob.Container != nil || len(scorecardJob.Services) > 0 {
 		return errors.New("workflow contains container or service")
 	}
 
 	// Verify that the workflow runs on ubuntu-latest and nothing else.
-	if job.RunsOn == nil {
+	if scorecardJob.RunsOn == nil {
 		return errors.New("no RunsOn found in workflow")
 	} else {
-		labels := job.RunsOn.Labels
+		labels := scorecardJob.RunsOn.Labels
 		if len(labels) == 0 || len(labels) > 1 {
 			return errors.New("workflow doesn't have only 1 virtual environment")
 		}
@@ -280,17 +298,17 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 
 	// Verify that there are no job env vars set.
-	if job.Env != nil {
+	if scorecardJob.Env != nil {
 		return errors.New("workflow contains env vars")
 	}
 
 	// Verify that there are no job defaults set.
-	if job.Defaults != nil {
+	if scorecardJob.Defaults != nil {
 		return errors.New("workflow has defaults set")
 	}
 
 	// Get steps in job.
-	steps := job.Steps
+	steps := scorecardJob.Steps
 
 	if steps == nil || len(steps) > 4 {
 		return fmt.Errorf("workflow has an invalid number of steps: %d", len(steps))
@@ -309,7 +327,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"github/codeql-action/upload-sarif",
 			"rohankh532/scorecard-action": // TODO: remove later, for debugging
 		default:
-			return fmt.Errorf("workflow has invalid step name: %s", stepName)
+			return fmt.Errorf("workflow has invalid step: %s", stepName)
 		}
 	}
 

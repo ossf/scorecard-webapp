@@ -24,6 +24,9 @@ jobs:
     
     steps:
       - name: "asdsad"
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        with:
+          persist-credentials: false
       
       - name: "Checkout code"
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0

@@ -31,8 +31,7 @@ import (
 )
 
 type ScorecardOutput struct {
-	SarifOutput string
-	JsonOutput  string
+	JsonOutput string
 }
 
 func VerifySignatureHandler(w http.ResponseWriter, r *http.Request) {
@@ -82,20 +81,10 @@ var errorWritingBucket = errors.New("error writing to GCS bucket")
 // certificate, and extracts the repository's workflow file to ensure its legitimacy.
 func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRepo, reqBranch string) error {
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
-	sarifRepoPath, sarifRepoRef, sarifRepoSHA, workflowPath, err1 := lookupPayload(ctx, []byte(scorecardOutput.SarifOutput))
-	jsonRepoPath, jsonRepoRef, jsonRepoSHA, _, err2 := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
-	if err1 != nil || err2 != nil {
-		return fmt.Errorf("error looking up sarif: %v, or looking up json: %v", err1, err2)
+	repoPath, repoRef, repoSHA, _, err := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
+	if err != nil {
+		return fmt.Errorf("error looking up json results: %v", err)
 	}
-
-	// Verify that the sarif results and json results are from the same repo, ref, and SHA.
-	if sarifRepoPath != jsonRepoPath || sarifRepoRef != jsonRepoRef || sarifRepoSHA != jsonRepoSHA {
-		return fmt.Errorf("sarif and json results correspond to different repos/refs/SHAs")
-	}
-
-	repoPath := sarifRepoPath
-	repoRef := sarifRepoRef
-	repoSHA := sarifRepoSHA
 
 	// Split repo path into owner and repo name.
 	ownerName := repoPath[:strings.Index(repoPath, "/")]
@@ -138,17 +127,14 @@ func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRe
 		return fmt.Errorf("workflow could not be verified: %v", err)
 	}
 
-	// Save scorecard results (results.sarif, results.json, score.txt) to GCS
+	// Save scorecard results (results.json, score.txt) to GCS
 	bucketURL := "gs://ossf-scorecard-results"
 	folderPath := fmt.Sprintf("%s/%s", "github.com", repoPath)
-	sarifPath := fmt.Sprintf("%s/results.sarif", folderPath)
 	jsonPath := fmt.Sprintf("%s/results.json", folderPath)
 
-	err1 = data.WriteToBlobStore(ctx, bucketURL, sarifPath, []byte(scorecardOutput.SarifOutput))
-	err2 = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
-	if err1 != nil || err2 != nil {
-		return fmt.Errorf(errorWritingBucket.Error()+": %v, %v", err1, err2)
-		// return fmt.Errorf("error writing to GCS bucket: %v, %v", err1, err2)
+	err = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
+	if err != nil {
+		return fmt.Errorf(errorWritingBucket.Error()+": %v, %v", err)
 	}
 	return nil
 }

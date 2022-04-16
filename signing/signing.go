@@ -81,7 +81,7 @@ var errorWritingBucket = errors.New("error writing to GCS bucket")
 // certificate, and extracts the repository's workflow file to ensure its legitimacy.
 func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRepo, reqBranch string) error {
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
-	repoPath, repoRef, repoSHA, _, err := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
+	repoPath, repoRef, repoSHA, workflowPath, err := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
 	if err != nil {
 		return fmt.Errorf("error looking up json results: %v", err)
 	}
@@ -231,28 +231,35 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("workflow contains global env vars or defaults")
 	}
 
-	// Verify that the only global permission set is read-all.
-	if workflow.Permissions.All.Value != "read" && workflow.Permissions.All.Value != "read-all" {
-		return errors.New("workflow global permission isn't read-all")
+	// Verify that the all scope, if set, isn't write-all.
+	globalPermAll := workflow.Permissions.All
+	if globalPermAll != nil && globalPermAll.Value == "write-all" {
+		return fmt.Errorf("global perm is set to write-all")
 	}
 
-	// Find the job with a step that calls scorecard-action.
-	var scorecardJob *actionlint.Job
-	for _, job := range workflow.Jobs {
-		scorecardStepFound := false
-		if !scorecardStepFound {
-			for _, step := range job.Steps {
-				stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
-				stepName = stepName[:strings.Index(stepName, "@")]                                    // get rid of commit sha.
-				if stepName == "ossf/scorecard-action" || stepName == "rohankh532/scorecard-action" { // TODO: remove rohankh532 later.
-					scorecardJob = job
-					scorecardStepFound = true
-					break
-				}
-			}
+	// Verify that there are no global permissions set to write.
+	globalPerms := workflow.Permissions.Scopes
+	for globalPerm, val := range globalPerms {
+		if val.Value.Value == "write" {
+			return fmt.Errorf("global perm %v is set to write", globalPerm)
 		}
-		// Make sure other jobs don't have id-token permissions.
-		if !scorecardStepFound && job.Permissions != nil {
+	}
+
+	// Verify that the global id-token, if set, isn't set to write.
+	idToken := workflow.Permissions.Scopes["id-token"]
+	if idToken != nil && idToken.Value.Value == "write" {
+		return errors.New("workflow has id-token globally set to write")
+	}
+
+	// Find the (first) job with a step that calls scorecard-action.
+	scorecardJob := findScorecardJob(workflow.Jobs)
+	if scorecardJob == nil {
+		return errors.New("workflow has no job that calls ossf/scorecard-action")
+	}
+
+	// Make sure other jobs don't have id-token permissions.
+	for _, job := range workflow.Jobs {
+		if job != scorecardJob && job.Permissions != nil {
 			idToken := job.Permissions.Scopes["id-token"]
 			if idToken != nil && idToken.Value.Value == "write" {
 				return errors.New("workflow has a non-scorecard job with id-token permissions")
@@ -269,7 +276,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("workflow contains container or service")
 	}
 
-	// Verify that the workflow runs on ubuntu-latest and nothing else.
+	// Verify that the workflow runs on ubuntu and nothing else.
 	if scorecardJob.RunsOn == nil {
 		return errors.New("no RunsOn found in workflow")
 	} else {
@@ -317,6 +324,20 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		}
 	}
 
+	return nil
+}
+
+// Finds the job with a step that calls ossf/scorecard-action
+func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
+	for _, job := range jobs {
+		for _, step := range job.Steps {
+			stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
+			stepName = stepName[:strings.Index(stepName, "@")]                                    // get rid of commit sha.
+			if stepName == "ossf/scorecard-action" || stepName == "rohankh532/scorecard-action" { // TODO: remove rohankh532 later.
+				return job
+			}
+		}
+	}
 	return nil
 }
 

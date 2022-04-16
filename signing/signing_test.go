@@ -15,9 +15,8 @@ import (
 
 func TestVerifySignature(t *testing.T) {
 	// Should pass entry, cert, and workflow verification but fail GCS upload.
-	sarifpayload, _ := ioutil.ReadFile("../testdata/results/results.sarif")
 	jsonpayload, _ := ioutil.ReadFile("../testdata/results/results.json")
-	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
+	payload := ScorecardOutput{JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
 
@@ -33,9 +32,8 @@ func TestVerifySignature(t *testing.T) {
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
-	sarifpayload, _ := ioutil.ReadFile("../testdata/results/results.sarif")
 	jsonpayload, _ := ioutil.ReadFile("../testdata/results/results.json")
-	payload := ScorecardOutput{SarifOutput: string(sarifpayload), JsonOutput: string(jsonpayload)}
+	payload := ScorecardOutput{JsonOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
 
@@ -68,6 +66,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"../testdata/workflow-invalid-global-env.yml",
 		"../testdata/workflow-invalid-global-defaults.yml",
 		"../testdata/workflow-invalid-otherjob.yml",
+		"../testdata/workflow-invalid-global-idtoken.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {

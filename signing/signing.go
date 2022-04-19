@@ -237,18 +237,12 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return fmt.Errorf("global perm is set to write-all")
 	}
 
-	// Verify that there are no global permissions set to write.
+	// Verify that there are no global permissions (including id-token) set to write.
 	globalPerms := workflow.Permissions.Scopes
 	for globalPerm, val := range globalPerms {
 		if val.Value.Value == "write" {
 			return fmt.Errorf("global perm %v is set to write", globalPerm)
 		}
-	}
-
-	// Verify that the global id-token, if set, isn't set to write.
-	idToken := workflow.Permissions.Scopes["id-token"]
-	if idToken != nil && idToken.Value.Value == "write" {
-		return errors.New("workflow has id-token globally set to write")
 	}
 
 	// Find the (first) job with a step that calls scorecard-action.

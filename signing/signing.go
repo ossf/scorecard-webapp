@@ -281,7 +281,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("no RunsOn found in workflow")
 	} else {
 		labels := scorecardJob.RunsOn.Labels
-		if len(labels) == 0 || len(labels) > 1 {
+		if len(labels) != 1 {
 			return errors.New("workflow doesn't have only 1 virtual environment")
 		}
 		jobEnv := labels[0].Value

@@ -30,6 +30,7 @@ func main() {
 
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", homepage)
+	r.HandleFunc("/verify", signing.VerifySignatureHandler).Methods("POST")
 	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", signing.GetResults).Methods("GET")
 	http.Handle("/", r)
 

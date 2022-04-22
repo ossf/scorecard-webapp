@@ -74,6 +74,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"../testdata/workflow-invalid-global-defaults.yml",
 		"../testdata/workflow-invalid-otherjob.yml",
 		"../testdata/workflow-invalid-global-idtoken.yml",
+		"../testdata/workflow-invalid-empty.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {

@@ -10,7 +10,7 @@ require (
 require (
 	github.com/go-openapi/runtime v0.23.3
 	github.com/google/go-github/v42 v42.0.0
-	github.com/rhysd/actionlint v1.6.11
+	github.com/rhysd/actionlint v1.6.12
 	github.com/sigstore/cosign v1.7.2
 	github.com/sigstore/rekor v0.6.0
 	github.com/sigstore/sigstore v1.2.1-0.20220401110139-0e610e39782f

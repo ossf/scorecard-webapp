@@ -222,7 +222,7 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 func verifyScorecardWorkflow(workflowContent string) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
-	if lintErrs != nil {
+	if lintErrs != nil || workflow == nil {
 		return fmt.Errorf("actionlint errors parsing workflow: %v", lintErrs)
 	}
 
@@ -231,17 +231,18 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return errors.New("workflow contains global env vars or defaults")
 	}
 
-	// Verify that the all scope, if set, isn't write-all.
-	globalPerm := workflow.Permissions
-	if globalPerm != nil && globalPerm.All != nil && globalPerm.All.Value == "write-all" {
-		return fmt.Errorf("global perm is set to write-all")
-	}
+	if workflow.Permissions != nil {
+		globalPerms := workflow.Permissions
+		// Verify that the all scope, if set, isn't write-all.
+		if globalPerms.All != nil && globalPerms.All.Value == "write-all" {
+			return fmt.Errorf("global perm is set to write-all")
+		}
 
-	// Verify that there are no global permissions (including id-token) set to write.
-	globalPerms := workflow.Permissions.Scopes
-	for globalPerm, val := range globalPerms {
-		if val.Value.Value == "write" {
-			return fmt.Errorf("global perm %v is set to write", globalPerm)
+		// Verify that there are no global permissions (including id-token) set to write.
+		for globalPerm, val := range globalPerms.Scopes {
+			if val.Value.Value == "write" {
+				return fmt.Errorf("global perm %v is set to write", globalPerm)
+			}
 		}
 	}
 

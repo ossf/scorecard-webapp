@@ -46,10 +46,17 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
-func TestVerifyValidWorkflow(t *testing.T) {
-	workflowContent, _ := ioutil.ReadFile("../testdata/workflow-valid.yml")
-	err := verifyScorecardWorkflow(string(workflowContent))
-	assert.Equal(t, err, nil)
+func TestVerifyValidWorkflows(t *testing.T) {
+	workflowFiles := []string{
+		"../testdata/workflow-valid.yml",
+		"../testdata/workflow-valid-noglobalperm.yml",
+	}
+
+	for _, workflowFile := range workflowFiles {
+		workflowContent, _ := ioutil.ReadFile(workflowFile)
+		err := verifyScorecardWorkflow(string(workflowContent))
+		assert.Equal(t, err, nil, workflowFile)
+	}
 }
 
 func TestVerifyInvalidWorkflows(t *testing.T) {

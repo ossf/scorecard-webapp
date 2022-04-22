@@ -232,8 +232,8 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 
 	// Verify that the all scope, if set, isn't write-all.
-	globalPermAll := workflow.Permissions.All
-	if globalPermAll != nil && globalPermAll.Value == "write-all" {
+	globalPerm := workflow.Permissions
+	if globalPerm != nil && globalPerm.All != nil && globalPerm.All.Value == "write-all" {
 		return fmt.Errorf("global perm is set to write-all")
 	}
 

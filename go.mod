@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/go-openapi/runtime v0.23.3
+	github.com/go-openapi/runtime v0.24.0
 	github.com/google/go-github/v42 v42.0.0
 	github.com/rhysd/actionlint v1.6.12
 	github.com/sigstore/cosign v1.7.2

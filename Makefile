@@ -6,3 +6,6 @@ scorecard-webapp: ## Runs go build on repo
 
 scorecard-webapp-docker:
 	DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag scorecard-webapp
+
+linter:
+	golangci-lint run -c .golangci.yml

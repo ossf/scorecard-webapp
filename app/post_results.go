@@ -1,4 +1,18 @@
-package signing
+// Copyright 2022 Security Scorecard Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package app
 
 import (
 	"bytes"
@@ -11,15 +25,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
-	"github.com/gorilla/mux"
 	"github.com/ossf/scorecard/v2/cron/data"
-	"github.com/rhysd/actionlint"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
 	"github.com/sigstore/cosign/pkg/cosign"
@@ -219,123 +230,6 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 	return repoPath, repoRef, repoSHA, workflowPath, nil
 }
 
-func verifyScorecardWorkflow(workflowContent string) error {
-	// Verify workflow contents using actionlint.
-	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
-	if lintErrs != nil || workflow == nil {
-		return fmt.Errorf("actionlint errors parsing workflow: %v", lintErrs)
-	}
-
-	// Verify that there are no global env vars or defaults.
-	if workflow.Env != nil || workflow.Defaults != nil {
-		return errors.New("workflow contains global env vars or defaults")
-	}
-
-	if workflow.Permissions != nil {
-		globalPerms := workflow.Permissions
-		// Verify that the all scope, if set, isn't write-all.
-		if globalPerms.All != nil && globalPerms.All.Value == "write-all" {
-			return fmt.Errorf("global perm is set to write-all")
-		}
-
-		// Verify that there are no global permissions (including id-token) set to write.
-		for globalPerm, val := range globalPerms.Scopes {
-			if val.Value.Value == "write" {
-				return fmt.Errorf("global perm %v is set to write", globalPerm)
-			}
-		}
-	}
-
-	// Find the (first) job with a step that calls scorecard-action.
-	scorecardJob := findScorecardJob(workflow.Jobs)
-	if scorecardJob == nil {
-		return errors.New("workflow has no job that calls ossf/scorecard-action")
-	}
-
-	// Make sure other jobs don't have id-token permissions.
-	for _, job := range workflow.Jobs {
-		if job != scorecardJob && job.Permissions != nil {
-			idToken := job.Permissions.Scopes["id-token"]
-			if idToken != nil && idToken.Value.Value == "write" {
-				return errors.New("workflow has a non-scorecard job with id-token permissions")
-			}
-		}
-	}
-
-	if scorecardJob == nil {
-		return errors.New("workflow has no job calling ossf/scorecard-action")
-	}
-
-	// Verify that there is no job container or services.
-	if scorecardJob.Container != nil || len(scorecardJob.Services) > 0 {
-		return errors.New("workflow contains container or service")
-	}
-
-	// Verify that the workflow runs on ubuntu and nothing else.
-	if scorecardJob.RunsOn == nil {
-		return errors.New("no RunsOn found in workflow")
-	} else {
-		labels := scorecardJob.RunsOn.Labels
-		if len(labels) != 1 {
-			return errors.New("workflow doesn't have only 1 virtual environment")
-		}
-		jobEnv := labels[0].Value
-		if jobEnv != "ubuntu-latest" && jobEnv != "ubuntu-20.04" && jobEnv != "ubuntu-18.04" {
-			return errors.New("workflow doesn't run on ubuntu")
-		}
-	}
-
-	// Verify that there are no job env vars set.
-	if scorecardJob.Env != nil {
-		return errors.New("workflow contains env vars")
-	}
-
-	// Verify that there are no job defaults set.
-	if scorecardJob.Defaults != nil {
-		return errors.New("workflow has defaults set")
-	}
-
-	// Get steps in job.
-	steps := scorecardJob.Steps
-
-	if steps == nil || len(steps) > 4 {
-		return fmt.Errorf("workflow has an invalid number of steps: %d", len(steps))
-	}
-
-	// Verify that steps are valid (checkout, scorecard-action, upload-artifact, upload-sarif).
-	for _, step := range steps {
-		stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
-		stepName = stepName[:strings.Index(stepName, "@")] // get rid of commit sha.
-
-		switch stepName {
-		case
-			"actions/checkout",
-			"ossf/scorecard-action",
-			"actions/upload-artifact",
-			"github/codeql-action/upload-sarif",
-			"rohankh532/scorecard-action": // TODO: remove later, for debugging
-		default:
-			return fmt.Errorf("workflow has invalid step: %s", stepName)
-		}
-	}
-
-	return nil
-}
-
-// Finds the job with a step that calls ossf/scorecard-action
-func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
-	for _, job := range jobs {
-		for _, step := range job.Steps {
-			stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
-			stepName = stepName[:strings.Index(stepName, "@")]                                    // get rid of commit sha.
-			if stepName == "ossf/scorecard-action" || stepName == "rohankh532/scorecard-action" { // TODO: remove rohankh532 later.
-				return job
-			}
-		}
-	}
-	return nil
-}
-
 // Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/cmd/cosign/cli/verify/verify_blob.go#L321
 func extractCerts(e *models.LogEntryAnon) ([]*x509.Certificate, error) {
 	b, err := base64.StdEncoding.DecodeString(e.Body.(string))
@@ -384,57 +278,4 @@ func extractCerts(e *models.LogEntryAnon) ([]*x509.Certificate, error) {
 	}
 
 	return certs, err
-}
-
-var errorPullingBucket = errors.New("error pulling from GCS bucket")
-var errorVerifyingFilepath = errors.New("error verifying filepath format")
-
-func GetResults(w http.ResponseWriter, r *http.Request) {
-	host := mux.Vars(r)["host"]
-	orgName := mux.Vars(r)["orgName"]
-	repoName := mux.Vars(r)["repoName"]
-	results, err := getResults(host, orgName, repoName)
-
-	if err == errorVerifyingFilepath {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("err: %v", err)
-		return
-	}
-	if err == errorPullingBucket {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Printf("err: %v", err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(results)
-}
-
-func getResults(host, orgName, repoName string) (results []byte, err error) {
-	// Get params to build GCS filepath.
-	ctx := context.Background()
-	bucketURL := "gs://ossf-scorecard-results"
-	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
-
-	// Sanitize input and log query.
-	resultsFile = filepath.Clean(resultsFile)
-	matched, err := filepath.Match("*/*/*/results.json", resultsFile)
-	if err != nil || !matched {
-		return nil, errorVerifyingFilepath
-	}
-
-	if len(resultsFile) >= 256 {
-		return nil, fmt.Errorf("filepath (%v) is greater than the Linux maximum of 256", resultsFile[:256])
-	}
-
-	resultsFileEscaped := strings.Replace(resultsFile, "\n", "", -1)
-	resultsFileEscaped = strings.Replace(resultsFileEscaped, "\r", "", -1)
-	log.Printf("Querying GCS bucket for: %s", resultsFileEscaped)
-
-	// Query GCS bucket.
-	results, err = data.GetBlobContent(ctx, bucketURL, resultsFileEscaped)
-	if err != nil {
-		return nil, errorPullingBucket
-	}
-	return results, nil
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 Security Scorecard Authors
+// Copyright 2022 Security Scorecard Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main implements the scorecard.dev webapp.
-package main
+package app
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
-
-	"github.com/ossf/scorecard-webapp/app"
 )
 
-func main() {
-	fmt.Printf("Starting HTTP server on port 8080 ...\n")
-
-	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/", app.Index)
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.VerifySignatureHandler).Methods("POST")
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.GetResults).Methods("GET")
-	http.Handle("/", r)
-
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+func Index(w http.ResponseWriter, r *http.Request) {
+	endpts := struct {
+		GetRepoResults string `json:"get_repo_results"`
+	}{
+		GetRepoResults: "/projects{/host}{/owner}{/repository}",
+	}
+	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
+	if err != nil {
+		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
 		log.Fatal(err)
 	}
 }

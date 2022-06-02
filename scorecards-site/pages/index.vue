@@ -102,6 +102,7 @@ export default {
       tocs: [],
       logos: [],
       observer: null,
+      isGoatCounterLoaded: false,
       observerOptions: {
         root: this.$refs.homeSection,
         rootMargin: "-50% 0% -50% 0%",
@@ -117,6 +118,14 @@ export default {
           script: [
             {
               src: "https://identity.netlify.com/v1/netlify-identity-widget.js",
+            },
+            {
+              vmid: 'home',
+              defer: true,
+              // Changed after script load
+              callback: () => { this.isGoatCounterLoaded = true },
+              src: '//gc.zgo.at/count.js',
+              'data-goatcounter': 'https://securityscorecards.goatcounter.com/count'
             },
             {
               json: {

@@ -19,26 +19,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+
+	"github.com/ossf/scorecard-webapp/app"
 )
 
 func main() {
-	http.HandleFunc("/", httpHandler)
 	fmt.Printf("Starting HTTP server on port 8080 ...\n")
+
+	r := mux.NewRouter().StrictSlash(true)
+	r.HandleFunc("/", app.Index)
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.PostResultsHandler).Methods(http.MethodPost)
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.GetResultsHandler).Methods(http.MethodGet)
+	r.HandleFunc("/projects/{host}/{orgName}/{repoName}/badge", app.GetBadgeHandler).Methods(http.MethodGet)
+	http.Handle("/", r)
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
-	}
-}
-
-func httpHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte("Hello world!" +
-			" This site is still under construction." +
-			" Please check back again later.")); err != nil {
-			log.Printf("error during Write: %v", err)
-		}
-	default:
-		http.Error(w, "only GET method is allowed", http.StatusMethodNotAllowed)
 	}
 }

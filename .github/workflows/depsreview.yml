@@ -11,19 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+name: 'Dependency Review'
+on: [pull_request]
 
-FROM golang@sha256:bd9823cdad5700fb4abe983854488749421d5b4fc84154c30dae474100468b85 AS base
-WORKDIR /src
-ENV CGO_ENABLED=0
-COPY go.* ./
-RUN go mod download
-COPY . ./
+permissions:
+  contents: read
 
-FROM base AS webapp
-ARG TARGETOS
-ARG TARGETARCH
-RUN CGO_ENABLED=0 make scorecard-webapp
-
-FROM gcr.io/distroless/base:nonroot@sha256:d65ac1a65a4d82a48ebd0a22aea2acdd95d7abeeda245dfee932ec0018c781f4
-COPY --from=webapp /src/scorecard-webapp /
-ENTRYPOINT ["/scorecard-webapp"]
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@a9c83d3af6b9031e20feba03b904645bb23d1dab

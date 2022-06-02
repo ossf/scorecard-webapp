@@ -59,14 +59,12 @@ export default {
   beforeDestroy() {
     this.observer.disconnect();
   },
-  mounted() {
-    this.getNavLinks();
-  },
   created() {
     this.$nuxt.$on("setActiveToc", (id) => {
       this.currentlyActiveToc = id;
     });
   },
+  this.getNavLinks();
   data() {
     return {
       currentlyActiveToc: "",

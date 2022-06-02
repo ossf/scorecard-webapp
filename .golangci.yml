@@ -30,19 +30,19 @@ linters:
     - deadcode
     - depguard
     - dogsled
-    - errcheck
-    - errorlint
+    #  - errcheck
+    #  - errorlint
     - exhaustive
     - exportloopref
     - gci
     - gochecknoinits
-    - gocognit
+    #  - gocognit
     - goconst
-    - gocritic
+    #  - gocritic
     - gocyclo
     - godot
     - godox
-    - goerr113
+    #  - goerr113
     - gofmt
     - gofumpt
     - goheader
@@ -51,7 +51,7 @@ linters:
     - goprintffuncname
     - gosec
     - gosimple
-    - govet
+    #  - govet
     - ineffassign
     - lll
     - makezero
@@ -62,7 +62,7 @@ linters:
     - nolintlint
     - paralleltest
     - predeclared
-    - revive
+    # - revive
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
@@ -76,7 +76,7 @@ linters:
     - unused
     - varcheck
     - whitespace
-    - wrapcheck
+    #  - wrapcheck
 linters-settings:
   errcheck:
     check-type-assertions: true

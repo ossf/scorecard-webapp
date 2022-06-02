@@ -45,8 +45,8 @@ type ScorecardOutput struct {
 	JSONOutput string
 }
 
-func VerifySignatureHandler(w http.ResponseWriter, r *http.Request) {
-	err := VerifySignature(w, r)
+func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
+	err := handler(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
@@ -54,7 +54,7 @@ func VerifySignatureHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func VerifySignature(w http.ResponseWriter, r *http.Request) error {
+func handler(w http.ResponseWriter, r *http.Request) error {
 	ctx := context.Background()
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {

@@ -15,37 +15,10 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: scorecard-webapp-managed-cert
-spec:
-  domains:
-  - securityscorecards.dev
-  - www.securityscorecards.dev
----
-
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
   name: scorecard-api-managed-cert
 spec:
   domains:
   - api.securityscorecards.dev
----
-
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: scorecard-webapp-ingress
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: scorecard-webapp
-    networking.gke.io/managed-certificates: scorecard-webapp-managed-cert
-    kubernetes.io/ingress.class: "gce"
-spec:
-  defaultBackend:
-    service:
-      name: scorecard-webapp-service
-      port:
-        number: 80
 ---
 
 apiVersion: networking.k8s.io/v1
@@ -83,7 +56,7 @@ kind: Deployment
 metadata:
   name: scorecard-webapp
 spec:
-  replicas: 1
+  replicas: 10
   selector:
     matchLabels:
       app.kubernetes.io/name: scorecard-webapp

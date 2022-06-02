@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestVerifySignature(t *testing.T) {
+func TestPostResultsHandler(t *testing.T) {
 	t.Parallel()
 	// Should pass entry, cert, and workflow verification but fail GCS upload.
 	jsonpayload, _ := ioutil.ReadFile("testdata/results/results.json")
@@ -42,14 +42,14 @@ func TestVerifySignature(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 
-	VerifySignatureHandler(w, r)
+	PostResultsHandler(w, r)
 
 	// Only the GCS upload error code is allowed
 	errMsg := strings.TrimSuffix(w.Body.String(), "\n")
 	assert.True(t, strings.HasPrefix(errMsg, errorWritingBucket.Error()))
 }
 
-func TestVerifySignatureInvalidRepo(t *testing.T) {
+func TestPostResultsInvalidRepo(t *testing.T) {
 	t.Parallel()
 	jsonpayload, _ := ioutil.ReadFile("testdata/results/results.json")
 	payload := ScorecardOutput{JSONOutput: string(jsonpayload)}
@@ -60,7 +60,7 @@ func TestVerifySignatureInvalidRepo(t *testing.T) {
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/invalid-repo"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 
-	VerifySignatureHandler(w, r)
+	PostResultsHandler(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

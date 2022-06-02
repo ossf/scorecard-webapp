@@ -30,7 +30,6 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
-	"github.com/ossf/scorecard/v2/cron/data"
 	"github.com/sigstore/cosign/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
 	"github.com/sigstore/cosign/pkg/cosign"
@@ -39,10 +38,11 @@ import (
 	hashedrekord "github.com/sigstore/rekor/pkg/types/hashedrekord/v0.0.1"
 	rekord "github.com/sigstore/rekor/pkg/types/rekord/v0.0.1"
 	"github.com/sigstore/sigstore/pkg/cryptoutils"
+	"gocloud.dev/blob"
 )
 
 type ScorecardOutput struct {
-	JsonOutput string
+	JSONOutput string
 }
 
 func VerifySignatureHandler(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +81,10 @@ func VerifySignature(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Write response.
-	w.Write([]byte(fmt.Sprintf("Successfully verified and uploaded scorecard results for repo %s on branch %s", reqRepo[0], reqBranch[0])))
+	w.Write([]byte(
+		fmt.Sprintf(
+			"Successfully verified and uploaded scorecard results for repo %s on branch %s",
+			reqRepo[0], reqBranch[0])))
 
 	return nil
 }
@@ -92,7 +95,7 @@ var errorWritingBucket = errors.New("error writing to GCS bucket")
 // certificate, and extracts the repository's workflow file to ensure its legitimacy.
 func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRepo, reqBranch string) error {
 	// Lookup results payload to get the repo info from the corresponding entry & cert.
-	repoPath, repoRef, repoSHA, workflowPath, err := lookupPayload(ctx, []byte(scorecardOutput.JsonOutput))
+	repoPath, repoRef, repoSHA, workflowPath, err := lookupPayload(ctx, []byte(scorecardOutput.JSONOutput))
 	if err != nil {
 		return fmt.Errorf("error looking up json results: %v", err)
 	}
@@ -143,9 +146,30 @@ func verifySignature(ctx context.Context, scorecardOutput ScorecardOutput, reqRe
 	folderPath := fmt.Sprintf("%s/%s", "github.com", repoPath)
 	jsonPath := fmt.Sprintf("%s/results.json", folderPath)
 
-	err = data.WriteToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JsonOutput))
+	err = writeToBlobStore(ctx, bucketURL, jsonPath, []byte(scorecardOutput.JSONOutput))
+
 	if err != nil {
 		return fmt.Errorf(errorWritingBucket.Error()+": %v, %v", err)
+	}
+	return nil
+}
+
+func writeToBlobStore(ctx context.Context, bucketURL, filename string, data []byte) error {
+	bucket, err := blob.OpenBucket(ctx, bucketURL)
+	if err != nil {
+		return fmt.Errorf("error from blob.OpenBucket: %w", err)
+	}
+	defer bucket.Close()
+
+	blobWriter, err := bucket.NewWriter(ctx, filename, nil)
+	if err != nil {
+		return fmt.Errorf("error from bucket.NewWriter: %w", err)
+	}
+	if _, err = blobWriter.Write(data); err != nil {
+		return fmt.Errorf("error from blobWriter.Write: %w", err)
+	}
+	if err := blobWriter.Close(); err != nil {
+		return fmt.Errorf("error from blobWriter.Close: %w", err)
 	}
 	return nil
 }
@@ -157,7 +181,7 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 		return "", "", "", "", fmt.Errorf("error initializing Rekor client: %v", err)
 	}
 
-	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, []byte(payload))
+	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, payload)
 	if err != nil || len(uuids) == 0 {
 		return "", "", "", "", fmt.Errorf("error finding tlog entries corresponding to payload: %v", err)
 	}
@@ -230,6 +254,7 @@ func lookupPayload(ctx context.Context, payload []byte) (repoPath, repoRef, repo
 	return repoPath, repoRef, repoSHA, workflowPath, nil
 }
 
+// nolint:lll
 // Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/cmd/cosign/cli/verify/verify_blob.go#L321
 func extractCerts(e *models.LogEntryAnon) ([]*x509.Certificate, error) {
 	b, err := base64.StdEncoding.DecodeString(e.Body.(string))

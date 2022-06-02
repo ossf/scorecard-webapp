@@ -22,6 +22,7 @@ import (
 )
 
 func TestSanitizePath(t *testing.T) {
+	t.Parallel()
 	testcases := []struct {
 		name     string
 		host     string

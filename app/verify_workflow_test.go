@@ -22,6 +22,7 @@ import (
 )
 
 func TestVerifyValidWorkflows(t *testing.T) {
+	t.Parallel()
 	workflowFiles := []string{
 		"testdata/workflow-valid.yml",
 		"testdata/workflow-valid-noglobalperm.yml",
@@ -35,6 +36,7 @@ func TestVerifyValidWorkflows(t *testing.T) {
 }
 
 func TestVerifyInvalidWorkflows(t *testing.T) {
+	t.Parallel()
 	workflowFiles := []string{
 		"testdata/workflow-invalid-formatting.yml",
 		"testdata/workflow-invalid-container.yml",

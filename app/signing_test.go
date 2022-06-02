@@ -16,6 +16,7 @@ package app
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -27,30 +28,35 @@ import (
 )
 
 func TestVerifySignature(t *testing.T) {
+	t.Parallel()
 	// Should pass entry, cert, and workflow verification but fail GCS upload.
 	jsonpayload, _ := ioutil.ReadFile("testdata/results/results.json")
-	payload := ScorecardOutput{JsonOutput: string(jsonpayload)}
+	payload := ScorecardOutput{JSONOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
 
-	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
-	r.Header = http.Header{"X-Repository": []string{"rohankh532/scorecard-OIDC-test"}, "X-Branch": []string{"refs/heads/main"}}
+	r, _ := http.NewRequestWithContext(context.Background(), "POST", "/verify", bytes.NewBuffer(payloadbytes))
+	r.Header = http.Header{
+		"X-Repository": []string{"rohankh532/scorecard-OIDC-test"},
+		"X-Branch":     []string{"refs/heads/main"},
+	}
 	w := httptest.NewRecorder()
 
 	VerifySignatureHandler(w, r)
 
 	// Only the GCS upload error code is allowed
-	err_msg := strings.TrimSuffix(w.Body.String(), "\n")
-	assert.True(t, strings.HasPrefix(err_msg, errorWritingBucket.Error()))
+	errMsg := strings.TrimSuffix(w.Body.String(), "\n")
+	assert.True(t, strings.HasPrefix(errMsg, errorWritingBucket.Error()))
 }
 
 func TestVerifySignatureInvalidRepo(t *testing.T) {
+	t.Parallel()
 	jsonpayload, _ := ioutil.ReadFile("testdata/results/results.json")
-	payload := ScorecardOutput{JsonOutput: string(jsonpayload)}
+	payload := ScorecardOutput{JSONOutput: string(jsonpayload)}
 	payloadbytes, err := json.Marshal(payload)
 	assert.Equal(t, err, nil)
 
-	r, _ := http.NewRequest("POST", "/verify", bytes.NewBuffer(payloadbytes))
+	r, _ := http.NewRequestWithContext(context.Background(), "POST", "/verify", bytes.NewBuffer(payloadbytes))
 	r.Header = http.Header{"X-Repository": []string{"rohankh532/invalid-repo"}, "X-Branch": []string{"refs/heads/main"}}
 	w := httptest.NewRecorder()
 

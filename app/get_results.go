@@ -35,7 +35,7 @@ var (
 	errBucketNotFound = errors.New("bucket not found")
 )
 
-func GetResults(w http.ResponseWriter, r *http.Request) {
+func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]

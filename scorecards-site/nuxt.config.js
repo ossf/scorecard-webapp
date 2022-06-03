@@ -43,7 +43,26 @@ export default {
         sizes: '180x180',
         href: '/apple-touch-icon.png',
       },
-    ]
+    ],
+    script: [
+      {
+        type: 'text/javascript',
+        src: '//gc.zgo.at/count.js',
+        'data-goatcounter': 'https://MYCODE.goatcounter.com/count',
+        async: true,
+      },
+      {
+        type: 'text/javascript',
+        innerHTML:`
+          window.goatcounter = {no_onload: true}
+          window.addEventListener("hashchange", function(e) {
+              window.goatcounter.count({
+                  path: location.pathname + location.search + location.hash,
+              })
+          })`
+      }
+    ],
+    __dangerouslyDisableSanitizers: ['script']
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css

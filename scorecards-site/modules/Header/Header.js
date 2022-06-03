@@ -71,8 +71,7 @@ export default {
 
   mounted() {
     window.addEventListener('scroll', this.getScrollPos)
-    this.getTotalCommits("ossf", "scorecard");
-    this.fetchData()
+    // this.initHeadroom()
   },
 
   beforeDestroy() {

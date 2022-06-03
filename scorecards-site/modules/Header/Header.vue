@@ -12,6 +12,7 @@
               $route.params.slug === 'trust-security' ? 'logo-white' : 'logo-black',
             ]"
         /></a>
+        <CommitData class="hidden md:flex" :latestCommit="latestCommit" />
         <RepoButton :stars="stars" :commits="commits" />
       </div>
     </div>

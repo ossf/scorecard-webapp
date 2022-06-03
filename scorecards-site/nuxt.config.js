@@ -55,7 +55,6 @@ export default {
         type: 'text/javascript',
         innerHTML:`
           window.goatcounter = {no_onload: true}
-
           window.addEventListener("hashchange", function(e) {
               window.goatcounter.count({
                   path: location.pathname + location.search + location.hash,

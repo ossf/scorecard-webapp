@@ -63,8 +63,8 @@ export default {
     this.$nuxt.$on("setActiveToc", (id) => {
       this.currentlyActiveToc = id;
     });
+    this.getNavLinks();
   },
-  this.getNavLinks();
   data() {
     return {
       currentlyActiveToc: "",

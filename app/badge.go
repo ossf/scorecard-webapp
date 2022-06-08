@@ -16,17 +16,28 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/mux"
 	_ "gocloud.dev/blob/gcsblob" // Needed to link in GCP drivers.
 )
 
-const shieldsURL = "https://img.shields.io/ossf-scorecard"
+const (
+	shieldsURL = "https://img.shields.io/ossf-scorecard"
+	badgeLabel = "openssf scorecard"
+)
 
 func GetBadgeHandler(w http.ResponseWriter, r *http.Request) {
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
-	http.Redirect(w, r, fmt.Sprintf("%s/%s/%s/%s", shieldsURL, host, orgName, repoName), http.StatusFound)
+	parsedURL, err := url.Parse(fmt.Sprintf("%s/%s/%s/%s?label=%s", shieldsURL, host, orgName, repoName, badgeLabel))
+	if err != nil {
+		log.Printf("parsing badge URL: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, parsedURL.String(), http.StatusFound)
 }

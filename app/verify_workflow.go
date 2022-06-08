@@ -34,6 +34,7 @@ var (
 	errUnallowedStepName            = errors.New("job has unallowed step")
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
+	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
 )
 
 func verifyScorecardWorkflow(workflowContent string) error {
@@ -114,7 +115,11 @@ func verifyScorecardWorkflow(workflowContent string) error {
 
 	// Verify that steps are valid (checkout, scorecard-action, upload-artifact, upload-sarif).
 	for _, step := range steps {
-		stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
+		stepUses := getStepUses(step)
+		if stepUses == nil {
+			return fmt.Errorf("%w", errEmptyStepUses)
+		}
+		stepName := stepUses.Value
 		stepName = stepName[:strings.Index(stepName, "@")] // get rid of commit sha.
 
 		switch stepName {
@@ -122,7 +127,8 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"actions/checkout",
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
-			"github/codeql-action/upload-sarif":
+			"github/codeql-action/upload-sarif",
+			"actions-ecosystem/action-create-issue":
 		default:
 			return fmt.Errorf("%w: %s", errUnallowedStepName, stepName)
 		}
@@ -134,8 +140,15 @@ func verifyScorecardWorkflow(workflowContent string) error {
 // Finds the job with a step that calls ossf/scorecard-action.
 func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 	for _, job := range jobs {
+		if job == nil {
+			continue
+		}
 		for _, step := range job.Steps {
-			stepName := step.Exec.(*actionlint.ExecAction).Uses.Value
+			stepUses := getStepUses(step)
+			if stepUses == nil {
+				continue
+			}
+			stepName := stepUses.Value
 			stepName = stepName[:strings.Index(stepName, "@")] // get rid of commit sha.
 			if stepName == "ossf/scorecard-action" {
 				return job
@@ -143,4 +156,15 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 		}
 	}
 	return nil
+}
+
+func getStepUses(step *actionlint.Step) *actionlint.String {
+	if step == nil || step.Exec == nil {
+		return nil
+	}
+	execAction, exists := step.Exec.(*actionlint.ExecAction)
+	if !exists || execAction == nil {
+		return nil
+	}
+	return execAction.Uses
 }

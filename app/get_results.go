@@ -47,7 +47,6 @@ func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		return
 	}
@@ -55,13 +54,10 @@ func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, errInvalidInputs) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Printf("err: %v", err)
-	} else if errors.Is(err, errBucketNotFound) ||
-		errors.Is(err, errRetrievingData) {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("err: %v", err)
+		return
 	}
-
 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	log.Printf("err: %v", err)
 }
 
 func getResults(host, orgName, repoName string) ([]byte, error) {

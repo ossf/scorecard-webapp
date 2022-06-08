@@ -107,7 +107,18 @@ func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		return
 	}
-	if errors.Is(err, errMismatchedCertAndRequest) {
+	if errors.Is(err, errMismatchedCertAndRequest) ||
+		errors.Is(err, errGlobalVarsOrDefaults) ||
+		errors.Is(err, errGlobalWriteAll) ||
+		errors.Is(err, errGlobalWrite) ||
+		errors.Is(err, errScorecardJobNotFound) ||
+		errors.Is(err, errNonScorecardJobHasTokenWrite) ||
+		errors.Is(err, errJobHasContainerOrServices) ||
+		errors.Is(err, errScorecardJobRunsOn) ||
+		errors.Is(err, errUnallowedStepName) ||
+		errors.Is(err, errScorecardJobEnvVars) ||
+		errors.Is(err, errScorecardJobDefaults) ||
+		errors.Is(err, errEmptyStepUses) {
 		w.WriteHeader(http.StatusBadRequest)
 		if _, errWrite := fmt.Fprintf(w, "%v", err); errWrite != nil {
 			log.Printf("%v", errWrite)

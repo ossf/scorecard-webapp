@@ -26,12 +26,16 @@ func TestVerifyValidWorkflows(t *testing.T) {
 	workflowFiles := []string{
 		"testdata/workflow-valid.yml",
 		"testdata/workflow-valid-noglobalperm.yml",
+		"testdata/workflow-valid-e2e.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {
 		workflowContent, _ := ioutil.ReadFile(workflowFile)
 		err := verifyScorecardWorkflow(string(workflowContent))
-		assert.Equal(t, err, nil, workflowFile)
+		if err != nil {
+			t.Fail()
+			t.Errorf("expected - %v, got - %v", nil, err)
+		}
 	}
 }
 
@@ -43,7 +47,6 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"testdata/workflow-invalid-services.yml",
 		"testdata/workflow-invalid-runson.yml",
 		"testdata/workflow-invalid-envvars.yml",
-		"testdata/workflow-invalid-manysteps.yml",
 		"testdata/workflow-invalid-diffsteps.yml",
 		"testdata/workflow-invalid-defaults.yml",
 		"testdata/workflow-invalid-global-perm.yml",

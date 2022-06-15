@@ -29,11 +29,7 @@ import (
 
 const scorecardResultBucketURL = "gs://ossf-scorecard-results"
 
-var (
-	errRetrievingData = errors.New("error pulling from GCS bucket")
-	errInvalidInputs  = errors.New("invalid inputs provided")
-	errBucketNotFound = errors.New("bucket not found")
-)
+var errInvalidInputs = errors.New("invalid inputs provided")
 
 func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 	host := mux.Vars(r)["host"]
@@ -48,6 +44,12 @@ func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+	// TODO: Remove if here once all errors have been migrated to
+	// map to a http status code.
+	if errors.Is(err, errNotFound) {
+		errHandler(w, err)
 		return
 	}
 
@@ -72,11 +74,11 @@ func getResults(host, orgName, repoName string) ([]byte, error) {
 	ctx := context.Background()
 	bucket, err := blob.OpenBucket(ctx, scorecardResultBucketURL)
 	if err != nil {
-		return nil, errBucketNotFound
+		return nil, errNotFound
 	}
 	results, err := bucket.ReadAll(ctx, cleanResultsFile)
 	if err != nil {
-		return nil, errRetrievingData
+		return nil, errNotFound
 	}
 	return results, nil
 }

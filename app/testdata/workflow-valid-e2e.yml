@@ -1,0 +1,87 @@
+name: scorecard-golang
+on:
+  workflow_dispatch:
+  # Only the default branch is supported.
+  branch_protection_rule:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches: [ main ]
+
+# Declare default permissions as read only.
+
+jobs:
+  scorecard-golang:
+    name: Scorecard Golang
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed to upload the results to code-scanning dashboard.
+      security-events: write
+      actions: read
+      contents: read
+      id-token: write # needed for keyless signing
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix:
+        results_format: [sarif, json, default]
+        publish_results: [false, true]
+        include:
+          - results_format: sarif
+            upload_result: true
+          - results_format: json
+            upload_result: false
+          - results_format: default
+            upload_result: false
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        with:
+          persist-credentials: false
+      - name: "Run analysis"
+        id: scorecard-run
+        uses: docker://gcr.io/openssf/scorecard-action:latest
+        with:
+          entrypoint: "/scorecard-action"
+          results_file: results.${{ matrix.results_format }}
+          results_format: ${{ matrix.results_format }}
+          # Read-only PAT token. To create it,
+          # follow the steps in https://github.com/ossf/scorecard-action#pat-token-creation.
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          # Publish the results to enable scorecard badges. For more details, see
+          # https://github.com/ossf/scorecard-action#publishing-results.
+          # For private repositories, `publish_results` will automatically be set to `false`,
+          # regardless of the value entered here.
+          publish_results: ${{ matrix.publish_results }}
+      # Upload the results as artifacts (optional).
+      - name: "Upload artifact"
+        if: steps.scorecard-run.outcome == 'success'
+        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        with:
+          name: ${{ matrix.results_format }} file
+          path: results.${{ matrix.results_format }}
+          retention-days: 5
+      # Upload the results to GitHub's code scanning dashboard.
+      - name: "Upload to code-scanning"
+        if: matrix.upload_result == true && steps.scorecard-run.outcome == 'success'
+        uses: github/codeql-action/upload-sarif@5f532563584d71fdef14ee64d17bafb34f751ce5 # v1.0.26
+        with:
+          sarif_file: results.sarif
+      - name: "Report Scorecard run failure"
+        if: always() && steps.scorecard-run.outcome != 'success'
+        uses: actions-ecosystem/action-create-issue@b02a3c1d9d929a5839315bd255e40389f0dab627 #v1
+        with:
+          github_token: ${{ secrets.SCORECARD_READ_TOKEN }}
+          title: "Failing e2e tests - scorecard-golang on ${{ github.repository }}"
+          body: |
+            Matrix: ${{ toJSON(matrix) }}
+            Repo: https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Workflow name: ${{ github.workflow }}
+            Workflow file: https://github.com/${{ github.repository }}/tree/main/.github/workflows/scorecards-golang.yml
+            Trigger: ${{ github.event_name }}
+            Branch: ${{ github.ref_name }}
+          repo: "ossf/scorecard-action"
+          labels: |
+            e2e
+            automated-tests

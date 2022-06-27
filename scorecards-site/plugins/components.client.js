@@ -32,7 +32,9 @@ const animateOnScrollObserver = new IntersectionObserver(function (
             '.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]'
           )
           .forEach((el) => {
+            /* eslint-disable no-console */
             console.log(el)
+            /* eslint-enable no-console */
           })
         // entry.target.classList.add('enter')
         // const headerEl = document.querySelector('header')

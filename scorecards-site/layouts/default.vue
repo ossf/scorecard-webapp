@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import Header from "@/modules/Header/Header.vue";
-import Footer from "@/modules/Footer/Footer.vue";
+import Header from '@/modules/Header/Header.vue'
+import Footer from '@/modules/Footer/Footer.vue'
 
 export default {
-  name: "MainLayout",
+  name: 'MainLayout',
   components: {
     Header,
     Footer,
@@ -23,13 +23,13 @@ export default {
 
   filters: {
     capitalize(value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.charAt(0).toUpperCase() + value.slice(1);
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
     },
   },
   data: () => ({
-    scrollPos: "",
+    scrollPos: '',
     isScrolling: false,
     loading: false,
     headerNavLinks: null,
@@ -44,56 +44,56 @@ export default {
 
   computed: {
     scrollPosX() {
-      return window.scrollY;
+      return window.scrollY
     },
   },
 
   watch: {
     $route(to, from) {
-      this.$nuxt.$emit("openNavigation", false);
-      this.$nuxt.$on("storeTocs", (payload) => {
-        this.tocList = payload;
-      });
+      this.$nuxt.$emit('openNavigation', false)
+      this.$nuxt.$on('storeTocs', (payload) => {
+        this.tocList = payload
+      })
     },
   },
 
   mounted() {
-    window.addEventListener("scroll", this.getScrollPos);
+    window.addEventListener('scroll', this.getScrollPos)
 
     this.observer = new IntersectionObserver((entries) => {
-      this.$nuxt.$emit("observer.observed", entries);
-    });
+      this.$nuxt.$emit('observer.observed', entries)
+    })
 
-    this.$nuxt.$emit("observer.created", this.observer);
+    this.$nuxt.$emit('observer.created', this.observer)
 
-    this.$nuxt.$on("openNavigation", (payload) => {
-      this.mobileNavOpen = payload;
-    });
+    this.$nuxt.$on('openNavigation', (payload) => {
+      this.mobileNavOpen = payload
+    })
   },
 
   created() {
-    this.$nuxt.$on("storeTocs", (payload) => {
-      this.tocList = payload;
-    });
+    this.$nuxt.$on('storeTocs', (payload) => {
+      this.tocList = payload
+    })
   },
 
   beforeDestroy() {
-    window.removeEventListener("scroll", this.getScrollPos);
-    this.$nuxt.$off("openNavigation");
-    this.$nuxt.$off("storeTocs");
+    window.removeEventListener('scroll', this.getScrollPos)
+    this.$nuxt.$off('openNavigation')
+    this.$nuxt.$off('storeTocs')
   },
 
   methods: {
     getScrollPos() {
       if (window.scrollY > 0) {
-        this.isScrolling = true;
-        this.scrollPos = window.scrollY;
+        this.isScrolling = true
+        this.scrollPos = window.scrollY
       } else {
-        this.isScrolling = false;
+        this.isScrolling = false
       }
     },
   },
-};
+}
 </script>
 <style lang="scss">
 .slide-left-enter-active,

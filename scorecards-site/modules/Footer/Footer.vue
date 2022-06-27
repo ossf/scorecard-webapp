@@ -15,10 +15,12 @@
         © 2022 The Linux Foundation, under the terms of the Apache License 2.0.
       </div>
       <div class="text-14">
-        <strong>Privacy statement: </strong> We use <a href="https://www.goatcounter.com/">GoatCounter</a> to help us improve our website by
-        collecting and reporting information on how it's used. We do not store
-        advertising or tracking cookies. The information we collect does not
-        identify anyone and does not track an individual's use of the site.
+        <strong>Privacy statement: </strong> We use
+        <a href="https://www.goatcounter.com/">GoatCounter</a> to help us
+        improve our website by collecting and reporting information on how it's
+        used. We do not store advertising or tracking cookies. The information
+        we collect does not identify anyone and does not track an individual's
+        use of the site.
       </div>
     </div>
   </footer>

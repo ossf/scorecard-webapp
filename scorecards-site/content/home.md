@@ -7,7 +7,7 @@ thumbnail: /assets/checks.png
 ---
 
 <div>
-  <sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
+    <sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
 </div>
 
 <section class="bg-orange prose md:prose-lg w-full">
@@ -150,7 +150,7 @@ That’s where Security Scorecards is helping. Its focus is to understand the se
 
 ##### Security Scorecards assesses open source projects for security risks through a series of automated checks
 
-It was created by OSS developers to help improve the health of critical projects that the community depends on.
+It was created by OS developers to help improve the health of critical projects that the community depends on.
 
 You can use it to proactively assess and make informed decisions about accepting security risks within your codebase. You can also use the tool to evaluate other projects and dependencies, and work with maintainers to improve codebases you might want to integrate.
 
@@ -277,7 +277,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 #### For individual maintainers
 
-Security Scorecards is helpful as a pre-launch security checker for a new OSS project or to help to plan improvements to an existing one. If a project is well maintained, it’s more likely to be used by others instead of an alternative. It can also be used to check a new dependency being added to a project, so a maintainer can make an informed decision about the risk of doing so.
+Security Scorecards is helpful as a pre-launch security checker for a new OS project or to help to plan improvements to an existing one. If a project is well maintained, it’s more likely to be used by others instead of an alternative. It can also be used to check a new dependency being added to a project, so a maintainer can make an informed decision about the risk of doing so.
 
 #### For an organisation
 
@@ -285,11 +285,11 @@ Security Scorecards can be included in the continuous integration/continuous dep
 
 #### For consumers
 
-Security Scorecards helps to make informed decisions about security risks and vulnerabilities. Using the public data, it is also possible to evaluate the security posture of over 1 million of the most used OSS projects.
+Security Scorecards helps to make informed decisions about security risks and vulnerabilities. Using the public data, it is also possible to evaluate the security posture of over 1m of the most used OS projects.
 
 <br/>
 
-### Part of the OSS community
+### Part of the OSSS community
 
 <div class="w-full md:w-3/4 inline-flex items-center gap-x-40">
 
@@ -319,9 +319,9 @@ Security Scorecards helps to make informed decisions about security risks and vu
 
 </div>
 
-Security Scorecards is being [developed and facilitated by contributors](https://github.com/ossf/scorecard/graphs/contributors) from across the OSS ecosystem.
+Security Scorecards is being [developed and facilitated by contributors](https://github.com/ossf/scorecard/graphs/contributors) from across the OS ecosystem.
 
-We're part of the [Open Source Security Foundation (OpenSSF)](https://openssf.org), a cross-industry collaboration that brings together OSS security initiatives under one foundation and seeks to improve the security of OSS by building a broader community, targeted initiatives, and best practises.
+We're part of the [Open Source Security Foundation (OpenSSF)](https://openssf.org), a cross-industry collaboration that brings together OS security initiatives under one foundation and seeks to improve the security of OS software by building a broader community, targeted initiatives, and best practises.
 
 OpenSSF launched Security Scorecards in November 2020 with the intention of auto-generating a “security score” for open source projects to help users as they decide the trust, risk, and security posture for their use case.
 

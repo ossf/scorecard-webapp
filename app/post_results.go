@@ -17,9 +17,12 @@ package app
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -28,18 +31,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-openapi/runtime"
 	"github.com/google/go-github/v42/github"
 	"github.com/gorilla/mux"
-	"github.com/sigstore/cosign/cmd/cosign/cli/options"
-	"github.com/sigstore/cosign/cmd/cosign/cli/rekor"
-	"github.com/sigstore/cosign/pkg/cosign"
-	"github.com/sigstore/rekor/pkg/generated/client"
-	"github.com/sigstore/rekor/pkg/generated/models"
-	"github.com/sigstore/rekor/pkg/types"
-	hashedrekord "github.com/sigstore/rekor/pkg/types/hashedrekord/v0.0.1"
-	rekord "github.com/sigstore/rekor/pkg/types/rekord/v0.0.1"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 	"gocloud.dev/blob"
 )
 
@@ -74,6 +67,11 @@ type certInfo struct {
 	repoBranchRef string
 	repoSHA       string
 	workflowPath  string
+}
+
+type tlogEntry struct {
+	Body           string `json:"body"`
+	IntegratedTime int64  `json:"integratedTime"`
 }
 
 func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
@@ -130,13 +128,8 @@ func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func processRequest(host, org, repo string, scorecardResult ScorecardResult) error {
-	rekorClient, err := rekor.NewClient(options.DefaultRekorURL)
-	if err != nil {
-		return fmt.Errorf("error initializing Rekor client: %w", err)
-	}
-
 	ctx := context.Background()
-	cert, err := extractAndVerifyCertForPayload(ctx, rekorClient, []byte(scorecardResult.Result))
+	cert, err := extractAndVerifyCertForPayload(ctx, []byte(scorecardResult.Result))
 	if err != nil {
 		return fmt.Errorf("error extracting cert: %w", err)
 	}
@@ -227,27 +220,30 @@ func writeToBlobStore(ctx context.Context, bucketURL, filename string, data []by
 	return nil
 }
 
-func extractAndVerifyCertForPayload(ctx context.Context,
-	rekorClient *client.Rekor, payload []byte,
-) (*x509.Certificate, error) {
+func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.Certificate, error) {
 	// Get most recent Rekor entry uuid.
-	uuids, err := cosign.FindTLogEntriesByPayload(ctx, rekorClient, payload)
+	uuids, err := getUUIDsByPayload(ctx, payload)
 	if err != nil || len(uuids) == 0 {
 		return nil, fmt.Errorf("error finding tlog entries corresponding to payload: %w", err)
 	}
+	// TODO(#135): We can't simply take the latest UUID. Either:
+	// (a) iterate through all returned UUIDs to find the right one.
+	// (b) send tlog index in the POST payload to identify the corresponding UUID.
 	uuid := uuids[len(uuids)-1] // ignore past entries.
 
 	// Get tlog entry from the UUID.
-	entry, err := cosign.GetTlogEntry(ctx, rekorClient, uuid)
+	entry, err := getTLogEntry(ctx, uuid)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 	}
 
 	// Verify tlog entry to make sure it is actually in the log.
-	err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
-	if err != nil {
-		return nil, fmt.Errorf("error verifying tlog entry: %w", err)
-	}
+	// TODO(#113): What exactly are we verifying here and how can we do it
+	// based on the info returned from the API?
+	//err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
+	//if err != nil {
+	//	return nil, fmt.Errorf("error verifying tlog entry: %w", err)
+	//}
 
 	// Extract certificate.
 	certs, err := extractCerts(entry)
@@ -259,11 +255,83 @@ func extractAndVerifyCertForPayload(ctx context.Context,
 	}
 
 	cert := certs[0]
+
 	// Verify that cert isn't expired.
-	if err = cosign.CheckExpiry(cert, time.Unix(*entry.IntegratedTime, 0)); err != nil {
-		return nil, fmt.Errorf("error during cosign.CheckExpiry: %w", err)
+	integratedTime := time.Unix(entry.IntegratedTime, 0)
+	if cert.NotAfter.Before(integratedTime) {
+		return nil, fmt.Errorf("certificate expired before signatures were entered in log: %s is before %s",
+			cert.NotAfter, integratedTime)
+	}
+	if cert.NotBefore.After(integratedTime) {
+		return nil, fmt.Errorf("certificate was issued after signatures were entered in log: %s is after %s",
+			cert.NotAfter, integratedTime)
 	}
 	return cert, nil
+}
+
+func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
+	payloadSHA := sha256.Sum256(payload)
+	rekorPayload := struct {
+		Hash string `json:"hash"`
+	}{
+		Hash: fmt.Sprintf("sha256:%s", hex.EncodeToString(payloadSHA[:])),
+	}
+	jsonPayload, err := json.Marshal(rekorPayload)
+	if err != nil {
+		return nil, fmt.Errorf("marshaling json payload: %w", err)
+	}
+
+	rekorReq, err := http.NewRequestWithContext(ctx,
+		http.MethodPost,
+		"https://rekor.sigstore.dev/api/v1/index/retrieve",
+		bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return nil, fmt.Errorf("creating new HTTP request: %w", err)
+	}
+	rekorReq.Header.Add("Content-Type", "application/json")
+	rekorReq.Header.Add("accept", "application/json")
+	resp, err := http.DefaultClient.Do(rekorReq)
+	if err != nil {
+		return nil, fmt.Errorf("looking up Rekor index: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var rekorResult []string
+	if err := json.NewDecoder(resp.Body).Decode(&rekorResult); err != nil {
+		return nil, fmt.Errorf("decoding Rekor response: %w", err)
+	}
+
+	return rekorResult, nil
+}
+
+func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
+	rekorReq, err := http.NewRequestWithContext(ctx,
+		http.MethodGet,
+		fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries/%s", uuid),
+		nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating new HTTP request: %w", err)
+	}
+	rekorReq.Header.Add("accept", "application/json")
+	resp, err := http.DefaultClient.Do(rekorReq)
+	if err != nil {
+		return nil, fmt.Errorf("looking up Rekor index: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var rekorResult map[string]tlogEntry
+	if err := json.NewDecoder(resp.Body).Decode(&rekorResult); err != nil {
+		return nil, fmt.Errorf("decoding Rekor response: %w", err)
+	}
+
+	for _, res := range rekorResult {
+		return &tlogEntry{
+			Body:           res.Body,
+			IntegratedTime: res.IntegratedTime,
+		}, nil
+	}
+
+	return nil, fmt.Errorf("unexpected error")
 }
 
 func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
@@ -305,53 +373,45 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	return ret, nil
 }
 
-// nolint:lll
-// Source: https://github.com/sigstore/cosign/blob/18d2ce0b458018951f7356db911467a427a8dffe/cmd/cosign/cli/verify/verify_blob.go#L321
-func extractCerts(e *models.LogEntryAnon) ([]*x509.Certificate, error) {
-	b, err := base64.StdEncoding.DecodeString(e.Body.(string))
+func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
+	b, err := base64.StdEncoding.DecodeString(entry.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	pe, err := models.UnmarshalProposedEntry(bytes.NewReader(b), runtime.JSONConsumer())
+	var entryBody struct {
+		Spec struct {
+			Signature struct {
+				PublicKey struct {
+					Content string `json:"content"`
+				} `json:"publicKey"`
+			} `json:"signature"`
+		} `json:"spec"`
+	}
+	if err := json.Unmarshal(b, &entryBody); err != nil {
+		return nil, err
+	}
+
+	publicKeyB64 := entryBody.Spec.Signature.PublicKey.Content
+	publicKey, err := base64.StdEncoding.DecodeString(publicKeyB64)
 	if err != nil {
 		return nil, err
 	}
 
-	eimpl, err := types.NewEntry(pe)
-	if err != nil {
-		return nil, err
-	}
-
-	var publicKeyB64 []byte
-	switch e := eimpl.(type) {
-	case *rekord.V001Entry:
-		publicKeyB64, err = e.RekordObj.Signature.PublicKey.Content.MarshalText()
-		if err != nil {
-			return nil, err
+	remaining := publicKey
+	var result []*x509.Certificate
+	for len(remaining) > 0 {
+		var certDer *pem.Block
+		certDer, remaining = pem.Decode(remaining)
+		if certDer == nil {
+			return nil, fmt.Errorf("error during PEM decoding: %w", err)
 		}
-	case *hashedrekord.V001Entry:
-		publicKeyB64, err = e.HashedRekordObj.Signature.PublicKey.Content.MarshalText()
+
+		cert, err := x509.ParseCertificate(certDer.Bytes)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error during certificate parsing: %w", err)
 		}
-	default:
-		return nil, errors.New("unexpected tlog entry type")
+		result = append(result, cert)
 	}
-
-	publicKey, err := base64.StdEncoding.DecodeString(string(publicKeyB64))
-	if err != nil {
-		return nil, err
-	}
-
-	certs, err := cryptoutils.UnmarshalCertificatesFromPEM(publicKey)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(certs) == 0 {
-		return nil, errors.New("no certs found in pem tlog")
-	}
-
-	return certs, err
+	return result, nil
 }

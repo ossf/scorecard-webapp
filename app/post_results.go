@@ -19,6 +19,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"crypto/x509"
+	_ "embed"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -77,7 +78,7 @@ type tlogEntry struct {
 //go:embed fulcio_v1.crt.pem
 var fulcioRoot []byte
 
-//go:embed fulcio__intermediate.crt.pem
+//go:embed fulcio_intermediate.crt.pem
 var fulcioIntermediate []byte
 
 func PostResultsHandler(w http.ResponseWriter, r *http.Request) {

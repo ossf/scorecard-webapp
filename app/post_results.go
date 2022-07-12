@@ -263,7 +263,11 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 	cert := certs[0]
 
 	// Verify the certificate against Fulcio Root CA
-	roots, intermediates, err := getFulcioRoots()
+	roots, err := getCertPool(fulcioRoot)
+	if err != nil {
+		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
+	}
+	intermediates, err := getCertPool(fulcioIntermediate)
 	if err != nil {
 		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
 	}
@@ -438,17 +442,11 @@ func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
 	return result, nil
 }
 
-func getFulcioRoots() (*x509.CertPool, *x509.CertPool, error) {
-	rootPool := x509.NewCertPool()
-	intermediatePool := x509.NewCertPool()
+func getCertPool(cert []byte) (*x509.CertPool, error) {
+	pool := x509.NewCertPool()
 
-	if ok := rootPool.AppendCertsFromPEM(fulcioRoot); !ok {
-		return nil, nil, fmt.Errorf("unmarshalling fulcio root")
+	if ok := pool.AppendCertsFromPEM(cert); !ok {
+		return nil, fmt.Errorf("unmarshalling PEM certificate")
 	}
-
-	if ok := intermediatePool.AppendCertsFromPEM(fulcioIntermediate); !ok {
-		return nil, nil, fmt.Errorf("unmarshalling fulcio intermediate")
-	}
-
-	return rootPool, intermediatePool, nil
+	return pool, nil
 }

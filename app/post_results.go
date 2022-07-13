@@ -17,6 +17,7 @@ package app
 import (
 	"bytes"
 	"context"
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"crypto/x509"
 	_ "embed"
@@ -32,8 +33,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
+	"github.com/go-openapi/strfmt"
 	"github.com/google/go-github/v42/github"
 	"github.com/gorilla/mux"
+	merkleproof "github.com/transparency-dev/merkle/proof"
+	"github.com/transparency-dev/merkle/rfc6962"
 	"gocloud.dev/blob"
 )
 
@@ -73,6 +78,17 @@ type certInfo struct {
 type tlogEntry struct {
 	Body           string `json:"body"`
 	IntegratedTime int64  `json:"integratedTime"`
+	LogID          string `json:"logID"`
+	LogIndex       int64  `json:"logIndex"`
+	Verification   *struct {
+		InclusionProof *struct {
+			Hashes   []string `json:"hashes"`
+			RootHash string   `json:"rootHash"`
+			TreeSize uint64   `json:"treeSize"`
+			LogIndex uint64   `json:"logIndex"`
+		} `json:"inclusionProof,omitempty"`
+		SignedEntryTimestamp strfmt.Base64 `json:"signedEntryTimestamp,omitempty"`
+	} `json:"verification"`
 }
 
 //go:embed fulcio_v1.crt.pem
@@ -80,6 +96,9 @@ var fulcioRoot []byte
 
 //go:embed fulcio_intermediate.crt.pem
 var fulcioIntermediate []byte
+
+//go:embed rekor.pub
+var rekorPub []byte
 
 func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
 	// Sanity check
@@ -244,15 +263,12 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 		return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 	}
 
-	// Verify tlog entry to make sure it is actually in the log.
-	// TODO(#113): What exactly are we verifying here and how can we do it
-	// based on the info returned from the API?
-	//err = cosign.VerifyTLogEntry(ctx, rekorClient, entry)
-	//if err != nil {
-	//	return nil, fmt.Errorf("error verifying tlog entry: %w", err)
-	//}
+	// Verify inclusion proof.
+	if err := verifyInclusionProof(uuid, entry); err != nil {
+		return nil, fmt.Errorf("verifying inclusion proof for Rekor: %w", err)
+	}
 
-	// Extract certificate.
+	// Extract and verify certificate.
 	certs, err := extractCerts(entry)
 	if err != nil || len(certs) == 0 {
 		return nil, fmt.Errorf("error extracting certificate from entry: %w", err)
@@ -262,36 +278,8 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 	}
 
 	cert := certs[0]
-
-	// Verify the certificate against Fulcio Root CA
-	roots, err := getCertPool(fulcioRoot)
-	if err != nil {
-		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
-	}
-	intermediates, err := getCertPool(fulcioIntermediate)
-	if err != nil {
-		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
-	}
-	if _, err := cert.Verify(x509.VerifyOptions{
-		CurrentTime:   cert.NotBefore,
-		Roots:         roots,
-		Intermediates: intermediates,
-		KeyUsages: []x509.ExtKeyUsage{
-			x509.ExtKeyUsageCodeSigning,
-		},
-	}); err != nil {
-		return nil, fmt.Errorf("verifying Fulcio issued certificate: %w", err)
-	}
-
-	// Verify that cert isn't expired.
-	integratedTime := time.Unix(entry.IntegratedTime, 0)
-	if cert.NotAfter.Before(integratedTime) {
-		return nil, fmt.Errorf("certificate expired before signatures were entered in log: %s is before %s",
-			cert.NotAfter, integratedTime)
-	}
-	if cert.NotBefore.After(integratedTime) {
-		return nil, fmt.Errorf("certificate was issued after signatures were entered in log: %s is after %s",
-			cert.NotAfter, integratedTime)
+	if err := verifyCert(certs[0], time.Unix(entry.IntegratedTime, 0)); err != nil {
+		return nil, fmt.Errorf("verifying cert: %w", err)
 	}
 	return cert, nil
 }
@@ -351,14 +339,112 @@ func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
 		return nil, fmt.Errorf("decoding Rekor response: %w", err)
 	}
 
-	for _, res := range rekorResult {
-		return &tlogEntry{
-			Body:           res.Body,
-			IntegratedTime: res.IntegratedTime,
-		}, nil
+	if res, exists := rekorResult[uuid]; exists {
+		return &res, nil
+	}
+	return nil, fmt.Errorf("unexpected error: entry for uuid %s not found", uuid)
+}
+
+func verifyInclusionProof(uuid string, e *tlogEntry) error {
+	if e == nil || e.Verification == nil || e.Verification.InclusionProof == nil {
+		return fmt.Errorf("no inclusion proof provided")
+	}
+	rootHash, err := hex.DecodeString(e.Verification.InclusionProof.RootHash)
+	if err != nil {
+		return fmt.Errorf("error decoding hex encoded root hash: %w", err)
 	}
 
-	return nil, fmt.Errorf("unexpected error")
+	leafHash, err := hex.DecodeString(uuid)
+	if err != nil {
+		return fmt.Errorf("error decoding hex encoded leaf hash: %w", err)
+	}
+
+	var hashes [][]byte
+	for _, h := range e.Verification.InclusionProof.Hashes {
+		hb, err := hex.DecodeString(h)
+		if err != nil {
+			return fmt.Errorf("error decoding inclusion proof hashes: %w", err)
+		}
+		hashes = append(hashes, hb)
+	}
+
+	if err := merkleproof.VerifyInclusion(rfc6962.DefaultHasher,
+		e.Verification.InclusionProof.LogIndex,
+		e.Verification.InclusionProof.TreeSize, leafHash, hashes, rootHash); err != nil {
+		return fmt.Errorf("%w: %s", err, "verifying inclusion proof")
+	}
+
+	// Verify the SignedEntryTimestamp against Rekor's pub key.
+	derBytes, _ := pem.Decode(rekorPub)
+	if derBytes == nil {
+		return errors.New("PEM decoding failed")
+	}
+	rekorPubKey, err := x509.ParsePKIXPublicKey(derBytes.Bytes)
+	if err != nil {
+		return fmt.Errorf("parsing Rekor pub key: %w", err)
+	}
+	rekorECDSA, ok := rekorPubKey.(*ecdsa.PublicKey)
+	if !ok {
+		return errors.New("public key retrieved from Rekor is not an ECDSA key")
+	}
+
+	payload := struct {
+		Body           string `json:"body"`
+		IntegratedTime int64  `json:"integratedTime"`
+		LogID          string `json:"logID"`
+		LogIndex       int64  `json:"logIndex"`
+	}{
+		Body:           e.Body,
+		IntegratedTime: e.IntegratedTime,
+		LogID:          e.LogID,
+		LogIndex:       e.LogIndex,
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("json marshalling Rekor payload: %w", err)
+	}
+	jsonCanonicalized, err := jsoncanonicalizer.Transform(jsonPayload)
+	if err != nil {
+		return fmt.Errorf("json canonicalizer: %w", err)
+	}
+	hash := sha256.Sum256(jsonCanonicalized)
+	if !ecdsa.VerifyASN1(rekorECDSA, hash[:], e.Verification.SignedEntryTimestamp) {
+		return fmt.Errorf("unable to verify")
+	}
+	return nil
+}
+
+func verifyCert(cert *x509.Certificate, integratedTime time.Time) error {
+	// Verify the certificate against Fulcio Root CA
+	roots, err := getCertPool(fulcioRoot)
+	if err != nil {
+		return fmt.Errorf("retrieving Fulcio root: %w", err)
+	}
+	intermediates, err := getCertPool(fulcioIntermediate)
+	if err != nil {
+		return fmt.Errorf("retrieving Fulcio root: %w", err)
+	}
+	if _, err := cert.Verify(x509.VerifyOptions{
+		CurrentTime:   cert.NotBefore,
+		Roots:         roots,
+		Intermediates: intermediates,
+		KeyUsages: []x509.ExtKeyUsage{
+			x509.ExtKeyUsageCodeSigning,
+		},
+	}); err != nil {
+		return fmt.Errorf("verifying Fulcio issued certificate: %w", err)
+	}
+
+	// Verify that cert isn't expired.
+	if cert.NotAfter.Before(integratedTime) {
+		return fmt.Errorf("certificate expired before signatures were entered in log: %s is before %s",
+			cert.NotAfter, integratedTime)
+	}
+	if cert.NotBefore.After(integratedTime) {
+		return fmt.Errorf("certificate was issued after signatures were entered in log: %s is after %s",
+			cert.NotAfter, integratedTime)
+	}
+	return nil
 }
 
 func extractCertInfo(cert *x509.Certificate) (certInfo, error) {

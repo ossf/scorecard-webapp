@@ -58,3 +58,6 @@ jobs:
        run: |
             go env -w GOFLAGS=-mod=mod
             make scorecard-webapp
+     - name: Tests
+       run: |
+            cd app && go test

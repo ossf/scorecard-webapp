@@ -24,6 +24,6 @@ ARG TARGETOS
 ARG TARGETARCH
 RUN CGO_ENABLED=0 make scorecard-webapp
 
-FROM gcr.io/distroless/base:nonroot@sha256:d65ac1a65a4d82a48ebd0a22aea2acdd95d7abeeda245dfee932ec0018c781f4
+FROM gcr.io/distroless/base:nonroot@sha256:ad6969f9ab19c110d4dfaf679cdeca3d0e0a330c5cea792158dd633c3af928ed
 COPY --from=webapp /src/scorecard-webapp /
 ENTRYPOINT ["/scorecard-webapp"]

@@ -19,6 +19,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"crypto/x509"
+	_ "embed"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -73,6 +74,12 @@ type tlogEntry struct {
 	Body           string `json:"body"`
 	IntegratedTime int64  `json:"integratedTime"`
 }
+
+//go:embed fulcio_v1.crt.pem
+var fulcioRoot []byte
+
+//go:embed fulcio_intermediate.crt.pem
+var fulcioIntermediate []byte
 
 func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
 	// Sanity check
@@ -256,6 +263,26 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 
 	cert := certs[0]
 
+	// Verify the certificate against Fulcio Root CA
+	roots, err := getCertPool(fulcioRoot)
+	if err != nil {
+		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
+	}
+	intermediates, err := getCertPool(fulcioIntermediate)
+	if err != nil {
+		return nil, fmt.Errorf("retrieving Fulcio root: %w", err)
+	}
+	if _, err := cert.Verify(x509.VerifyOptions{
+		CurrentTime:   cert.NotBefore,
+		Roots:         roots,
+		Intermediates: intermediates,
+		KeyUsages: []x509.ExtKeyUsage{
+			x509.ExtKeyUsageCodeSigning,
+		},
+	}); err != nil {
+		return nil, fmt.Errorf("verifying Fulcio issued certificate: %w", err)
+	}
+
 	// Verify that cert isn't expired.
 	integratedTime := time.Unix(entry.IntegratedTime, 0)
 	if cert.NotAfter.Before(integratedTime) {
@@ -414,4 +441,13 @@ func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
 		result = append(result, cert)
 	}
 	return result, nil
+}
+
+func getCertPool(cert []byte) (*x509.CertPool, error) {
+	pool := x509.NewCertPool()
+
+	if ok := pool.AppendCertsFromPEM(cert); !ok {
+		return nil, fmt.Errorf("unmarshalling PEM certificate")
+	}
+	return pool, nil
 }

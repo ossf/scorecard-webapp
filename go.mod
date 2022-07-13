@@ -7,7 +7,7 @@ require github.com/gorilla/mux v1.8.0
 require (
 	github.com/google/go-github/v42 v42.0.0
 	github.com/rhysd/actionlint v1.6.13
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.0
 )
 
 require (
@@ -57,5 +57,5 @@ require (
 	google.golang.org/grpc v1.46.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

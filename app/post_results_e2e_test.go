@@ -26,7 +26,19 @@ import (
 var _ = Describe("E2E Test: extractAndVerifyCertForPayload", func() {
 	Context("E2E Test: Validate functionality", func() {
 		It("Should successfully extract cert for payload", func() {
-			testFile, err := os.Open("testdata/results/results.sarif")
+			testFile, err := os.Open("testdata/results/valid-payload.json")
+			Expect(err).Should(BeNil())
+
+			payload, err := ioutil.ReadAll(testFile)
+			Expect(err).Should(BeNil())
+
+			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload)
+			Expect(errCertExtract).Should(BeNil())
+		})
+	})
+	Context("E2E Test: Validate functionality", func() {
+		It("Should successfully extract cert for payload", func() {
+			testFile, err := os.Open("testdata/results/valid-payload-2.json")
 			Expect(err).Should(BeNil())
 
 			payload, err := ioutil.ReadAll(testFile)

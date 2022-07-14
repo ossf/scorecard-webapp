@@ -358,6 +358,12 @@ func verifyInclusionProof(uuid string, e *tlogEntry) error {
 	if err != nil {
 		return fmt.Errorf("error decoding hex encoded leaf hash: %w", err)
 	}
+	if len(leafHash) < 32 {
+		return fmt.Errorf("leafHash has unexpected size %d, want 32", len(leafHash))
+	}
+	if len(leafHash) > 32 {
+		leafHash = leafHash[len(leafHash)-32:]
+	}
 
 	var hashes [][]byte
 	for _, h := range e.Verification.InclusionProof.Hashes {

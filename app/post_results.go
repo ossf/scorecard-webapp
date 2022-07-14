@@ -339,7 +339,7 @@ func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
 		return nil, fmt.Errorf("decoding Rekor response: %w", err)
 	}
 
-	if res, exists := rekorResult[uuid]; exists {
+	for _, res := range rekorResult {
 		return &res, nil
 	}
 	return nil, fmt.Errorf("unexpected error: entry for uuid %s not found", uuid)

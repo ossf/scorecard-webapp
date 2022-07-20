@@ -30,6 +30,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 	"time"
 
@@ -190,13 +191,26 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient
 	if scorecardResult.AccessToken != "" {
+		log.Println("using github access roundtripper")
 		httpClient.Transport = githubTransport{
 			token: scorecardResult.AccessToken,
 		}
 	}
 	client := github.NewClient(httpClient)
-	repoClient, _, err := client.Repositories.Get(ctx, org, repo)
+	repoClient, resp, err := client.Repositories.Get(ctx, org, repo)
 	if err != nil {
+		if resp != nil {
+			if reqBytes, err := httputil.DumpRequest(resp.Request, false); err == nil {
+				log.Println(string(reqBytes))
+			} else {
+				log.Printf("dumping request: %v", err)
+			}
+			if respBytes, err := httputil.DumpResponse(resp.Response, true); err == nil {
+				log.Println(string(respBytes))
+			} else {
+				log.Printf("dumping response: %v", err)
+			}
+		}
 		return fmt.Errorf("error getting repository: %w", err)
 	}
 

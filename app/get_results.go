@@ -27,7 +27,10 @@ import (
 	_ "gocloud.dev/blob/gcsblob" // Needed to link in GCP drivers.
 )
 
-const scorecardResultBucketURL = "gs://ossf-scorecard-results"
+const (
+	scorecardResultBucketURL     = "gs://ossf-scorecard-results"
+	scorecardCronResultBucketURL = "gs://ossf-scorecard-cron-results"
+)
 
 var errInvalidInputs = errors.New("invalid inputs provided")
 
@@ -35,7 +38,8 @@ func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 	host := mux.Vars(r)["host"]
 	orgName := mux.Vars(r)["orgName"]
 	repoName := mux.Vars(r)["repoName"]
-	results, err := getResults(host, orgName, repoName)
+	commit := r.URL.Query().Get("commit")
+	results, err := getResults(host, orgName, repoName, commit)
 	if err == nil {
 		_, err := w.Write(results)
 		if err != nil {
@@ -62,9 +66,9 @@ func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("err: %v", err)
 }
 
-func getResults(host, orgName, repoName string) ([]byte, error) {
+func getResults(host, orgName, repoName, commit string) ([]byte, error) {
 	// Sanitize input and log query.
-	cleanResultsFile, err := sanitizeInputs(host, orgName, repoName)
+	cleanResultsFile, err := sanitizeInputs(host, orgName, repoName, commit)
 	if err != nil {
 		return nil, err
 	}
@@ -72,23 +76,42 @@ func getResults(host, orgName, repoName string) ([]byte, error) {
 
 	// Query GCS bucket.
 	ctx := context.Background()
-	bucket, err := blob.OpenBucket(ctx, scorecardResultBucketURL)
-	if err != nil {
-		return nil, errNotFound
+	if bucket, err := blob.OpenBucket(ctx, scorecardResultBucketURL); err == nil {
+		if results, err := bucket.ReadAll(ctx, cleanResultsFile); err == nil {
+			return results, nil
+		}
 	}
-	results, err := bucket.ReadAll(ctx, cleanResultsFile)
+
+	cleanResultsFile2, err := sanitizeInputs(host, orgName, repoName, commit)
 	if err != nil {
-		return nil, errNotFound
+		return nil, err
 	}
-	return results, nil
+
+	// Try the backup cron bucket.
+	if bucket, err := blob.OpenBucket(ctx, scorecardCronResultBucketURL); err == nil {
+		if results, err := bucket.ReadAll(ctx, cleanResultsFile2); err == nil {
+			return results, nil
+		}
+	}
+
+	return nil, errNotFound
 }
 
-func sanitizeInputs(host, orgName, repoName string) (string, error) {
-	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
+func sanitizeInputs(host, orgName, repoName, commit string) (string, error) {
+	resultsFile := filepath.Join(host, orgName, repoName, commit, "results.json")
+	if commit == "" {
+		resultsFile = filepath.Join(host, orgName, repoName, "results.json")
+	}
 	cleanResultsFile := filepath.Clean(resultsFile)
 	cleanResultsFile = strings.Replace(cleanResultsFile, "\n", "", -1)
 	cleanResultsFile = strings.Replace(cleanResultsFile, "\r", "", -1)
-	matched, err := filepath.Match("*/*/*/results.json", cleanResultsFile)
+	var matched bool
+	var err error
+	if commit == "" {
+		matched, err = filepath.Match("*/*/*/results.json", cleanResultsFile)
+	} else {
+		matched, err = filepath.Match("*/*/*/*/results.json", cleanResultsFile)
+	}
 	if err != nil || !matched {
 		return "", errInvalidInputs
 	}

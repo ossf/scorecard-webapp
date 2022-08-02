@@ -177,10 +177,15 @@ func processRequest(host, org, repo string, scorecardResult ScorecardResult) err
 	// Save scorecard results (results.json, score.txt) to GCS
 	bucketURL := resultsBucket
 	objectPath := fmt.Sprintf("%s/%s/%s/%s", host, org, repo, resultsFile)
-
 	if err := writeToBlobStore(ctx, bucketURL, objectPath, []byte(scorecardResult.Result)); err != nil {
-		return fmt.Errorf(errWritingBucket.Error()+": %v, %v", err)
+		return fmt.Errorf("%w: %v", errWritingBucket, err)
 	}
+
+	commitObjectPath := fmt.Sprintf("%s/%s/%s/%s/%s", host, org, repo, info.repoSHA, resultsFile)
+	if err := writeToBlobStore(ctx, bucketURL, commitObjectPath, []byte(scorecardResult.Result)); err != nil {
+		return fmt.Errorf("%w: %v", errWritingBucket, err)
+	}
+
 	return nil
 }
 

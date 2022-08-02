@@ -28,6 +28,7 @@ func TestSanitizePath(t *testing.T) {
 		host     string
 		orgName  string
 		repoName string
+		commit   string
 		wantPath string
 		wantErr  error
 	}{
@@ -59,12 +60,20 @@ func TestSanitizePath(t *testing.T) {
 			repoName: "repo",
 			wantErr:  errInvalidInputs,
 		},
+		{
+			name:     "handles commit",
+			host:     "github.com",
+			orgName:  "org",
+			repoName: "repo",
+			commit:   "sha1",
+			wantPath: "github.com/org/repo/sha1/results.json",
+		},
 	}
 	for _, tt := range testcases {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			gotPath, gotErr := sanitizeInputs(tt.host, tt.orgName, tt.repoName)
+			gotPath, gotErr := sanitizeInputs(tt.host, tt.orgName, tt.repoName, tt.commit)
 			if !errors.Is(gotErr, tt.wantErr) {
 				t.Errorf("expected %v, got %v", tt.wantErr, gotErr)
 			}

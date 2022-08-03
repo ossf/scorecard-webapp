@@ -86,11 +86,6 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return fmt.Errorf("%w", errJobHasContainerOrServices)
 	}
 
-	// Verify that the workflow runs on ubuntu and nothing else.
-	if scorecardJob.RunsOn == nil {
-		return fmt.Errorf("%w", errScorecardJobRunsOn)
-	}
-
 	labels := scorecardJob.RunsOn.Labels
 	if len(labels) != 1 {
 		return fmt.Errorf("%w", errScorecardJobRunsOn)
@@ -177,7 +172,7 @@ func getStepName(step string) string {
 }
 
 func getStepUses(step *actionlint.Step) *actionlint.String {
-	if step == nil || step.Exec == nil {
+	if step.Exec == nil {
 		return nil
 	}
 	execAction, exists := step.Exec.(*actionlint.ExecAction)

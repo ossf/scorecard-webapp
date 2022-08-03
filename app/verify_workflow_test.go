@@ -55,6 +55,11 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		"testdata/workflow-invalid-otherjob.yml",
 		"testdata/workflow-invalid-global-idtoken.yml",
 		"testdata/workflow-invalid-empty.yml",
+		"testdata/workflow-invalid-missing-scorecard.yml",
+		"testdata/workflow-invalid-missing-runson.yml",
+		"testdata/workflow-invalid-multiple-labels.yml",
+		"testdata/workflow-invalid-nil-steps.yml",
+		"testdata/workflow-invalid-execaction.yml",
 	}
 
 	for _, workflowFile := range workflowFiles {

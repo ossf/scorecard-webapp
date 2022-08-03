@@ -86,16 +86,6 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		return fmt.Errorf("%w", errJobHasContainerOrServices)
 	}
 
-	// Verify that the workflow runs on ubuntu and nothing else.
-	// This would never happen because it will fail the linting.
-	/*
-		errors during actionlint.Parse: [:16:3: "runs-on" section is missing in job "analysis" [syntax-check]]
-	*/
-	// TODO("naveen") :- Remove this check
-	if scorecardJob.RunsOn == nil {
-		return fmt.Errorf("%w", errScorecardJobRunsOn)
-	}
-
 	labels := scorecardJob.RunsOn.Labels
 	if len(labels) != 1 {
 		return fmt.Errorf("%w", errScorecardJobRunsOn)
@@ -182,18 +172,9 @@ func getStepName(step string) string {
 }
 
 func getStepUses(step *actionlint.Step) *actionlint.String {
-	// TODO("naveen") :- Remove this check as this never happens
-	// errors during actionlint.Parse: [:16:3: "steps" section is
-	// missing in job "analysis" [syntax-check]]
-	// workflow-invalid-nil-steps.yml has nil steps
-	if step == nil || step.Exec == nil {
+	if step.Exec == nil {
 		return nil
 	}
-	// TODO("naveen") :- Remove this check
-	// errors during actionlint.Parse: [:29:9: this step is for running action since it contains
-	// at least one of "uses", "with" keys, but also contains "run" key which is used for running
-	// shell command [syntax-check]]
-	// workflow-invalid-execaction.yml has execaction
 	execAction, exists := step.Exec.(*actionlint.ExecAction)
 	if !exists || execAction == nil {
 		return nil

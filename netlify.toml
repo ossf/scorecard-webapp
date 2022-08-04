@@ -20,4 +20,4 @@ command = "nuxt build"
 # Production context: all deploys from the Production branch set in your site's
 # deploy contexts will inherit these settings.
 [context.main.environment]
-REPO_URL="https://github.com/ossf/scorecard"
+REPO_URL="https://github.com/ossf/scorecard-webapp"

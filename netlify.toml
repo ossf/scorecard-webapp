@@ -12,7 +12,7 @@ base = "scorecards-site/"
 publish = "dist"
 
 # Default build command.
-command = "nuxt build"
+command = "nuxt generate"
 
 
 [build.environment]

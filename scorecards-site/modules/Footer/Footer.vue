@@ -20,6 +20,10 @@
         advertising or tracking cookies. The information we collect does not
         identify anyone and does not track an individual's use of the site.
       </div>
+      <div>
+        <br>
+      	<a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-dark.svg" alt="Deploys by Netlify"/> </a>
+      </div>
     </div>
   </footer>
 </template>

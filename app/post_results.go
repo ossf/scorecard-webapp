@@ -464,13 +464,13 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	for _, ext := range cert.Extensions {
 		if ext.Id.String() == fulcioRepoRefKey {
 			if len(ext.Value) == 0 {
-				return ret, fmt.Errorf("%w", errEmptyCertRef)
+				return ret, errEmptyCertRef
 			}
 			ret.repoBranchRef = string(ext.Value)
 		}
 		if ext.Id.String() == fulcioRepoPathKey {
 			if len(ext.Value) == 0 {
-				return ret, fmt.Errorf("%w", errEmptyCertPath)
+				return ret, errEmptyCertPath
 			}
 			ret.repoFullName = string(ext.Value)
 		}

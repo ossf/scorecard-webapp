@@ -309,7 +309,7 @@ Security Scorecards helps to make informed decisions about security risks and vu
 
 <div>
 
-![endor](assets/logos/endor.svg)
+![endor](assets/logos/endor.png)
 
 </div>
 

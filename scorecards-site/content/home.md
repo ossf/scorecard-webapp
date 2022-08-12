@@ -45,7 +45,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 1. You need to own the repository you are installing the action to, or have admin rights to it.
 2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
 3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
-<br/>
+   <br/>
 
 <a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta-icon">Install the action</a>
 
@@ -132,6 +132,7 @@ Security Scorecards also has standalone binaries and other platforms troubleshoo
 <h2 class="h1" id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards to ensure we follow secure development best practices.
+
 <div class="text-right"><cite>Appu Goundan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
 ### The problem
@@ -269,6 +270,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 <br/>
 
 > Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
+
 <div class="text-right mb-60"><cite>Harvey Tuch, <a href="https://www.envoyproxy.io/">Envoy</a></cite></div>
 
 ### Use cases

@@ -11,18 +11,16 @@ export default {
     return {
       items: [],
       onScreen: false,
-    };
+    }
   },
   watch: {
     onScreen(onScreen) {
       if (this.once && onScreen) {
-
-          this.$nuxt.$on("observer.observed", (observer) => {
-            for (const { el } of this.items) {
-              observer.unobserve(el);
-            }
-          });
-
+        this.$nuxt.$on('observer.observed', (observer) => {
+          for (const { el } of this.items) {
+            observer.unobserve(el)
+          }
+        })
       }
     },
   },
@@ -31,39 +29,39 @@ export default {
       ...(this.selector
         ? document.querySelectorAll(this.selector)
         : [this.$el]),
-    ].map((el) => ({ el, onScreen: false }));
+    ].map((el) => ({ el, onScreen: false }))
 
     if (this.items.length) {
-      this.$nuxt.$on("observer.observed", (entries) => {
+      this.$nuxt.$on('observer.observed', (entries) => {
         entries.forEach((entry) => {
-          const item = this.items.find(({ el }) => entry.target === el);
+          const item = this.items.find(({ el }) => entry.target === el)
 
           if (item) {
-            item.onScreen = entry.isIntersecting;
+            item.onScreen = entry.isIntersecting
           }
-        });
+        })
 
-        this.updateOnScreen();
-      });
+        this.updateOnScreen()
+      })
 
-      this.$nuxt.$on("observer.created", (observer) => {
+      this.$nuxt.$on('observer.created', (observer) => {
         for (const { el } of this.items) {
-          observer.observe(el);
+          observer.observe(el)
         }
-      });
+      })
 
-      this.updateOnScreen();
+      this.updateOnScreen()
     }
   },
   methods: {
     updateOnScreen() {
-      this.onScreen = !!this.items.find((item) => item.onScreen);
+      this.onScreen = !!this.items.find((item) => item.onScreen)
     },
   },
   render() {
     return this.$scopedSlots.default({
       onScreen: this.onScreen,
-    });
+    })
   },
-};
+}
 </script>

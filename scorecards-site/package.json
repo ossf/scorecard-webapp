@@ -11,8 +11,7 @@
     "lint:prettier": "prettier --check .",
     "lint": "yarn lint:js && yarn lint:prettier",
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix",
-    "prepare": "cd ../ && husky install ./scorecards-site/.husky",
-    "deploy": "yarn build && gcloud app deploy"
+    "prepare": "cd ../ && husky install ./scorecards-site/.husky"
   },
   "lint-staged": {
     "*.{js,vue}": "eslint --cache",

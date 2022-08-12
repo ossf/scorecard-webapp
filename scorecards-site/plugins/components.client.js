@@ -20,16 +20,20 @@ const animateOnScrollObserver = new IntersectionObserver(function (
 ) {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-    //   let id = null;
-    // document.querySelectorAll('.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]').forEach((el) => {
-    //   id = el.getAttribute('id');
-    // });
-    //   window.$nuxt.$emit("setActiveToc", id);
-    //   console.log(id)
+      //   let id = null;
+      // document.querySelectorAll('.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]').forEach((el) => {
+      //   id = el.getAttribute('id');
+      // });
+      //   window.$nuxt.$emit("setActiveToc", id);
+      //   console.log(id)
       if (entry.intersectionRatio > 0.1) {
-        document.querySelectorAll('.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]').forEach((el) => {
-          console.log(el)
-        });
+        document
+          .querySelectorAll(
+            '.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]'
+          )
+          .forEach((el) => {
+            console.log(el)
+          })
         // entry.target.classList.add('enter')
         // const headerEl = document.querySelector('header')
         // intersection ratio bigger than 90%

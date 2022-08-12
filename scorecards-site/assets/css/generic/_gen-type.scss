@@ -213,9 +213,9 @@ ol {
 ul {
   @extend %text--body-1;
   list-style: none;
-   li {
+  li {
     line-height: 3.2rem;
-   }
+  }
   &.bullet {
     @extend %bullet;
   }

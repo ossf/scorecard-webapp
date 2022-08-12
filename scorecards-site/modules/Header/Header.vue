@@ -9,7 +9,9 @@
         <a href="/" title="Home" class="logo"
           ><Logo
             :class="[
-              $route.params.slug === 'trust-security' ? 'logo-white' : 'logo-black',
+              $route.params.slug === 'trust-security'
+                ? 'logo-white'
+                : 'logo-black',
             ]"
         /></a>
         <RepoButton :stars="stars" :commits="commits" />

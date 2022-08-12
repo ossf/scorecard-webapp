@@ -3,7 +3,11 @@
     <div class="theme-code-group">
       <div class="theme-code-group__nav">
         <ul class="theme-code-group__ul">
-          <li v-for="(tab, i) in codeTabs" :key="tab.title" class="theme-code-group__li">
+          <li
+            v-for="(tab, i) in codeTabs"
+            :key="tab.title"
+            class="theme-code-group__li"
+          >
             <button
               class="theme-code-group__nav-tab"
               :class="{
@@ -26,56 +30,56 @@
 
 <script>
 export default {
-  name: "CodeGroup",
+  name: 'CodeGroup',
   data() {
     return {
       codeTabs: [],
       activeCodeTabIndex: -1,
-    };
+    }
   },
   watch: {
     activeCodeTabIndex(index) {
-      this.activateCodeTab(index);
+      this.activateCodeTab(index)
     },
   },
   mounted() {
-    this.loadTabs();
+    this.loadTabs()
   },
   methods: {
     changeCodeTab(index) {
-      console.log(index);
-      this.activeCodeTabIndex = index;
+      console.log(index)
+      this.activeCodeTabIndex = index
     },
     loadTabs() {
       this.codeTabs = (this.$slots.default || [])
         .filter((slot) => Boolean(slot.componentOptions))
         .map((slot, index) => {
-          if (slot.componentOptions.propsData.active === "") {
-            this.activeCodeTabIndex = index;
+          if (slot.componentOptions.propsData.active === '') {
+            this.activeCodeTabIndex = index
           }
-          this.activeCodeTabIndex = index;
+          this.activeCodeTabIndex = index
           return {
             title: slot.componentOptions.propsData.title,
             elm: slot.elm,
-          };
-        });
+          }
+        })
       if (this.activeCodeTabIndex === -1 && this.codeTabs.length > 0) {
-        this.activeCodeTabIndex = 0;
+        this.activeCodeTabIndex = 0
       }
-      this.activateCodeTab(this.activeCodeTabIndex);
+      this.activateCodeTab(this.activeCodeTabIndex)
     },
     activateCodeTab(index) {
       this.codeTabs.forEach((tab) => {
         if (tab.elm) {
-          tab.elm.classList.remove("theme-code-block__active");
+          tab.elm.classList.remove('theme-code-block__active')
         }
-      });
+      })
       if (this.codeTabs[index]) {
-        this.codeTabs[index].elm.classList.add("theme-code-block__active");
+        this.codeTabs[index].elm.classList.add('theme-code-block__active')
       }
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -107,7 +111,7 @@ export default {
   cursor: pointer;
   background: transparent;
   border-radius: 4px;
-  font-family: "Public Sans";
+  font-family: 'Public Sans';
   font-style: normal;
   font-weight: normal;
   font-size: 18px;

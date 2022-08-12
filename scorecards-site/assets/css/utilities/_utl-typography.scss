@@ -143,7 +143,6 @@
   font-weight: $weight-medium;
 
   @include media-breakpoint-up(md) {
-
     @apply leading-32;
   }
 }

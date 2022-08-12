@@ -19,9 +19,14 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: 'Quickly assess open source projects for risky practices'
+        content: 'Quickly assess open source projects for risky practices',
       },
-      { hid: 'keywords', name: 'keywords', content: 'scorecards, scorecard, openssf, slsa, sigstore, security, vulnerabilities, cve, supply chain, supply-chain' }
+      {
+        hid: 'keywords',
+        name: 'keywords',
+        content:
+          'scorecards, scorecard, openssf, slsa, sigstore, security, vulnerabilities, cve, supply chain, supply-chain',
+      },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
@@ -43,16 +48,16 @@ export default {
         sizes: '180x180',
         href: '/apple-touch-icon.png',
       },
-    ]
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['@/assets/css/base','highlight.js/styles/nord.css'],
+  css: ['@/assets/css/base', 'highlight.js/styles/nord.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~plugins/components.client' },
-    { src: '~plugins/prism', mode: 'client', ssr: false }
+    { src: '~plugins/prism', mode: 'client', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -107,30 +112,34 @@ export default {
     liveEdit: false,
     markdown: {
       highlighter(rawCode, lang) {
-        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
+        const highlightedCode = highlightjs.highlight(rawCode, {
+          language: lang,
+        }).value
 
         // We need to create a wrapper, because
         // the returned code from highlight.js
         // is only the highlighted code.
         return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`
       },
-      rehypePlugins: [
-        ['rehype-add-classes', { table: 'table' }]
-      ],
+      rehypePlugins: [['rehype-add-classes', { table: 'table' }]],
       remarkAutolinkHeadings: {
         // Fix for accessibility
-        linkProperties: { ariaHidden: 'true', tabIndex: -1, title: 'Link to Section' },
-       }
+        linkProperties: {
+          ariaHidden: 'true',
+          tabIndex: -1,
+          title: 'Link to Section',
+        },
+      },
     },
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   },
 
   googleFonts: {
     families: {
-      'Public Sans': [400,600,700],
-      'DM Mono': [400,500],
+      'Public Sans': [400, 600, 700],
+      'DM Mono': [400, 500],
     },
-    display: 'swap' // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
+    display: 'swap', // 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

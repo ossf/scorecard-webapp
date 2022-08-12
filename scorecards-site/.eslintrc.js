@@ -18,11 +18,11 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
   },
   overrides: [
-      {
-        files: ['pages/*','modules/*'],
-        rules: {
-          'vue/multi-word-component-names': 'off'
-        }
-      }
-    ]
+    {
+      files: ['pages/*', 'modules/*'],
+      rules: {
+        'vue/multi-word-component-names': 'off',
+      },
+    },
+  ],
 }

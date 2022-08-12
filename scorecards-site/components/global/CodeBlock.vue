@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "CodeBlock",
+  name: 'CodeBlock',
   props: {
     title: {
       type: String,
@@ -23,10 +23,10 @@ export default {
   },
   mounted() {
     if (this.$parent && this.$parent.loadTabs) {
-      this.$parent.loadTabs();
+      this.$parent.loadTabs()
     }
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

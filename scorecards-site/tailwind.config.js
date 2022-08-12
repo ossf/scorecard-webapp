@@ -276,9 +276,9 @@ module.exports = {
               },
             },
             blockquote: {
-                border: '2px solid #FF4D00',
-                borderRadius: '8px',
-                padding: '20px 32px 20px 20px',
+              border: '2px solid #FF4D00',
+              borderRadius: '8px',
+              padding: '20px 32px 20px 20px',
               p: {
                 fontFamily: 'Public Sans',
                 fontStyle: 'normal',
@@ -288,7 +288,7 @@ module.exports = {
                 letterSpacing: '-0.02em',
                 color: '#302825',
                 padding: '0',
-                margin: '0'
+                margin: '0',
               },
             },
             cite: {

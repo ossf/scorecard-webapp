@@ -1,22 +1,46 @@
 version: 2
 updates:
-- package-ecosystem: gomod
+  # For API code in app/
+  - package-ecosystem: gomod
   directory: "/"
   schedule:
     interval: daily
   commit-message:
       prefix: ":seedling:"
+  reviewers:
+    - ossf/scorecard-maintainers
   open-pull-requests-limit: 10
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
+  # For the website code in scorecards-site.
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: daily
+      time: '00:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - ossf/scorecard-maintainers
+    assignees:
+      - ossf/scorecard-maintainers
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
+  # github-actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
       interval: "daily"
-  commit-message:
+    commit-message:
       prefix: ":seedling:"
-- package-ecosystem: docker
-  directory: "/"
-  schedule:
-    interval: daily
-  commit-message:
+    reviewers:
+      - ossf/scorecard-maintainers
+  # Dockerfiles
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+    commit-message:
       prefix: ":seedling:"
-  open-pull-requests-limit: 10
+    reviewers:
+      - ossf/scorecard-maintainers
+    open-pull-requests-limit: 10

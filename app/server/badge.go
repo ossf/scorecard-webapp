@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 
-	"github.com/gorilla/mux"
+	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
 	_ "gocloud.dev/blob/gcsblob" // Needed to link in GCP drivers.
+
+	"github.com/ossf/scorecard-webapp/app/generated/models"
+	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/badge"
 )
 
 const (
@@ -29,15 +32,19 @@ const (
 	badgeLabel = "openssf scorecard"
 )
 
-func GetBadgeHandler(w http.ResponseWriter, r *http.Request) {
-	host := mux.Vars(r)["host"]
-	orgName := mux.Vars(r)["orgName"]
-	repoName := mux.Vars(r)["repoName"]
+func GetBadgeHandler(params badge.GetBadgeParams) middleware.Responder {
+	host := params.Platform
+	orgName := params.Org
+	repoName := params.Repo
 	parsedURL, err := url.Parse(fmt.Sprintf("%s/%s/%s/%s?label=%s", shieldsURL, host, orgName, repoName, badgeLabel))
 	if err != nil {
-		log.Printf("parsing badge URL: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		return badge.NewGetBadgeDefault(http.StatusInternalServerError).WithPayload(&models.Error{
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		})
 	}
-	http.Redirect(w, r, parsedURL.String(), http.StatusFound)
+
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, producer runtime.Producer) {
+		http.Redirect(rw, params.HTTPRequest, parsedURL.String(), http.StatusFound)
+	})
 }

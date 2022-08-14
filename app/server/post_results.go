@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
 	"bytes"
@@ -27,19 +27,21 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/google/go-github/v42/github"
-	"github.com/gorilla/mux"
 	merkleproof "github.com/transparency-dev/merkle/proof"
 	"github.com/transparency-dev/merkle/rfc6962"
 	"gocloud.dev/blob"
+
+	"github.com/ossf/scorecard-webapp/app/generated/models"
+	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/results"
 )
 
 const (
@@ -61,12 +63,6 @@ var (
 	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
 	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
 )
-
-type ScorecardResult struct {
-	Result      string `json:"result"`
-	Branch      string `json:"branch"`
-	AccessToken string `json:"accessToken"`
-}
 
 type certInfo struct {
 	repoFullName  string
@@ -100,36 +96,16 @@ var fulcioIntermediate []byte
 //go:embed rekor.pub
 var rekorPub []byte
 
-func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
+func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 	// Sanity check
-	host := mux.Vars(r)["host"]
-	orgName := mux.Vars(r)["orgName"]
-	repoName := mux.Vars(r)["repoName"]
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := fmt.Fprintf(w, "error reading request body")
-		if err != nil {
-			log.Printf("error during Write: %v", err)
-		}
-		return
-	}
-	var scorecardResult ScorecardResult
-	if err := json.Unmarshal(reqBody, &scorecardResult); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := fmt.Fprint(w, "error unmarshaling input JSON")
-		if err != nil {
-			log.Printf("error during Write: %v", err)
-		}
-		return
-	}
+	host := params.Platform
+	orgName := params.Org
+	repoName := params.Repo
 
 	// Process
-	err = processRequest(host, orgName, repoName, scorecardResult)
+	err := processRequest(host, orgName, repoName, params.Publish)
 	if err == nil {
-		w.WriteHeader(http.StatusCreated)
-		return
+		return results.NewPostResultCreated().WithPayload("successfully verified and published ScorecardResult")
 	}
 	if errors.Is(err, errMismatchedCertAndRequest) ||
 		errors.Is(err, errGlobalVarsOrDefaults) ||
@@ -143,17 +119,19 @@ func PostResultsHandler(w http.ResponseWriter, r *http.Request) {
 		errors.Is(err, errScorecardJobEnvVars) ||
 		errors.Is(err, errScorecardJobDefaults) ||
 		errors.Is(err, errEmptyStepUses) {
-		w.WriteHeader(http.StatusBadRequest)
-		if _, errWrite := fmt.Fprintf(w, "%v", err); errWrite != nil {
-			log.Printf("%v", errWrite)
-		}
-		return
+		return results.NewPostResultBadRequest().WithPayload(&models.Error{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
 	}
-	log.Printf("%v", err)
-	w.WriteHeader(http.StatusInternalServerError)
+	log.Println(err)
+	return results.NewPostResultDefault(http.StatusInternalServerError).WithPayload(&models.Error{
+		Code:    http.StatusInternalServerError,
+		Message: "something went wrong and we are looking into it.",
+	})
 }
 
-func processRequest(host, org, repo string, scorecardResult ScorecardResult) error {
+func processRequest(host, org, repo string, scorecardResult *models.VerifiedScorecardResult) error {
 	ctx := context.Background()
 	cert, err := extractAndVerifyCertForPayload(ctx, []byte(scorecardResult.Result))
 	if err != nil {
@@ -190,7 +168,7 @@ func processRequest(host, org, repo string, scorecardResult ScorecardResult) err
 }
 
 func getAndVerifyWorkflowContent(ctx context.Context,
-	org, repo string, scorecardResult ScorecardResult, info certInfo,
+	org, repo string, scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient

@@ -12,21 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
 	"errors"
-	"log"
-	"net/http"
 )
 
-// TODO: Add errors corresponding to http status codes
-// that should be returned by the server.
 var errNotFound = errors.New("not found")
-
-func errHandler(w http.ResponseWriter, err error) {
-	if errors.Is(err, errNotFound) {
-		log.Printf("%v", err)
-		w.WriteHeader(http.StatusNotFound)
-	}
-}

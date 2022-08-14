@@ -12,30 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
+	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	endpts := struct {
-		GetRepoResults string `json:"get_repo_results"`
-		GetRepoBadge   string `json:"get_repo_badge"`
-	}{
-		GetRepoResults: "/projects/{host}/{owner}/{repository}",
-		GetRepoBadge:   "/projects/{host}/{owner}/{repository}/badge",
-	}
-	endptsBytes, err := json.MarshalIndent(endpts, "", " ")
-	if err != nil {
-		log.Fatal(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if _, err := fmt.Fprint(w, string(endptsBytes)); err != nil {
-		log.Fatal(err)
-	}
+func TestE2E(t *testing.T) {
+	t.Parallel()
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Scorecard web API suite")
 }

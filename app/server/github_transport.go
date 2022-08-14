@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
-	"testing"
-
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"fmt"
+	"net/http"
 )
 
-func TestE2E(t *testing.T) {
-	t.Parallel()
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Scorecard web API suite")
+type githubTransport struct {
+	token string
+}
+
+func (transport githubTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", transport.token))
+	return http.DefaultTransport.RoundTrip(r)
 }

@@ -1,0 +1,230 @@
+# Copyright 2022 Security Scorecard Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+swagger: '2.0'
+info:
+  title: OpenSSF Scorecard API
+  description: API to interact with a project's published Scorecard result
+  version: 1.0.0
+host: api.securityscorecards.dev
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# TODO(azeems): Enable this when using it for Cloud Endpoints.
+#x-google-backend:
+#address: https://scorecard-api-prod-x3pmld2cbq-uc.a.run.app
+#protocol: h2
+
+paths:
+  /projects/{platform}/{org}/{repo}/badge:
+    get:
+      parameters:
+        - in: path
+          name: platform
+          type: string
+          required: true
+          description: VCS platform. eg. github.com
+        - in: path
+          name: org
+          type: string
+          required: true
+          description: Name of the owner/organization of the repository
+        - in: path
+          name: repo
+          type: string
+          required: true
+          description: Name of the repository
+      summary: Get a repository's Scorecard badge
+      operationId: getBadge
+      tags:
+        - badge
+      responses:
+        302:
+          description: Scorecard badge for the repository
+        default:
+          $ref: '#/responses/InternalServerError'
+
+  /projects/{platform}/{org}/{repo}:
+    parameters:
+      - in: path
+        name: platform
+        type: string
+        required: true
+        description: VCS platform. eg. github.com
+      - in: path
+        name: org
+        type: string
+        required: true
+        description: Name of the owner/organization of the repository
+      - in: path
+        name: repo
+        type: string
+        required: true
+        description: Name of the repository
+    get:
+      summary: Get a repository's ScorecardResult
+      operationId: getResult
+      tags:
+        - results
+      parameters:
+        - in: query
+          name: commit
+          type: string
+          description: SHA1 commit hash expressed in hexadecimal format
+          pattern: '^[0-9a-fA-F]{40}$'
+      responses:
+        200:
+          description: A JSON object of the repository's ScorecardResult
+          schema:
+            $ref: '#/definitions/ScorecardResult'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+        default:
+          $ref: '#/responses/InternalServerError'
+    post:
+      summary: Publish a repository's OIDC verified ScorecardResult
+      operationId: postResult
+      tags:
+        - results
+      parameters:
+        - in: body
+          name: publish
+          required: true
+          schema:
+            $ref: '#/definitions/VerifiedScorecardResult'
+      responses:
+        201:
+          description: Successfully updated ScorecardResult
+          schema:
+            type: string
+        400:
+          $ref: '#/responses/BadRequest'
+        default:
+          $ref: '#/responses/InternalServerError'
+
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+
+  ScorecardResult:
+    type: object
+    properties:
+      date:
+        type: string
+        x-order: 0
+      repo:
+        $ref: '#/definitions/Repo'
+        x-order: 1
+      scorecard:
+        type: object
+        x-order: 2
+        $ref: '#/definitions/ScorecardVersion'
+      score:
+        type: number
+        x-order: 3
+        description: Aggregate score of the repository
+      checks:
+        type: array
+        x-order: 4
+        items:
+          $ref: '#/definitions/ScorecardCheck'
+      metadata:
+        type: string
+        x-order: 5
+
+  Repo:
+    type: object
+    properties:
+          name:
+            type: string
+            x-order: 0
+            description: respository that was analyzed
+          commit:
+            type: string
+            x-order: 1
+            pattern: '^[0-9a-fA-F]{40}$'
+            description: SHA1 value of the analyzed commit expressed as hexadecimal
+
+  ScorecardVersion:
+    type: object
+    properties:
+      version:
+        type: string
+        x-order: 0
+        description: Scorecard version used for this analysis
+      commit:
+        type: string
+        x-order: 1
+        pattern: '^[0-9a-fA-F]{40}$'
+        description: SHA1 value of the Scorecard commit used for analysis
+
+  ScorecardCheck:
+    type: object
+    properties:
+      name:
+        type: string
+        x-order: 0
+      score:
+        type: integer
+        x-order: 1
+      reason:
+        type: string
+        x-order: 2
+      documentation:
+        type: object
+        x-order: 3
+        properties:
+          url:
+            type: string
+          short:
+            type: string
+      details:
+        type: array
+        x-order: 4
+        items:
+          type: string
+
+  VerifiedScorecardResult:
+    type: object
+    properties:
+      result:
+        type: string
+      branch:
+        type: string
+      accessToken:
+        type: string
+
+responses:
+  NotFound:
+    description: The content requested could not be found
+  BadRequest:
+    description: The request provided to the server was invalid
+    schema:
+      $ref: "#/definitions/Error"
+  InternalServerError:
+    description: There was an internal error in the server while processing the request
+    schema:
+      $ref: "#/definitions/Error"

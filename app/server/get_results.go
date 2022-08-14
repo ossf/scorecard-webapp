@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
 	"context"
@@ -22,9 +22,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gorilla/mux"
+	"github.com/go-openapi/runtime/middleware"
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/gcsblob" // Needed to link in GCP drivers.
+
+	"github.com/ossf/scorecard-webapp/app/generated/models"
+	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/results"
 )
 
 const (
@@ -34,39 +37,29 @@ const (
 
 var errInvalidInputs = errors.New("invalid inputs provided")
 
-func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
-	host := mux.Vars(r)["host"]
-	orgName := mux.Vars(r)["orgName"]
-	repoName := mux.Vars(r)["repoName"]
-	commit := r.URL.Query().Get("commit")
-	results, err := getResults(host, orgName, repoName, commit)
-	if err == nil {
-		_, err := w.Write(results)
-		if err != nil {
-			log.Printf("err: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		return
-	}
-	// TODO: Remove if here once all errors have been migrated to
-	// map to a http status code.
+func GetResultHandler(params results.GetResultParams) middleware.Responder {
+	res, err := getResults(params.Platform, params.Org, params.Repo, params.Commit)
+
 	if errors.Is(err, errNotFound) {
-		errHandler(w, err)
-		return
+		return results.NewGetResultNotFound()
+	}
+	if errors.Is(err, errInvalidInputs) {
+		return results.NewGetResultBadRequest()
+	}
+	if err == nil {
+		var ret models.ScorecardResult
+		if err = ret.UnmarshalBinary(res); err == nil {
+			return results.NewGetResultOK().WithPayload(&ret)
+		}
 	}
 
-	if errors.Is(err, errInvalidInputs) {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("err: %v", err)
-		return
-	}
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-	log.Printf("err: %v", err)
+	return results.NewGetResultDefault(http.StatusInternalServerError).WithPayload(&models.Error{
+		Code:    http.StatusInternalServerError,
+		Message: err.Error(),
+	})
 }
 
-func getResults(host, orgName, repoName, commit string) ([]byte, error) {
+func getResults(host, orgName, repoName string, commit *string) ([]byte, error) {
 	// Sanitize input and log query.
 	cleanResultsFile, err := sanitizeInputs(host, orgName, repoName, commit)
 	if err != nil {
@@ -97,17 +90,17 @@ func getResults(host, orgName, repoName, commit string) ([]byte, error) {
 	return nil, errNotFound
 }
 
-func sanitizeInputs(host, orgName, repoName, commit string) (string, error) {
-	resultsFile := filepath.Join(host, orgName, repoName, commit, "results.json")
-	if commit == "" {
-		resultsFile = filepath.Join(host, orgName, repoName, "results.json")
+func sanitizeInputs(host, orgName, repoName string, commit *string) (string, error) {
+	resultsFile := filepath.Join(host, orgName, repoName, "results.json")
+	if commit != nil {
+		resultsFile = filepath.Join(host, orgName, repoName, *commit, "results.json")
 	}
 	cleanResultsFile := filepath.Clean(resultsFile)
 	cleanResultsFile = strings.Replace(cleanResultsFile, "\n", "", -1)
 	cleanResultsFile = strings.Replace(cleanResultsFile, "\r", "", -1)
 	var matched bool
 	var err error
-	if commit == "" {
+	if commit == nil {
 		matched, err = filepath.Match("*/*/*/results.json", cleanResultsFile)
 	} else {
 		matched, err = filepath.Match("*/*/*/*/results.json", cleanResultsFile)

@@ -12,18 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang@sha256:bd9823cdad5700fb4abe983854488749421d5b4fc84154c30dae474100468b85 AS base
-WORKDIR /src
-ENV CGO_ENABLED=0
-COPY go.* ./
-RUN go mod download
-COPY . ./
+FROM golang:1.18.5@sha256:fb249eca1b9172732de4950b0fb0fb5c231b83c2c90952c56d822d8a9de4d64b AS builder
+ENV APP_ROOT=/opt/app-root
+ENV GOPATH=$APP_ROOT
 
-FROM base AS webapp
+WORKDIR $APP_ROOT/src/
+ADD . $APP_ROOT/src/
+RUN go mod download
+
 ARG TARGETOS
 ARG TARGETARCH
 RUN CGO_ENABLED=0 make scorecard-webapp
 
-FROM gcr.io/distroless/base:nonroot@sha256:49d2923f35d66b8402487a7c01bc62a66d8279cd42e89c11b64cdce8d5826c03
-COPY --from=webapp /src/scorecard-webapp /
-ENTRYPOINT ["/scorecard-webapp"]
+# Multi-Stage production build
+FROM golang:1.18.5@sha256:fb249eca1b9172732de4950b0fb0fb5c231b83c2c90952c56d822d8a9de4d64b as deploy
+# Retrieve the binary from the previous stage
+COPY --from=builder /opt/app-root/src/scorecard-webapp /usr/local/bin/scorecard-webapp
+
+# Set the binary as the entrypoint of the container
+ENTRYPOINT scorecard-webapp --host="0.0.0.0" --port=8080
+EXPOSE 8080

@@ -12,30 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main implements the scorecard.dev webapp.
 package main
 
 import (
 	"fmt"
 	"log"
-	"net/http"
+	"os"
 
-	"github.com/gorilla/mux"
+	"github.com/go-openapi/loads"
+	flag "github.com/spf13/pflag"
 
-	"github.com/ossf/scorecard-webapp/app"
+	"github.com/ossf/scorecard-webapp/app/generated/restapi"
+	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations"
 )
 
 func main() {
-	fmt.Printf("Starting HTTP server on port 8080 ...\n")
+	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/", app.Index)
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.PostResultsHandler).Methods(http.MethodPost)
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}", app.GetResultsHandler).Methods(http.MethodGet)
-	r.HandleFunc("/projects/{host}/{orgName}/{repoName}/badge", app.GetBadgeHandler).Methods(http.MethodGet)
-	http.Handle("/", r)
+	var server *restapi.Server // make sure init is called
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal(err)
+	flag.Usage = func() {
+		fmt.Fprint(os.Stderr, "Usage:\n")
+		fmt.Fprint(os.Stderr, "  scorecard-server [OPTIONS]\n\n")
+
+		title := "OpenSSF Scorecard API"
+		fmt.Fprint(os.Stderr, title+"\n\n")
+		desc := "API to interact with a project's published Scorecard result"
+		if desc != "" {
+			fmt.Fprintf(os.Stderr, desc+"\n\n")
+		}
+		fmt.Fprintln(os.Stderr, flag.CommandLine.FlagUsages())
+	}
+	// parse the CLI flags
+	flag.Parse()
+
+	api := operations.NewScorecardAPI(swaggerSpec)
+	// get server with flag values filled out
+	server = restapi.NewServer(api)
+	defer func() {
+		if err := server.Shutdown(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	server.ConfigureAPI()
+	if err := server.Serve(); err != nil {
+		log.Fatalln(err)
 	}
 }

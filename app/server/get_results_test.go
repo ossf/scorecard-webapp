@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package server
 
 import (
 	"errors"
@@ -23,12 +23,13 @@ import (
 
 func TestSanitizePath(t *testing.T) {
 	t.Parallel()
+	testSHA := "sha1"
 	testcases := []struct {
 		name     string
 		host     string
 		orgName  string
 		repoName string
-		commit   string
+		commit   *string
 		wantPath string
 		wantErr  error
 	}{
@@ -65,7 +66,7 @@ func TestSanitizePath(t *testing.T) {
 			host:     "github.com",
 			orgName:  "org",
 			repoName: "repo",
-			commit:   "sha1",
+			commit:   &testSHA,
 			wantPath: "github.com/org/repo/sha1/results.json",
 		},
 	}

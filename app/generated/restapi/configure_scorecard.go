@@ -106,11 +106,14 @@ func serveStatic(handler http.Handler) http.Handler {
 		case "/",
 			"/favicon.ico",
 			"/swagger-ui.css",
+			"/swagger-ui.css.map",
 			"/index.css",
 			"/favicon-32x32.png",
 			"/favicon-16x16.png",
 			"/swagger-ui-bundle.js",
+			"/swagger-ui-bundle.js.map",
 			"/swagger-ui-standalone-preset.js",
+			"/swagger-ui-standalone-preset.js.map",
 			"/swagger-initializer.js":
 			static, err := fs.Sub(staticDir, "static")
 			if err != nil {

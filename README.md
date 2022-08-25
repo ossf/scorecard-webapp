@@ -21,3 +21,23 @@ changes committed to [openapi.yaml](./openapi.yaml) on the `main` branch gets
 deployed to the staging site only. To make changes to the production API, a new
 Git tag needs to be generated which will auto deploy the latest tag to
 production.
+
+### TODO: automate these steps
+
+Any updates made to [openapi.yaml](./openapi.yaml) needs to be deployed onto
+Google Cloud Endpoints. To do that, follow these steps:
+
+```
+$ gcloud auth login
+$ gcloud endpoints services deploy openapi.yaml --project openssf --quiet --format=json > /tmp/gcloud.json
+$ wget https://raw.githubusercontent.com/GoogleCloudPlatform/esp-v2/master/docker/serverless/gcloud_build_image \
+   --output-document=/tmp/gcloud_build_image
+$ chmod +x /tmp/gcloud_build_image
+$ /tmp/gcloud_build_image -c $(cat /tmp/gcloud.json | jq -r .serviceConfig.id) \
+   -s $(cat /tmp/gcloud.json | jq -r .serviceConfig.name) \
+   -p openssf -z us
+$ gcloud run deploy scorecard-endpoints-prod \
+   --image=<image-from-above-step> \
+   --project=openssf
+   # For region prompt, choose us-central1.
+```

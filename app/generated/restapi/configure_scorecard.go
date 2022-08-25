@@ -120,6 +120,9 @@ func serveStatic(handler http.Handler) http.Handler {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+			if r.URL.Path == "/" {
+				w.Header().Add("content-type", "text/html")
+			}
 			http.FileServer(http.FS(static)).ServeHTTP(w, r)
 			return
 		}

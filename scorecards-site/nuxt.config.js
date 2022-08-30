@@ -4,7 +4,7 @@ export default {
   ssr: true,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'OSSF Security Scorecards',
+    title: 'OpenSSF Scorecard',
     htmlAttrs: {
       lang: 'en',
     },

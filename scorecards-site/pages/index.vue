@@ -129,7 +129,7 @@ export default {
     return this.page
       ? {
           title: this.page.title,
-          titleTemplate: `OSSF Security Scorecards`,
+          titleTemplate: `OpenSSF Scorecard`,
           script: [
             {
               src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',

@@ -20,7 +20,9 @@ import (
 	"encoding/asn1"
 	"net/url"
 	"testing"
+	"unicode/utf8"
 
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -176,4 +178,35 @@ func Test_extractCertInfo(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzExtractCertInfo(f *testing.F) {
+	f.Fuzz(func(t *testing.T, commonName, value string, critical bool, data []byte) {
+		f := fuzz.NewConsumer(data)
+		asn := []int{}
+		f.CreateSlice(&asn)
+		if !utf8.ValidString(commonName) || !utf8.ValidString(value) {
+			t.Skip()
+		}
+		if len(data) == 0 {
+			t.Skip()
+		}
+		if len(asn) < 8 {
+			t.Skip()
+		}
+		cert := &x509.Certificate{
+			Subject: pkix.Name{
+				CommonName: commonName,
+			},
+			Extensions: []pkix.Extension{
+				{
+					Critical: critical,
+					Id:       asn1.ObjectIdentifier{asn[0], asn[1], asn[2], asn[3], asn[4], asn[5], asn[6], asn[7]},
+					Value:    []byte(value),
+				},
+			},
+		}
+		//this is to ensure that it doesn't panic.
+		extractCertInfo(cert)
+	})
 }

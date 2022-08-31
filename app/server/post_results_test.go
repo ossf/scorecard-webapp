@@ -206,7 +206,6 @@ func FuzzExtractCertInfo(f *testing.F) {
 				},
 			},
 		}
-		//this is to ensure that it doesn't panic.
 		extractCertInfo(cert)
 	})
 }

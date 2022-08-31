@@ -76,7 +76,6 @@ func FuzzVerifyWorkflow(f *testing.F) {
 		if !utf8.ValidString(data) {
 			t.Skip()
 		}
-		//this is to ensure that it doesn't panic.
 		verifyScorecardWorkflow(data)
 	})
 }

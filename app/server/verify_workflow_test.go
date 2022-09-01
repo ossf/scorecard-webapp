@@ -17,6 +17,7 @@ package server
 import (
 	"io/ioutil"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -67,4 +68,14 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		err := verifyScorecardWorkflow(string(workflowContent))
 		assert.NotEqual(t, err, nil, workflowFile)
 	}
+}
+
+//nolint
+func FuzzVerifyWorkflow(f *testing.F) {
+	f.Fuzz(func(t *testing.T, data string) {
+		if !utf8.ValidString(data) {
+			t.Skip()
+		}
+		verifyScorecardWorkflow(data)
+	})
 }

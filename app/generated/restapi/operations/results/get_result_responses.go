@@ -31,7 +31,8 @@ import (
 // GetResultOKCode is the HTTP code returned for type GetResultOK
 const GetResultOKCode int = 200
 
-/*GetResultOK A JSON object of the repository's ScorecardResult
+/*
+GetResultOK A JSON object of the repository's ScorecardResult
 
 swagger:response getResultOK
 */
@@ -75,7 +76,8 @@ func (o *GetResultOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 // GetResultBadRequestCode is the HTTP code returned for type GetResultBadRequest
 const GetResultBadRequestCode int = 400
 
-/*GetResultBadRequest The request provided to the server was invalid
+/*
+GetResultBadRequest The request provided to the server was invalid
 
 swagger:response getResultBadRequest
 */
@@ -119,7 +121,8 @@ func (o *GetResultBadRequest) WriteResponse(rw http.ResponseWriter, producer run
 // GetResultNotFoundCode is the HTTP code returned for type GetResultNotFound
 const GetResultNotFoundCode int = 404
 
-/*GetResultNotFound The content requested could not be found
+/*
+GetResultNotFound The content requested could not be found
 
 swagger:response getResultNotFound
 */
@@ -140,7 +143,8 @@ func (o *GetResultNotFound) WriteResponse(rw http.ResponseWriter, producer runti
 	rw.WriteHeader(404)
 }
 
-/*GetResultDefault There was an internal error in the server while processing the request
+/*
+GetResultDefault There was an internal error in the server while processing the request
 
 swagger:response getResultDefault
 */

@@ -33,6 +33,8 @@ type GetBadgeURL struct {
 	Platform string
 	Repo     string
 
+	Style *string
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -82,6 +84,18 @@ func (o *GetBadgeURL) Build() (*url.URL, error) {
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var styleQ string
+	if o.Style != nil {
+		styleQ = *o.Style
+	}
+	if styleQ != "" {
+		qs.Set("style", styleQ)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

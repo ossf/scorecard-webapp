@@ -67,7 +67,8 @@ func NewPostResultCreated() *PostResultCreated {
 	return &PostResultCreated{}
 }
 
-/* PostResultCreated describes a response with status code 201, with default header values.
+/*
+PostResultCreated describes a response with status code 201, with default header values.
 
 Successfully updated ScorecardResult
 */
@@ -75,9 +76,39 @@ type PostResultCreated struct {
 	Payload string
 }
 
+// IsSuccess returns true when this post result created response has a 2xx status code
+func (o *PostResultCreated) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this post result created response has a 3xx status code
+func (o *PostResultCreated) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post result created response has a 4xx status code
+func (o *PostResultCreated) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post result created response has a 5xx status code
+func (o *PostResultCreated) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post result created response a status code equal to that given
+func (o *PostResultCreated) IsCode(code int) bool {
+	return code == 201
+}
+
 func (o *PostResultCreated) Error() string {
 	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResultCreated  %+v", 201, o.Payload)
 }
+
+func (o *PostResultCreated) String() string {
+	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResultCreated  %+v", 201, o.Payload)
+}
+
 func (o *PostResultCreated) GetPayload() string {
 	return o.Payload
 }
@@ -97,7 +128,8 @@ func NewPostResultBadRequest() *PostResultBadRequest {
 	return &PostResultBadRequest{}
 }
 
-/* PostResultBadRequest describes a response with status code 400, with default header values.
+/*
+PostResultBadRequest describes a response with status code 400, with default header values.
 
 The request provided to the server was invalid
 */
@@ -105,9 +137,39 @@ type PostResultBadRequest struct {
 	Payload *models.Error
 }
 
+// IsSuccess returns true when this post result bad request response has a 2xx status code
+func (o *PostResultBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post result bad request response has a 3xx status code
+func (o *PostResultBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post result bad request response has a 4xx status code
+func (o *PostResultBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post result bad request response has a 5xx status code
+func (o *PostResultBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post result bad request response a status code equal to that given
+func (o *PostResultBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *PostResultBadRequest) Error() string {
 	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResultBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *PostResultBadRequest) String() string {
+	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResultBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *PostResultBadRequest) GetPayload() *models.Error {
 	return o.Payload
 }
@@ -131,7 +193,8 @@ func NewPostResultDefault(code int) *PostResultDefault {
 	}
 }
 
-/* PostResultDefault describes a response with status code -1, with default header values.
+/*
+PostResultDefault describes a response with status code -1, with default header values.
 
 There was an internal error in the server while processing the request
 */
@@ -146,9 +209,39 @@ func (o *PostResultDefault) Code() int {
 	return o._statusCode
 }
 
+// IsSuccess returns true when this post result default response has a 2xx status code
+func (o *PostResultDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this post result default response has a 3xx status code
+func (o *PostResultDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this post result default response has a 4xx status code
+func (o *PostResultDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this post result default response has a 5xx status code
+func (o *PostResultDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this post result default response a status code equal to that given
+func (o *PostResultDefault) IsCode(code int) bool {
+	return o._statusCode == code
+}
+
 func (o *PostResultDefault) Error() string {
 	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResult default  %+v", o._statusCode, o.Payload)
 }
+
+func (o *PostResultDefault) String() string {
+	return fmt.Sprintf("[POST /projects/{platform}/{org}/{repo}][%d] postResult default  %+v", o._statusCode, o.Payload)
+}
+
 func (o *PostResultDefault) GetPayload() *models.Error {
 	return o.Payload
 }

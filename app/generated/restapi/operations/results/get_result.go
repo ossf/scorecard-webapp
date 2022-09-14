@@ -44,10 +44,10 @@ func NewGetResult(ctx *middleware.Context, handler GetResultHandler) *GetResult 
 	return &GetResult{Context: ctx, Handler: handler}
 }
 
-/* GetResult swagger:route GET /projects/{platform}/{org}/{repo} results getResult
+/*
+	GetResult swagger:route GET /projects/{platform}/{org}/{repo} results getResult
 
 Get a repository's ScorecardResult
-
 */
 type GetResult struct {
 	Context *middleware.Context

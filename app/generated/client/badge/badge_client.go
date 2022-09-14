@@ -49,7 +49,7 @@ type ClientService interface {
 }
 
 /*
-  GetBadge gets a repository s scorecard badge
+GetBadge gets a repository s scorecard badge
 */
 func (a *Client) GetBadge(params *GetBadgeParams, opts ...ClientOption) error {
 	// TODO: Validate the params before sending

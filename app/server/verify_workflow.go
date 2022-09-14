@@ -122,6 +122,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",
+			"step-security/harden-runner",
 			// Needed for e2e tests
 			"gcr.io/openssf/scorecard-action",
 			"actions-ecosystem/action-create-issue":

@@ -44,10 +44,10 @@ func NewPostResult(ctx *middleware.Context, handler PostResultHandler) *PostResu
 	return &PostResult{Context: ctx, Handler: handler}
 }
 
-/* PostResult swagger:route POST /projects/{platform}/{org}/{repo} results postResult
+/*
+	PostResult swagger:route POST /projects/{platform}/{org}/{repo} results postResult
 
 Publish a repository's OIDC verified ScorecardResult
-
 */
 type PostResult struct {
 	Context *middleware.Context

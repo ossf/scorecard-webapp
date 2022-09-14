@@ -16,18 +16,18 @@
 
 // Package restapi OpenSSF Scorecard API
 //
-//  API to interact with a project's published Scorecard result
-//  Schemes:
-//    http
-//  Host: api.securityscorecards.dev
-//  BasePath: /
-//  Version: 1.0.0
+//	API to interact with a project's published Scorecard result
+//	Schemes:
+//	  http
+//	Host: api.securityscorecards.dev
+//	BasePath: /
+//	Version: 1.0.0
 //
-//  Consumes:
-//    - application/json
+//	Consumes:
+//	  - application/json
 //
-//  Produces:
-//    - application/json
+//	Produces:
+//	  - application/json
 //
 // swagger:meta
 package restapi

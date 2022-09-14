@@ -28,15 +28,25 @@ import (
 )
 
 const (
-	shieldsURL = "https://img.shields.io/ossf-scorecard"
-	badgeLabel = "openssf scorecard"
+	shieldsURL   = "https://img.shields.io/ossf-scorecard"
+	badgeLabel   = "openssf scorecard"
+	defaultStyle = "flat"
 )
 
 func GetBadgeHandler(params badge.GetBadgeParams) middleware.Responder {
 	host := params.Platform
 	orgName := params.Org
 	repoName := params.Repo
-	parsedURL, err := url.Parse(fmt.Sprintf("%s/%s/%s/%s?label=%s", shieldsURL, host, orgName, repoName, badgeLabel))
+	style := defaultStyle
+	if len(*params.Style) > 0 {
+		style = *params.Style
+	}
+	parsedURL, err := url.Parse(fmt.Sprintf("%s/%s/%s/%s?label=%s&style=%s", shieldsURL,
+		host,
+		orgName,
+		repoName,
+		badgeLabel,
+		style))
 	if err != nil {
 		return badge.NewGetBadgeDefault(http.StatusInternalServerError).WithPayload(&models.Error{
 			Code:    http.StatusInternalServerError,

@@ -69,10 +69,12 @@ func NewPostResultParamsWithHTTPClient(client *http.Client) *PostResultParams {
 	}
 }
 
-/* PostResultParams contains all the parameters to send to the API endpoint
-   for the post result operation.
+/*
+PostResultParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post result operation.
+
+	Typically these are written to a http.Request.
 */
 type PostResultParams struct {
 

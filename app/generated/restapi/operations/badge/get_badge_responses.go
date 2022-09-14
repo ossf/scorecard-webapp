@@ -31,7 +31,8 @@ import (
 // GetBadgeFoundCode is the HTTP code returned for type GetBadgeFound
 const GetBadgeFoundCode int = 302
 
-/*GetBadgeFound Scorecard badge for the repository
+/*
+GetBadgeFound Scorecard badge for the repository
 
 swagger:response getBadgeFound
 */
@@ -52,7 +53,8 @@ func (o *GetBadgeFound) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	rw.WriteHeader(302)
 }
 
-/*GetBadgeDefault There was an internal error in the server while processing the request
+/*
+GetBadgeDefault There was an internal error in the server while processing the request
 
 swagger:response getBadgeDefault
 */

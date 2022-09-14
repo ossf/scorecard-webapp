@@ -51,7 +51,7 @@ type ClientService interface {
 }
 
 /*
-  GetResult gets a repository s scorecard result
+GetResult gets a repository s scorecard result
 */
 func (a *Client) GetResult(params *GetResultParams, opts ...ClientOption) (*GetResultOK, error) {
 	// TODO: Validate the params before sending
@@ -88,7 +88,7 @@ func (a *Client) GetResult(params *GetResultParams, opts ...ClientOption) (*GetR
 }
 
 /*
-  PostResult publishes a repository s o ID c verified scorecard result
+PostResult publishes a repository s o ID c verified scorecard result
 */
 func (a *Client) PostResult(params *PostResultParams, opts ...ClientOption) (*PostResultCreated, error) {
 	// TODO: Validate the params before sending

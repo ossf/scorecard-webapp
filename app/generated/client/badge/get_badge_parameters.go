@@ -67,10 +67,12 @@ func NewGetBadgeParamsWithHTTPClient(client *http.Client) *GetBadgeParams {
 	}
 }
 
-/* GetBadgeParams contains all the parameters to send to the API endpoint
-   for the get badge operation.
+/*
+GetBadgeParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the get badge operation.
+
+	Typically these are written to a http.Request.
 */
 type GetBadgeParams struct {
 
@@ -92,6 +94,14 @@ type GetBadgeParams struct {
 	*/
 	Repo string
 
+	/* Style.
+
+	   Style to render the badge
+
+	   Default: "flat"
+	*/
+	Style *string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -109,7 +119,18 @@ func (o *GetBadgeParams) WithDefaults() *GetBadgeParams {
 //
 // All values with no default are reset to their zero value.
 func (o *GetBadgeParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		styleDefault = string("flat")
+	)
+
+	val := GetBadgeParams{
+		Style: &styleDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get badge params
@@ -178,6 +199,17 @@ func (o *GetBadgeParams) SetRepo(repo string) {
 	o.Repo = repo
 }
 
+// WithStyle adds the style to the get badge params
+func (o *GetBadgeParams) WithStyle(style *string) *GetBadgeParams {
+	o.SetStyle(style)
+	return o
+}
+
+// SetStyle adds the style to the get badge params
+func (o *GetBadgeParams) SetStyle(style *string) {
+	o.Style = style
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetBadgeParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -199,6 +231,23 @@ func (o *GetBadgeParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 	// path param repo
 	if err := r.SetPathParam("repo", o.Repo); err != nil {
 		return err
+	}
+
+	if o.Style != nil {
+
+		// query param style
+		var qrStyle string
+
+		if o.Style != nil {
+			qrStyle = *o.Style
+		}
+		qStyle := qrStyle
+		if qStyle != "" {
+
+			if err := r.SetQueryParam("style", qStyle); err != nil {
+				return err
+			}
+		}
 	}
 
 	if len(res) > 0 {

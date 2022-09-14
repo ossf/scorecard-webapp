@@ -61,14 +61,44 @@ func NewGetBadgeFound() *GetBadgeFound {
 	return &GetBadgeFound{}
 }
 
-/* GetBadgeFound describes a response with status code 302, with default header values.
+/*
+GetBadgeFound describes a response with status code 302, with default header values.
 
 Scorecard badge for the repository
 */
 type GetBadgeFound struct {
 }
 
+// IsSuccess returns true when this get badge found response has a 2xx status code
+func (o *GetBadgeFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get badge found response has a 3xx status code
+func (o *GetBadgeFound) IsRedirect() bool {
+	return true
+}
+
+// IsClientError returns true when this get badge found response has a 4xx status code
+func (o *GetBadgeFound) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get badge found response has a 5xx status code
+func (o *GetBadgeFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get badge found response a status code equal to that given
+func (o *GetBadgeFound) IsCode(code int) bool {
+	return code == 302
+}
+
 func (o *GetBadgeFound) Error() string {
+	return fmt.Sprintf("[GET /projects/{platform}/{org}/{repo}/badge][%d] getBadgeFound ", 302)
+}
+
+func (o *GetBadgeFound) String() string {
 	return fmt.Sprintf("[GET /projects/{platform}/{org}/{repo}/badge][%d] getBadgeFound ", 302)
 }
 
@@ -84,7 +114,8 @@ func NewGetBadgeDefault(code int) *GetBadgeDefault {
 	}
 }
 
-/* GetBadgeDefault describes a response with status code -1, with default header values.
+/*
+GetBadgeDefault describes a response with status code -1, with default header values.
 
 There was an internal error in the server while processing the request
 */
@@ -99,9 +130,39 @@ func (o *GetBadgeDefault) Code() int {
 	return o._statusCode
 }
 
+// IsSuccess returns true when this get badge default response has a 2xx status code
+func (o *GetBadgeDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get badge default response has a 3xx status code
+func (o *GetBadgeDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get badge default response has a 4xx status code
+func (o *GetBadgeDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get badge default response has a 5xx status code
+func (o *GetBadgeDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get badge default response a status code equal to that given
+func (o *GetBadgeDefault) IsCode(code int) bool {
+	return o._statusCode == code
+}
+
 func (o *GetBadgeDefault) Error() string {
 	return fmt.Sprintf("[GET /projects/{platform}/{org}/{repo}/badge][%d] getBadge default  %+v", o._statusCode, o.Payload)
 }
+
+func (o *GetBadgeDefault) String() string {
+	return fmt.Sprintf("[GET /projects/{platform}/{org}/{repo}/badge][%d] getBadge default  %+v", o._statusCode, o.Payload)
+}
+
 func (o *GetBadgeDefault) GetPayload() *models.Error {
 	return o.Payload
 }

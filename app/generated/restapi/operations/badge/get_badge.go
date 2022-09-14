@@ -44,10 +44,10 @@ func NewGetBadge(ctx *middleware.Context, handler GetBadgeHandler) *GetBadge {
 	return &GetBadge{Context: ctx, Handler: handler}
 }
 
-/* GetBadge swagger:route GET /projects/{platform}/{org}/{repo}/badge badge getBadge
+/*
+	GetBadge swagger:route GET /projects/{platform}/{org}/{repo}/badge badge getBadge
 
 Get a repository's Scorecard badge
-
 */
 type GetBadge struct {
 	Context *middleware.Context

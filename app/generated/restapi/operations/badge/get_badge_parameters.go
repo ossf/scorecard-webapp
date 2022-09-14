@@ -24,16 +24,25 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 )
 
 // NewGetBadgeParams creates a new GetBadgeParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewGetBadgeParams() GetBadgeParams {
 
-	return GetBadgeParams{}
+	var (
+		// initialize parameters with default values
+
+		styleDefault = string("flat")
+	)
+
+	return GetBadgeParams{
+		Style: &styleDefault,
+	}
 }
 
 // GetBadgeParams contains all the bound params for the get badge operation
@@ -60,6 +69,11 @@ type GetBadgeParams struct {
 	  In: path
 	*/
 	Repo string
+	/*Style to render the badge
+	  In: query
+	  Default: "flat"
+	*/
+	Style *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -70,6 +84,8 @@ func (o *GetBadgeParams) BindRequest(r *http.Request, route *middleware.MatchedR
 	var res []error
 
 	o.HTTPRequest = r
+
+	qs := runtime.Values(r.URL.Query())
 
 	rOrg, rhkOrg, _ := route.Params.GetOK("org")
 	if err := o.bindOrg(rOrg, rhkOrg, route.Formats); err != nil {
@@ -83,6 +99,11 @@ func (o *GetBadgeParams) BindRequest(r *http.Request, route *middleware.MatchedR
 
 	rRepo, rhkRepo, _ := route.Params.GetOK("repo")
 	if err := o.bindRepo(rRepo, rhkRepo, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qStyle, qhkStyle, _ := qs.GetOK("style")
+	if err := o.bindStyle(qStyle, qhkStyle, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -129,6 +150,39 @@ func (o *GetBadgeParams) bindRepo(rawData []string, hasKey bool, formats strfmt.
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.Repo = raw
+
+	return nil
+}
+
+// bindStyle binds and validates parameter Style from query.
+func (o *GetBadgeParams) bindStyle(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewGetBadgeParams()
+		return nil
+	}
+	o.Style = &raw
+
+	if err := o.validateStyle(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateStyle carries on validations for parameter Style
+func (o *GetBadgeParams) validateStyle(formats strfmt.Registry) error {
+
+	if err := validate.EnumCase("style", "query", *o.Style, []interface{}{"plastic", "flat", "flat-square", "for-the-badge", "social"}, true); err != nil {
+		return err
+	}
 
 	return nil
 }

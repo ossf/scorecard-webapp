@@ -31,7 +31,8 @@ import (
 // PostResultCreatedCode is the HTTP code returned for type PostResultCreated
 const PostResultCreatedCode int = 201
 
-/*PostResultCreated Successfully updated ScorecardResult
+/*
+PostResultCreated Successfully updated ScorecardResult
 
 swagger:response postResultCreated
 */
@@ -73,7 +74,8 @@ func (o *PostResultCreated) WriteResponse(rw http.ResponseWriter, producer runti
 // PostResultBadRequestCode is the HTTP code returned for type PostResultBadRequest
 const PostResultBadRequestCode int = 400
 
-/*PostResultBadRequest The request provided to the server was invalid
+/*
+PostResultBadRequest The request provided to the server was invalid
 
 swagger:response postResultBadRequest
 */
@@ -114,7 +116,8 @@ func (o *PostResultBadRequest) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
-/*PostResultDefault There was an internal error in the server while processing the request
+/*
+PostResultDefault There was an internal error in the server while processing the request
 
 swagger:response postResultDefault
 */

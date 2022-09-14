@@ -148,6 +148,20 @@ func init() {
         "operationId": "getBadge",
         "parameters": [
           {
+            "enum": [
+              "plastic",
+              "flat",
+              "flat-square",
+              "for-the-badge",
+              "social"
+            ],
+            "type": "string",
+            "default": "flat",
+            "description": "Style to render the badge",
+            "name": "style",
+            "in": "query"
+          },
+          {
             "type": "string",
             "description": "VCS platform. eg. github.com",
             "name": "platform",
@@ -459,6 +473,20 @@ func init() {
         "summary": "Get a repository's Scorecard badge",
         "operationId": "getBadge",
         "parameters": [
+          {
+            "enum": [
+              "plastic",
+              "flat",
+              "flat-square",
+              "for-the-badge",
+              "social"
+            ],
+            "type": "string",
+            "default": "flat",
+            "description": "Style to render the badge",
+            "name": "style",
+            "in": "query"
+          },
           {
             "type": "string",
             "description": "VCS platform. eg. github.com",

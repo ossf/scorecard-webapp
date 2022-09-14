@@ -24,6 +24,8 @@ jobs:
       id-token: write # needed for keyless signing
     
     steps:
+      - name: "Harden runner"
+        uses: step-security/harden-runner@dd2c410b088af7c0dc8046f3ac9a8f4148492a95
       - name: "Checkout code"
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
         with:

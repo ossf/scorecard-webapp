@@ -124,8 +124,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"github/codeql-action/upload-sarif",
 			"step-security/harden-runner",
 			// Needed for e2e tests
-			"gcr.io/openssf/scorecard-action",
-			"actions-ecosystem/action-create-issue":
+			"gcr.io/openssf/scorecard-action":
 		default:
 			return fmt.Errorf("%w: %s", errUnallowedStepName, stepName)
 		}

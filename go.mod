@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/validate v0.22.0
 	github.com/google/go-cmp v0.5.9
 	github.com/onsi/ginkgo/v2 v2.2.0
-	github.com/onsi/gomega v1.20.2
+	github.com/onsi/gomega v1.21.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/pflag v1.0.5
 	github.com/transparency-dev/merkle v0.0.1

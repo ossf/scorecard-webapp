@@ -254,6 +254,7 @@ func init() {
         },
         "score": {
           "type": "integer",
+          "x-omitempty": false,
           "x-order": 1
         }
       }
@@ -283,6 +284,7 @@ func init() {
         "score": {
           "description": "Aggregate score of the repository",
           "type": "number",
+          "x-omitempty": false,
           "x-order": 3
         },
         "scorecard": {
@@ -583,6 +585,7 @@ func init() {
         },
         "score": {
           "type": "integer",
+          "x-omitempty": false,
           "x-order": 1
         }
       }
@@ -624,6 +627,7 @@ func init() {
         "score": {
           "description": "Aggregate score of the repository",
           "type": "number",
+          "x-omitempty": false,
           "x-order": 3
         },
         "scorecard": {

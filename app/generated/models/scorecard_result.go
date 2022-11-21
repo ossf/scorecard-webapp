@@ -44,7 +44,7 @@ type ScorecardResult struct {
 	Scorecard *ScorecardVersion `json:"scorecard,omitempty"`
 
 	// Aggregate score of the repository
-	Score float64 `json:"score,omitempty"`
+	Score float64 `json:"score"`
 
 	// checks
 	Checks []*ScorecardCheck `json:"checks"`

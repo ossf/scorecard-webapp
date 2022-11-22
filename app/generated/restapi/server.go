@@ -80,6 +80,8 @@ var (
 	tlsCertificate    string
 	tlsCertificateKey string
 	tlsCACertificate  string
+
+	jsonIndent string
 )
 
 func init() {
@@ -109,6 +111,8 @@ func init() {
 	flag.DurationVar(&tlsKeepAlive, "tls-keep-alive", 3*time.Minute, "sets the TCP keep-alive timeouts on accepted connections. It prunes dead TCP connections ( e.g. closing laptop mid-download)")
 	flag.DurationVar(&tlsReadTimeout, "tls-read-timeout", 30*time.Second, "maximum duration before timing out read of the request")
 	flag.DurationVar(&tlsWriteTimeout, "tls-write-timeout", 30*time.Second, "maximum duration before timing out write of the response")
+	
+	flag.StringVar(&jsonIndent, "indent", "", "the indent used in json output (default no ident \"\")")
 }
 
 func stringEnvOverride(orig string, def string, keys ...string) string {

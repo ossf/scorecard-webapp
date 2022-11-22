@@ -19,6 +19,8 @@ package restapi
 import (
 	"crypto/tls"
 	"embed"
+	"encoding/json"
+	"io"
 	"io/fs"
 	"net/http"
 
@@ -57,7 +59,12 @@ func configureAPI(api *operations.ScorecardAPI) http.Handler {
 	// api.UseRedoc()
 
 	api.JSONConsumer = runtime.JSONConsumer()
-	api.JSONProducer = runtime.JSONProducer()
+	api.JSONProducer = runtime.ProducerFunc(func(writer io.Writer, data interface{}) error {
+		enc := json.NewEncoder(writer)
+		enc.SetIndent("", jsonIndent)
+		enc.SetEscapeHTML(false)
+		return enc.Encode(data)
+	})
 
 	api.ResultsGetResultHandler = results.GetResultHandlerFunc(server.GetResultHandler)
 	api.ResultsPostResultHandler = results.PostResultHandlerFunc(server.PostResultsHandler)

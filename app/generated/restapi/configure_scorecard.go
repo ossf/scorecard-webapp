@@ -41,12 +41,8 @@ import (
 var (
 	//go:embed static
 	staticDir  embed.FS
-	jsonIndent string
+	jsonIndent = flag.String("indent", "", "the indent used in json output (default no ident \"\")")
 )
-
-func init() {
-	flag.StringVar(&jsonIndent, "indent", "", "the indent used in json output (default no ident \"\")")
-}
 
 func configureFlags(api *operations.ScorecardAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -69,7 +65,7 @@ func configureAPI(api *operations.ScorecardAPI) http.Handler {
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.JSONProducer = runtime.ProducerFunc(func(writer io.Writer, data interface{}) error {
 		enc := json.NewEncoder(writer)
-		enc.SetIndent("", jsonIndent)
+		enc.SetIndent("", *jsonIndent)
 		enc.SetEscapeHTML(false)
 		return enc.Encode(data)
 	})

@@ -19,12 +19,15 @@ package restapi
 import (
 	"crypto/tls"
 	"embed"
+	"encoding/json"
+	"io"
 	"io/fs"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/rs/cors"
+	flag "github.com/spf13/pflag"
 
 	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations"
 	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/badge"
@@ -35,8 +38,11 @@ import (
 //nolint:lll // generated code
 //go:generate swagger generate server --target ../../generated --name Scorecard --spec ../../../openapi.yaml --principal interface{}
 
-//go:embed static
-var staticDir embed.FS
+var (
+	//go:embed static
+	staticDir  embed.FS
+	jsonIndent = flag.String("indent", "", "the indent used in json output (default no ident \"\")")
+)
 
 func configureFlags(api *operations.ScorecardAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -57,7 +63,12 @@ func configureAPI(api *operations.ScorecardAPI) http.Handler {
 	// api.UseRedoc()
 
 	api.JSONConsumer = runtime.JSONConsumer()
-	api.JSONProducer = runtime.JSONProducer()
+	api.JSONProducer = runtime.ProducerFunc(func(writer io.Writer, data interface{}) error {
+		enc := json.NewEncoder(writer)
+		enc.SetIndent("", *jsonIndent)
+		enc.SetEscapeHTML(false)
+		return enc.Encode(data)
+	})
 
 	api.ResultsGetResultHandler = results.GetResultHandlerFunc(server.GetResultHandler)
 	api.ResultsPostResultHandler = results.PostResultHandlerFunc(server.PostResultsHandler)

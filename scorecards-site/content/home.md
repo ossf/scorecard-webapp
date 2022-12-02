@@ -14,7 +14,7 @@ thumbnail: /assets/checks.png
 
 <h2 class="h1" id="run-the-checks">Run the checks</h2>
 
-Security Scorecards can be used in a couple of different ways:
+OpenSSF Scorecard can be used in a couple of different ways:
 
 1. Run automatically on code you own **using the GitHub Action**
 2. Run manually on your (or somebody else’s) project **via the Command Line**
@@ -44,7 +44,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 1. You need to own the repository you are installing the action to, or have admin rights to it.
 2. [Authenticate](https://github.com/ossf/scorecard-action#authentication) your access to the repository with a Personal Access Token
-3. Add Security Scorecards to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
+3. Add Scorecard to your [codescanning suite](https://github.com/ossf/scorecard-action#workflow-setup) inside GitHub using the link below:
    <br/>
 
 <a href="https://github.com/marketplace/actions/ossf-scorecard-action" class="btn cta-icon">Install the action</a>
@@ -57,7 +57,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 ### Install time: <10mins
 
-You can use Security Scorecards on the Command Line. This enables you to:
+You can use Scorecard on the Command Line. This enables you to:
 
 - Check someone else’s repository
 - Select which checks you want to run
@@ -79,7 +79,7 @@ You can use Security Scorecards on the Command Line. This enables you to:
 ### Install and run
 
 1. Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with 'public_repo' scope. Store the token somewhere safe.
-2. Choose a language-specific quick start below, or refer to our [detailed instructions](https://github.com/ossf/scorecard#scorecards-command-line-interface)
+2. Choose a language-specific quick start below, or refer to our [detailed instructions](https://github.com/ossf/scorecard#scorecard-command-line-interface)
 
 <code-group>
 
@@ -121,17 +121,17 @@ scorecard --repo=<your choice of repo e.g. github.com/ossf-tests/scorecard-check
 
 </code-group>
 
-Security Scorecards also has standalone binaries and other platforms troubleshooting and custom configuration available. Learn more here:
+Scorecard also has standalone binaries and other platforms troubleshooting and custom configuration available. Learn more here:
 
 <br/>
 
-<a href="https://github.com/ossf/scorecard#scorecards-command-line-interface" class="btn cta-icon">Detailed installation instructions</a>
+<a href="https://github.com/ossf/scorecard#scorecard-command-line-interface" class="btn cta-icon">Detailed installation instructions</a>
 
 </section>
 
 <h2 class="h1" id="learn-more">Learn more</h2>
 
-> We rely on Security Scorecards to ensure we follow secure development best practices.
+> We rely on Security Scorecards *[i.e., OpenSSF Scorecard]* to ensure we follow secure development best practices.
 
 <div class="text-right"><cite>Appu Goundan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
@@ -141,21 +141,21 @@ By some estimates\* 84% of all codebases have at least one vulnerability, with a
 
 Even in large tech companies, the tedious process of reviewing code for vulnerabilities falls down the priority list, and there is little insight into known vulnerabilities and solutions that companies can draw on.
 
-That’s where Security Scorecards is helping. Its focus is to understand the security posture of a project and assess the risks that dependencies introduce.
+That’s where Security Scorecards *[i.e., OpenSSF Scorecard]* is helping. Its focus is to understand the security posture of a project and assess the risks that dependencies introduce.
 
 \*[Open Source Security and Risk Analysis Report](https://www.synopsys.com/software-integrity/resources/analyst-reports/open-source-security-risk-analysis.html?intcmp=sig-blog-ossra1) (Synopsys, 2021)
 
 <br/>
 
-### What is Security Scorecards?
+### What is OpenSSF Scorecard?
 
-##### Security Scorecards assesses open source projects for security risks through a series of automated checks
+##### Scorecard assesses open source projects for security risks through a series of automated checks
 
 It was created by OSS developers to help improve the health of critical projects that the community depends on.
 
 You can use it to proactively assess and make informed decisions about accepting security risks within your codebase. You can also use the tool to evaluate other projects and dependencies, and work with maintainers to improve codebases you might want to integrate.
 
-Security Scorecards help you enforce best practices that can guard against:
+Scorecard help you enforce best practices that can guard against:
 
 <section class="grid grid-cols-1 grid-rows-1 md:grid-cols-2 md:grid-cols-2">
 
@@ -204,7 +204,7 @@ Security Scorecards help you enforce best practices that can guard against:
 
 ### How it works
 
-Security Scorecards checks for vulnerabilities affecting different parts of the software supply chain including **source code**, **build**, **dependencies**, **testing**, and project **maintenance**.
+Scorecard checks for vulnerabilities affecting different parts of the software supply chain including **source code**, **build**, **dependencies**, **testing**, and project **maintenance**.
 
 Each automated check returns a **score out of 10** and a **risk level**. The risk level **adds a weighting** to the score, and this weighting is compiled into a single, **aggregate score**. This score helps give a sense of the overall security posture of a project.
 
@@ -224,7 +224,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <div class="w-full items-center justify-center">
 
-![What scorecards assesses](assets/diagram-flower.svg)
+![What Scorecard assesses](assets/diagram-flower.svg)
 
 </div>
 
@@ -269,27 +269,31 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <br/>
 
-> Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards into our dependency acceptance criteria.
+> Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards *[i.e., OpenSSF Scorecard]* into our dependency acceptance criteria.
 
 <div class="text-right mb-60"><cite>Harvey Tuch, <a href="https://www.envoyproxy.io/">Envoy</a></cite></div>
 
 ### Use cases
 
-##### Security Scorecards reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
+##### OpenSSF Scorecard reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
 #### For individual maintainers
 
-Security Scorecards is helpful as a pre-launch security checker for a new OSS project or to help to plan improvements to an existing one. If a project is well maintained, it’s more likely to be used by others instead of an alternative. It can also be used to check a new dependency being added to a project, so a maintainer can make an informed decision about the risk of doing so.
+Scorecard is helpful as a pre-launch security checker for a new OSS project or to help to plan improvements to an existing one. If a project is well maintained, it’s more likely to be used by others instead of an alternative. It can also be used to check a new dependency being added to a project, so a maintainer can make an informed decision about the risk of doing so.
 
 #### For an organisation
 
-Security Scorecards can be included in the continuous integration/continuous deployment processes using the GitHub action and run by default on pull requests.
+Scorecard can be included in the continuous integration/continuous deployment processes using the GitHub action and run by default on pull requests.
 
 #### For consumers
 
-Security Scorecards helps to make informed decisions about security risks and vulnerabilities. Using the public data, it is also possible to evaluate the security posture of over 1 million of the most used OSS projects.
+Scorecard helps to make informed decisions about security risks and vulnerabilities. Using the public data, it is also possible to evaluate the security posture of over 1 million of the most used OSS projects.
 
 <br/>
+
+### About the project name
+
+This project was initially called "Security Scorecards" but that form wasn't used consistently. In particular, the repo was named "scorecard" and so was the program. Over time people started referring to either form (singular and plural), with or without "Security", and the inconsitency became prevalent. To end this situation the decision was made to consolidate over the use of the singular form in keeping with the repo and program name, drop the "Security" part and use "OpenSSF" instead to ensure uniqueness. One should therefore refer to this project as "OpenSSF Scorecard" or "Scorecard" for short.
 
 ### Part of the OSS community
 
@@ -327,11 +331,11 @@ Security Scorecards helps to make informed decisions about security risks and vu
 
 </div>
 
-Security Scorecards is being [developed and facilitated by contributors](https://github.com/ossf/scorecard/graphs/contributors) from across the OSS ecosystem.
+OpenSSF Scorecard is being [developed and facilitated by contributors](https://github.com/ossf/scorecard/graphs/contributors) from across the OSS ecosystem.
 
 We're part of the [Open Source Security Foundation (OpenSSF)](https://openssf.org), a cross-industry collaboration that brings together OSS security initiatives under one foundation and seeks to improve the security of OSS by building a broader community, targeted initiatives, and best practises.
 
-OpenSSF launched Security Scorecards in November 2020 with the intention of auto-generating a “security score” for open source projects to help users as they decide the trust, risk, and security posture for their use case.
+OpenSSF launched Scorecard in November 2020 with the intention of auto-generating a “security score” for open source projects to help users as they decide the trust, risk, and security posture for their use case.
 
 <br/>
 
@@ -339,8 +343,8 @@ OpenSSF launched Security Scorecards in November 2020 with the intention of auto
 
 ![Open Source Security Foundation](assets/logos/openssf.svg)
 
-Security Scorecards is part of the [OSSF Best Practices Working Group](https://github.com/ossf/wg-best-practices-os-developers).
+Scorecard is part of the [OpenSSF Best Practices Working Group](https://github.com/ossf/wg-best-practices-os-developers).
 
-If you want to get involved in the Security Scorecards community or have ideas you'd like to chat about, [we'd love to connect](https://github.com/ossf/scorecard#connect-with-the-scorecards-community).
+If you want to get involved in the OpenSSF Scorecard community or have ideas you'd like to chat about, [we'd love to connect](https://github.com/ossf/scorecard#connect-with-the-scorecard-community).
 
 </section>

@@ -167,6 +167,9 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	return nil
 }
 
+// getAndVerifyWorkflowContent retrieves the workflow content from the repository and verifies it.
+// It verifies the branch is a default branch and gets the scorecard workflow from the repository
+// from the specific commit and verifies it to ensure that it hasn't been tampered with.
 func getAndVerifyWorkflowContent(ctx context.Context,
 	org, repo string, scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
@@ -267,6 +270,10 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 	return cert, nil
 }
 
+// getUUIDsByPayload returns the UUIDs of the Rekor entries that contain the given payload.
+// It takes the payload as a byte array and converts it to a SHA256 hash.
+// It then queries the Rekor server for all entries that contain the hash.
+// It returns the UUIDs of the entries that contain the payload.
 func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
 	payloadSHA := sha256.Sum256(payload)
 	rekorPayload := struct {
@@ -302,6 +309,8 @@ func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
 	return rekorResult, nil
 }
 
+// getTLogEntry returns the tlog entry corresponding to the given UUID.
+// It queries the Rekor server for the entry.
 func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
 	rekorReq, err := http.NewRequestWithContext(ctx,
 		http.MethodGet,
@@ -328,6 +337,10 @@ func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
 	return nil, fmt.Errorf("unexpected error: entry for uuid %s not found", uuid)
 }
 
+// verifyInclusionProof verifies the inclusion proof of the tlog entry.
+// It hex decodes the RootHash from the tlog entry and hex decodes the uuid as the leaf hash.
+// It then verifies the merkelproof using the RootHash, LeafHash, and InclusionProof hashes from the
+// tlog entry. It also ensures that the timestamp of the tlog entry  was signed by rekor public key.
 func verifyInclusionProof(uuid string, e *tlogEntry) error {
 	if e == nil || e.Verification == nil || e.Verification.InclusionProof == nil {
 		return fmt.Errorf("no inclusion proof provided")
@@ -403,6 +416,10 @@ func verifyInclusionProof(uuid string, e *tlogEntry) error {
 	return nil
 }
 
+// verifyCert verifies the certificate from the tlog entry against the fulcio root cert and
+// fulcio intermediate cert.
+// It also verifies the certs are not expired by checking the notBefore and notAfter fields based
+// on the integratedTime from the tlog entry.
 func verifyCert(cert *x509.Certificate, integratedTime time.Time) error {
 	// Verify the certificate against Fulcio Root CA
 	roots, err := getCertPool(fulcioRoot)
@@ -436,6 +453,9 @@ func verifyCert(cert *x509.Certificate, integratedTime time.Time) error {
 	return nil
 }
 
+// extractCertInfo extracts the repository information from the certificate.
+// These certificates are issued by Fulcio and have extensions with the repository information.
+// These extensions are extracted and returned as certInfo.
 func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	ret := certInfo{}
 	// Get repo reference & path from cert.
@@ -475,6 +495,9 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	return ret, nil
 }
 
+// extractCerts extracts the certificates from the tlog entry.
+// It base64 decodes the tlog Body and extracts the public key.
+// It uses the public key to pem decode the certificates.
 func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
 	b, err := base64.StdEncoding.DecodeString(entry.Body)
 	if err != nil {

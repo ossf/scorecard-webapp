@@ -37,6 +37,12 @@ var (
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
 )
 
+var ubuntuRunners = map[string]bool{
+	"ubuntu-latest": true,
+	"ubuntu-20.04":  true,
+	"ubuntu-18.04":  true,
+}
+
 func verifyScorecardWorkflow(workflowContent string) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
@@ -90,8 +96,8 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	if len(labels) != 1 {
 		return fmt.Errorf("%w", errScorecardJobRunsOn)
 	}
-	jobEnv := labels[0].Value
-	if jobEnv != "ubuntu-latest" && jobEnv != "ubuntu-20.04" && jobEnv != "ubuntu-18.04" {
+	label := labels[0].Value
+	if _, ok := ubuntuRunners[label]; !ok {
 		return fmt.Errorf("%w", errScorecardJobRunsOn)
 	}
 

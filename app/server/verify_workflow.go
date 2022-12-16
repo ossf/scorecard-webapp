@@ -37,6 +37,7 @@ var (
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
 )
 
+// TODO(#290): retriev the runners dynamically.
 var ubuntuRunners = map[string]bool{
 	"ubuntu-latest": true,
 	"ubuntu-20.04":  true,

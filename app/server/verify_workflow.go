@@ -40,6 +40,7 @@ var (
 // TODO(#290): retriev the runners dynamically.
 var ubuntuRunners = map[string]bool{
 	"ubuntu-latest": true,
+	"ubuntu-22.04":  true,
 	"ubuntu-20.04":  true,
 	"ubuntu-18.04":  true,
 }

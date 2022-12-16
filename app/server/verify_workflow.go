@@ -37,7 +37,7 @@ var (
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
 )
 
-// TODO(#290): retriev the runners dynamically.
+// TODO(#290): retrieve the runners dynamically.
 // List below is from https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners.
 var ubuntuRunners = map[string]bool{
 	"ubuntu-latest": true,

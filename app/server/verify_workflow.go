@@ -38,6 +38,7 @@ var (
 )
 
 // TODO(#290): retriev the runners dynamically.
+// List below is from https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners.
 var ubuntuRunners = map[string]bool{
 	"ubuntu-latest": true,
 	"ubuntu-22.04":  true,

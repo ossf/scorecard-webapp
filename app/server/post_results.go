@@ -55,13 +55,14 @@ const (
 )
 
 var (
-	errWritingBucket            = errors.New("error writing to GCS bucket")
-	errMultipleCerts            = errors.New("multiple certificates found for the entry")
-	errEmptyCertRef             = errors.New("cert has empty repository ref")
-	errEmptyCertPath            = errors.New("cert has empty repository path")
-	errCertMissingURI           = errors.New("certificate has no URIs")
-	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
-	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
+	errWritingBucket             = errors.New("error writing to GCS bucket")
+	errMultipleCerts             = errors.New("multiple certificates found for the entry")
+	errEmptyCertRef              = errors.New("cert has empty repository ref")
+	errEmptyCertPath             = errors.New("cert has empty repository path")
+	errCertMissingURI            = errors.New("certificate has no URIs")
+	errCertWorkflowPathEmpty     = errors.New("cert workflow path is empty")
+	errCertWorkflowPathMalformed = errors.New("cert workflow path is malformed")
+	errMismatchedCertAndRequest  = errors.New("repository and branch of cert doesn't match that of request")
 )
 
 type certInfo struct {
@@ -69,6 +70,7 @@ type certInfo struct {
 	repoBranchRef string
 	repoSHA       string
 	workflowPath  string
+	workflowRef   string
 }
 
 type tlogEntry struct {
@@ -148,7 +150,7 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 		return fmt.Errorf("%w", errMismatchedCertAndRequest)
 	}
 
-	if err := getAndVerifyWorkflowContent(ctx, org, repo, scorecardResult, info); err != nil {
+	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
 		return fmt.Errorf("error verifying workflow: %w", err)
 	}
 
@@ -167,12 +169,26 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	return nil
 }
 
+// getFullRepoName extracts the org and repo from a path that starts with org/repo.
+func getFullRepoName(path string) (org, repo string, ok bool) {
+	parts := strings.SplitN(path, "/", 3)
+	if len(parts) < 2 {
+		return "", "", false
+	}
+	return parts[0], parts[1], true
+}
+
 // getAndVerifyWorkflowContent retrieves the workflow content from the repository and verifies it.
 // It verifies the branch is a default branch and gets the scorecard workflow from the repository
 // from the specific commit and verifies it to ensure that it hasn't been tampered with.
 func getAndVerifyWorkflowContent(ctx context.Context,
-	org, repo string, scorecardResult *models.VerifiedScorecardResult, info certInfo,
+	scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
+	org, repo, ok := getFullRepoName(info.workflowPath)
+	if !ok {
+		return errCertWorkflowPathMalformed
+	}
+
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient
 	if scorecardResult.AccessToken != "" {
@@ -193,8 +209,8 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("branch of cert isn't the repo's default branch")
 	}
 
-	// Get workflow file from cert commit SHA.
-	opts := &github.RepositoryContentGetOptions{Ref: info.repoSHA}
+	// Cannot use cert commit SHA for cases where the workflow is in a different repo.
+	opts := &github.RepositoryContentGetOptions{Ref: info.workflowRef}
 	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, info.workflowPath, opts)
 	if err != nil {
 		return fmt.Errorf("error downloading workflow contents from repo: %v", err)
@@ -489,7 +505,7 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	// url.URL.Path may have leading slashes
 	ret.workflowPath = strings.TrimLeft(workflowRef, "/")
 	// Remove repo ref tag from workflow filepath.
-	ret.workflowPath, _, _ = strings.Cut(ret.workflowPath, "@")
+	ret.workflowPath, ret.workflowRef, _ = strings.Cut(ret.workflowPath, "@")
 	return ret, nil
 }
 

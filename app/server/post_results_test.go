@@ -161,6 +161,7 @@ func Test_extractCertInfo(t *testing.T) {
 			want: certInfo{
 				repoFullName:  "https://test.com/",
 				workflowPath:  "foo/bar/workflow",
+				workflowRef:   "c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
 				repoBranchRef: "https://test.com/",
 				repoSHA:       "https://test.com/",
 			},

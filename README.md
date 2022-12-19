@@ -22,6 +22,12 @@ deployed to the staging site only. To make changes to the production API, a new
 Git tag needs to be generated which will auto deploy the latest tag to
 production.
 
+## Release process
+
+### GitHub release
+
+Cut a release for the project via the GitHub UX or by pushing a new tag.
+
 ### TODO: automate these steps
 
 Any updates made to [openapi.yaml](./openapi.yaml) needs to be deployed onto

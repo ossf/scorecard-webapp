@@ -486,12 +486,10 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 		return ret, errCertWorkflowPathEmpty
 	}
 
-	// Remove repo path from workflow filepath.
-	ind := strings.Index(workflowRef, ret.repoFullName) + len(ret.repoFullName) + 1
-	ret.workflowPath = workflowRef[ind:]
-
+	// url.URL.Path may have leading slashes
+	ret.workflowPath = strings.TrimLeft(workflowRef, "/")
 	// Remove repo ref tag from workflow filepath.
-	ret.workflowPath = ret.workflowPath[:strings.Index(ret.workflowPath, "@")]
+	ret.workflowPath, _, _ = strings.Cut(ret.workflowPath, "@")
 	return ret, nil
 }
 

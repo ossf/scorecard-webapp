@@ -153,14 +153,14 @@ func Test_extractCertInfo(t *testing.T) {
 						{
 							Scheme: "https",
 							Host:   "test.com",
-							Path:   "https://test.com/foo/bar/workflow@c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
+							Path:   "/foo/bar/workflow@c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
 						},
 					},
 				},
 			},
 			want: certInfo{
 				repoFullName:  "https://test.com/",
-				workflowPath:  "oo/bar/workflow",
+				workflowPath:  "foo/bar/workflow",
 				repoBranchRef: "https://test.com/",
 				repoSHA:       "https://test.com/",
 			},

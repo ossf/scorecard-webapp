@@ -31,6 +31,7 @@ var (
 	errNonScorecardJobHasTokenWrite = errors.New("workflow has a non-scorecard job with id-token permissions")
 	errJobHasContainerOrServices    = errors.New("job contains container or service")
 	errScorecardJobRunsOn           = errors.New("scorecard job should have exactly 1 'Ubuntu' virtual environment")
+	errInvalidRunnerLabel           = errors.New("scorecard job has invalid runner label")
 	errUnallowedStepName            = errors.New("job has unallowed step")
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
@@ -101,7 +102,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	}
 	label := labels[0].Value
 	if _, ok := ubuntuRunners[label]; !ok {
-		return fmt.Errorf("%w", errScorecardJobRunsOn)
+		return fmt.Errorf("%w: '%s'", errInvalidRunnerLabel, label)
 	}
 
 	// Verify that there are no job env vars set.

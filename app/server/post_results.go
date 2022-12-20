@@ -55,14 +55,13 @@ const (
 )
 
 var (
-	errWritingBucket             = errors.New("error writing to GCS bucket")
-	errMultipleCerts             = errors.New("multiple certificates found for the entry")
-	errEmptyCertRef              = errors.New("cert has empty repository ref")
-	errEmptyCertPath             = errors.New("cert has empty repository path")
-	errCertMissingURI            = errors.New("certificate has no URIs")
-	errCertWorkflowPathEmpty     = errors.New("cert workflow path is empty")
-	errCertWorkflowPathMalformed = errors.New("cert workflow path is malformed")
-	errMismatchedCertAndRequest  = errors.New("repository and branch of cert doesn't match that of request")
+	errWritingBucket            = errors.New("error writing to GCS bucket")
+	errMultipleCerts            = errors.New("multiple certificates found for the entry")
+	errEmptyCertRef             = errors.New("cert has empty repository ref")
+	errEmptyCertPath            = errors.New("cert has empty repository path")
+	errCertMissingURI           = errors.New("certificate has no URIs")
+	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
+	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
 )
 
 type certInfo struct {
@@ -190,7 +189,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 ) error {
 	org, repo, path, ok := splitFullPath(info.workflowPath)
 	if !ok {
-		return errCertWorkflowPathMalformed
+		return fmt.Errorf("cert workflow path is malformed")
 	}
 	workflowRepoFullName := fullName(org, repo)
 

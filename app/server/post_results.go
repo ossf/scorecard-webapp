@@ -144,7 +144,7 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if err != nil {
 		return fmt.Errorf("error extracting cert info: %w", err)
 	}
-	if info.repoFullName != fmt.Sprintf("%s/%s", org, repo) ||
+	if info.repoFullName != fullName(org, repo) ||
 		(info.repoBranchRef != scorecardResult.Branch &&
 			info.repoBranchRef != fmt.Sprintf("refs/heads/%s", scorecardResult.Branch)) {
 		return fmt.Errorf("%w", errMismatchedCertAndRequest)
@@ -169,13 +169,17 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	return nil
 }
 
-// getFullRepoName extracts the org and repo from a path that starts with org/repo.
-func getFullRepoName(path string) (org, repo string, ok bool) {
+func fullName(org, repo string) string {
+	return fmt.Sprintf("%s/%s", org, repo)
+}
+
+// splitFullPath extracts the org, repo, and path from a full path of the form org/repo/rest/of/path.
+func splitFullPath(path string) (org, repo, subPath string, ok bool) {
 	parts := strings.SplitN(path, "/", 3)
-	if len(parts) < 2 {
-		return "", "", false
+	if len(parts) < 3 {
+		return "", "", "", false
 	}
-	return parts[0], parts[1], true
+	return parts[0], parts[1], parts[2], true
 }
 
 // getAndVerifyWorkflowContent retrieves the workflow content from the repository and verifies it.
@@ -184,10 +188,11 @@ func getFullRepoName(path string) (org, repo string, ok bool) {
 func getAndVerifyWorkflowContent(ctx context.Context,
 	scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
-	org, repo, ok := getFullRepoName(info.workflowPath)
+	org, repo, path, ok := splitFullPath(info.workflowPath)
 	if !ok {
 		return errCertWorkflowPathMalformed
 	}
+	workflowRepoFullName := fullName(org, repo)
 
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient
@@ -209,9 +214,14 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("branch of cert isn't the repo's default branch")
 	}
 
-	// Cannot use cert commit SHA for cases where the workflow is in a different repo.
-	opts := &github.RepositoryContentGetOptions{Ref: info.workflowRef}
-	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, info.workflowPath, opts)
+	// Use the cert commit SHA if the workflow file is in the repo being analyzed.
+	// Otherwise fall back to the workflowRef, which may be a commit SHA, or it may be more vague e.g. refs/heads/main
+	opts := &github.RepositoryContentGetOptions{Ref: info.repoSHA}
+	if workflowRepoFullName != info.repoFullName {
+		opts.Ref = info.workflowRef
+	}
+
+	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, path, opts)
 	if err != nil {
 		return fmt.Errorf("error downloading workflow contents from repo: %v", err)
 	}

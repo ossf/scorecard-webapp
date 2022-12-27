@@ -69,6 +69,7 @@ type certInfo struct {
 	repoBranchRef string
 	repoSHA       string
 	workflowPath  string
+	workflowRef   string
 }
 
 type tlogEntry struct {
@@ -142,13 +143,13 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if err != nil {
 		return fmt.Errorf("error extracting cert info: %w", err)
 	}
-	if info.repoFullName != fmt.Sprintf("%s/%s", org, repo) ||
+	if info.repoFullName != fullName(org, repo) ||
 		(info.repoBranchRef != scorecardResult.Branch &&
 			info.repoBranchRef != fmt.Sprintf("refs/heads/%s", scorecardResult.Branch)) {
 		return fmt.Errorf("%w", errMismatchedCertAndRequest)
 	}
 
-	if err := getAndVerifyWorkflowContent(ctx, org, repo, scorecardResult, info); err != nil {
+	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
 		return fmt.Errorf("error verifying workflow: %w", err)
 	}
 
@@ -167,12 +168,31 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	return nil
 }
 
+func fullName(org, repo string) string {
+	return fmt.Sprintf("%s/%s", org, repo)
+}
+
+// splitFullPath extracts the org, repo, and path from a full path of the form org/repo/rest/of/path.
+func splitFullPath(path string) (org, repo, subPath string, ok bool) {
+	parts := strings.SplitN(path, "/", 3)
+	if len(parts) < 3 {
+		return "", "", "", false
+	}
+	return parts[0], parts[1], parts[2], true
+}
+
 // getAndVerifyWorkflowContent retrieves the workflow content from the repository and verifies it.
 // It verifies the branch is a default branch and gets the scorecard workflow from the repository
 // from the specific commit and verifies it to ensure that it hasn't been tampered with.
 func getAndVerifyWorkflowContent(ctx context.Context,
-	org, repo string, scorecardResult *models.VerifiedScorecardResult, info certInfo,
+	scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
+	org, repo, path, ok := splitFullPath(info.workflowPath)
+	if !ok {
+		return fmt.Errorf("cert workflow path is malformed")
+	}
+	workflowRepoFullName := fullName(org, repo)
+
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient
 	if scorecardResult.AccessToken != "" {
@@ -193,9 +213,14 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("branch of cert isn't the repo's default branch")
 	}
 
-	// Get workflow file from cert commit SHA.
+	// Use the cert commit SHA if the workflow file is in the repo being analyzed.
+	// Otherwise fall back to the workflowRef, which may be a commit SHA, or it may be more vague e.g. refs/heads/main
 	opts := &github.RepositoryContentGetOptions{Ref: info.repoSHA}
-	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, info.workflowPath, opts)
+	if workflowRepoFullName != info.repoFullName {
+		opts.Ref = info.workflowRef
+	}
+
+	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, path, opts)
 	if err != nil {
 		return fmt.Errorf("error downloading workflow contents from repo: %v", err)
 	}
@@ -486,12 +511,10 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 		return ret, errCertWorkflowPathEmpty
 	}
 
-	// Remove repo path from workflow filepath.
-	ind := strings.Index(workflowRef, ret.repoFullName) + len(ret.repoFullName) + 1
-	ret.workflowPath = workflowRef[ind:]
-
+	// url.URL.Path may have leading slashes
+	ret.workflowPath = strings.TrimLeft(workflowRef, "/")
 	// Remove repo ref tag from workflow filepath.
-	ret.workflowPath = ret.workflowPath[:strings.Index(ret.workflowPath, "@")]
+	ret.workflowPath, ret.workflowRef, _ = strings.Cut(ret.workflowPath, "@")
 	return ret, nil
 }
 

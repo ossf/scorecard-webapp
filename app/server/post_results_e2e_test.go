@@ -16,36 +16,77 @@ package server
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"github.com/ossf/scorecard-webapp/app/generated/models"
 )
 
 var _ = Describe("E2E Test: extractAndVerifyCertForPayload", func() {
-	Context("E2E Test: Validate functionality", func() {
+	AssertValidPayload := func(filename string) {
 		It("Should successfully extract cert for payload", func() {
-			testFile, err := os.Open("testdata/results/valid-payload.json")
+			testFile, err := os.Open(filename)
 			Expect(err).Should(BeNil())
 
-			payload, err := ioutil.ReadAll(testFile)
+			payload, err := io.ReadAll(testFile)
 			Expect(err).Should(BeNil())
 
 			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload)
 			Expect(errCertExtract).Should(BeNil())
 		})
+	}
+	Context("E2E Test: Validate functionality", func() {
+		AssertValidPayload("testdata/results/valid-payload.json")
 	})
 	Context("E2E Test: Validate functionality", func() {
-		It("Should successfully extract cert for payload", func() {
-			testFile, err := os.Open("testdata/results/valid-payload-2.json")
+		AssertValidPayload("testdata/results/valid-payload-2.json")
+	})
+})
+
+// readGitHubTokens is used to authenticate the github client in the getAndVerifyWorkflowContent tests
+// The CI/CD will have GITHUB_TOKEN available.
+func readGitHubTokens() (string, bool) {
+	githubAuthTokens := []string{"GITHUB_AUTH_TOKEN", "GITHUB_TOKEN", "GH_TOKEN", "GH_AUTH_TOKEN"}
+	for _, name := range githubAuthTokens {
+		if token, exists := os.LookupEnv(name); exists && token != "" {
+			return token, exists
+		}
+	}
+	return "", false
+}
+
+var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
+	AssertValidWorkflowContent := func(filename string) {
+		It("Should successfully extract cert and verify workflow for payload", func() {
+			testFile, err := os.Open(filename)
 			Expect(err).Should(BeNil())
 
-			payload, err := ioutil.ReadAll(testFile)
+			payload, err := io.ReadAll(testFile)
 			Expect(err).Should(BeNil())
 
-			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload)
+			ctx := context.Background()
+			cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload)
 			Expect(errCertExtract).Should(BeNil())
+
+			info, errCertExtractInfo := extractCertInfo(cert)
+			Expect(errCertExtractInfo).Should(BeNil())
+
+			token, _ := readGitHubTokens()
+			scorecardResult := &models.VerifiedScorecardResult{
+				AccessToken: token,
+				Branch:      "main",
+				Result:      string(payload),
+			}
+			Expect(getAndVerifyWorkflowContent(ctx, scorecardResult, info)).Should(BeNil())
 		})
+	}
+	Context("E2E Test: Validate functionality intra-repo", func() {
+		AssertValidWorkflowContent("testdata/results/reusable-workflow-intra-repo-results.json")
+	})
+	Context("E2E Test: Validate functionality inter-repo", func() {
+		AssertValidWorkflowContent("testdata/results/reusable-workflow-inter-repo-results.json")
 	})
 })

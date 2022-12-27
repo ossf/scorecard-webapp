@@ -15,7 +15,7 @@
 package server
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 	"unicode/utf8"
 
@@ -31,7 +31,7 @@ func TestVerifyValidWorkflows(t *testing.T) {
 	}
 
 	for _, workflowFile := range workflowFiles {
-		workflowContent, _ := ioutil.ReadFile(workflowFile)
+		workflowContent, _ := os.ReadFile(workflowFile)
 		err := verifyScorecardWorkflow(string(workflowContent))
 		if err != nil {
 			t.Fail()
@@ -64,7 +64,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	}
 
 	for _, workflowFile := range workflowFiles {
-		workflowContent, _ := ioutil.ReadFile(workflowFile)
+		workflowContent, _ := os.ReadFile(workflowFile)
 		err := verifyScorecardWorkflow(string(workflowContent))
 		assert.NotEqual(t, err, nil, workflowFile)
 	}

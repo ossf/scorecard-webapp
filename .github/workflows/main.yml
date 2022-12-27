@@ -59,5 +59,7 @@ jobs:
             go env -w GOFLAGS=-mod=mod
             make scorecard-webapp
      - name: Tests
+       env:
+        GITHUB_AUTH_TOKEN: ${{ github.token }} # needed for the e2e tests
        run: |
             cd app/server && go test

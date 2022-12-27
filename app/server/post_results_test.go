@@ -153,14 +153,15 @@ func Test_extractCertInfo(t *testing.T) {
 						{
 							Scheme: "https",
 							Host:   "test.com",
-							Path:   "https://test.com/foo/bar/workflow@c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
+							Path:   "/foo/bar/workflow@c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
 						},
 					},
 				},
 			},
 			want: certInfo{
 				repoFullName:  "https://test.com/",
-				workflowPath:  "oo/bar/workflow",
+				workflowPath:  "foo/bar/workflow",
+				workflowRef:   "c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
 				repoBranchRef: "https://test.com/",
 				repoSHA:       "https://test.com/",
 			},
@@ -208,4 +209,49 @@ func FuzzExtractCertInfo(f *testing.F) {
 		}
 		extractCertInfo(cert)
 	})
+}
+
+func Test_splitFullPath(t *testing.T) {
+	t.Parallel()
+	type results struct {
+		org, repo, subPath string
+		ok                 bool
+	}
+	tests := []struct {
+		name string
+		path string
+		want results
+	}{
+		{
+			name: "valid path",
+			path: "org/repo/rest/of/path@ref",
+			want: results{
+				org:     "org",
+				repo:    "repo",
+				subPath: "rest/of/path@ref",
+				ok:      true,
+			},
+		},
+		{
+			name: "malformed path",
+			path: "malformed/path",
+			want: results{
+				org:     "",
+				repo:    "",
+				subPath: "",
+				ok:      false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			o, r, p, ok := splitFullPath(tt.path)
+			assert.Equal(t, tt.want.ok, ok)
+			assert.Equal(t, tt.want.org, o)
+			assert.Equal(t, tt.want.repo, r)
+			assert.Equal(t, tt.want.subPath, p)
+		})
+	}
 }

@@ -255,3 +255,54 @@ func Test_splitFullPath(t *testing.T) {
 		})
 	}
 }
+
+// Test_getCertInfoFromCert tests the getCertInfoFromCert function
+func Test_getCertPool(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		cert        []byte
+		shouldBeNil bool // not comparing the cert pool, just if it's nil or not. It is hard to compare the cert pool
+		wantError   bool
+	}{
+		{nil, true, true},
+		{[]byte(""), true, true},
+		{[]byte("certificate"), true, true},
+		{[]byte(
+			`-----BEGIN CERTIFICATE-----
+MIIDYzCCAkugAwIBAgIRAPgUfht89Rg0uiZ/sUqqM+swDQYJKoZIhvcNAQELBQAw
+UDEhMB8GA1UEChMYTWFubmluZyBQdWJsaWNhdGlvbnMgQ28uMQ4wDAYDVQQLEwVC
+b29rczEbMBkGA1UEAxMSR28gV2ViIFByb2dyYW1taW5nMB4XDTIzMDEwODE2Mjkx
+MloXDTI1MTAwNDE2MjkxMlowUDEhMB8GA1UEChMYTWFubmluZyBQdWJsaWNhdGlv
+bnMgQ28uMQ4wDAYDVQQLEwVCb29rczEbMBkGA1UEAxMSR28gV2ViIFByb2dyYW1t
+aW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz06OXOWcXUOihEuJ
+yMDyGGAzGVUmLbLen4q2LiW8WiHBgM4gbADUZzK6d42XsNFQuptbZsjKl6/P0z4A
+LmALIXHwln4Acju5IbkqdQbKxyqbwHILNyXUoOXmbVwQwXwNxdKsRi2nySzsNUR7
+JiUhYZKlL26zu1wRo3JjnViXLsecf/1G+nvWyypcvf1iRmLv6oaMqroVAfnmksnG
+Oi2Peyd5fDbuMF9nI9qqPZ//clgPa9Z6P4kF+r+VAdgFo2Kt2mUzf8sn5jSvmdTu
+gYkuRoQdn6bQYY68FMEJivBXOPIwRqdbrnF7wl+PNEuZVYQgeSh5uNX1+WO1DD/y
+sRRm4QIDAQABozgwNjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUH
+AwEwDwYDVR0RBAgwBocEfwAAATANBgkqhkiG9w0BAQsFAAOCAQEAeaDNcWWiOY0r
+S6gr3AFhbPVD0sFDna+BbDfVOL6u4a9XVw2bg0ul0wEZFEq2g4qHASJDP6aB0og+
+rZCXPdmRvWKa1J1UsBBXwrZ3AEYv1kqOU2GJhD5AlG+zASAym7InapCQ5yU4eVB4
+5n0dayWStHI5It+ub2ubDcpZvjB+kCTRRLAy7PSSxa2rY7csIYgEOALOJk1VqO2M
+VT47afTMFrgOFyZ33DArNO034Dnu+Uz/V1SAeebPGv0vdl65plLh8ekoLgBZW87k
+e0i4463IxAwWdpCk29FOn3o0GZAtCWhDznIM70bTunZxl6QRCjdN0Z2sDEl+jPit
+MYSKu39B6Q==
+-----END CERTIFICATE-----`), false, false},
+	}
+
+	for _, tt := range tests {
+		t.Parallel()
+		got, err := getCertPool(tt.cert)
+		if (err != nil) != tt.wantError {
+			t.Errorf("getCertPool() error = %v, wantErr %v", err, tt.wantError)
+			continue
+		}
+
+		if tt.shouldBeNil {
+			assert.Nil(t, got)
+		} else {
+			assert.NotNil(t, got)
+		}
+	}
+}

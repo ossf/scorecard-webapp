@@ -37,7 +37,7 @@ type ScorecardCheck struct {
 	Name string `json:"name,omitempty"`
 
 	// score
-	Score int64 `json:"score,omitempty"`
+	Score int64 `json:"score"`
 
 	// reason
 	Reason string `json:"reason,omitempty"`

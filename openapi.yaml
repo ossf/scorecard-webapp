@@ -157,6 +157,7 @@ definitions:
         $ref: '#/definitions/ScorecardVersion'
       score:
         type: number
+        x-omitempty: false
         x-order: 3
         description: Aggregate score of the repository
       checks:
@@ -202,6 +203,7 @@ definitions:
         x-order: 0
       score:
         type: integer
+        x-omitempty: false
         x-order: 1
       reason:
         type: string

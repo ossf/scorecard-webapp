@@ -17,7 +17,7 @@ require (
 	github.com/go-openapi/spec v0.20.7
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/go-openapi/swag v0.22.3
-	github.com/go-openapi/validate v0.22.0
+	github.com/go-openapi/validate v0.22.1
 	github.com/google/go-cmp v0.5.9
 	github.com/onsi/ginkgo/v2 v2.7.0
 	github.com/onsi/gomega v1.24.2

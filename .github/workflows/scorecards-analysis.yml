@@ -20,7 +20,7 @@ jobs:
       id-token: write
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v2.4.0
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247 # v2.4.0
         with:
           persist-credentials: false
 

@@ -21,7 +21,7 @@ require (
 	github.com/google/go-cmp v0.5.9
 	github.com/onsi/ginkgo/v2 v2.9.1
 	github.com/onsi/gomega v1.27.4
-	github.com/rs/cors v1.8.3
+	github.com/rs/cors v1.9.0
 	github.com/spf13/pflag v1.0.5
 	github.com/transparency-dev/merkle v0.0.1
 	gocloud.dev v0.29.0

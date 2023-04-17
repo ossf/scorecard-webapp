@@ -32,9 +32,8 @@ func TestVerifyValidWorkflows(t *testing.T) {
 
 	for _, workflowFile := range workflowFiles {
 		workflowContent, _ := os.ReadFile(workflowFile)
-		err := verifyScorecardWorkflow(string(workflowContent))
+		err := verifyScorecardWorkflow(string(workflowContent), nil)
 		if err != nil {
-			t.Fail()
 			t.Errorf("expected - %v, got - %v", nil, err)
 		}
 	}
@@ -65,7 +64,7 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 
 	for _, workflowFile := range workflowFiles {
 		workflowContent, _ := os.ReadFile(workflowFile)
-		err := verifyScorecardWorkflow(string(workflowContent))
+		err := verifyScorecardWorkflow(string(workflowContent), nil)
 		assert.NotEqual(t, err, nil, workflowFile)
 	}
 }
@@ -76,6 +75,6 @@ func FuzzVerifyWorkflow(f *testing.F) {
 		if !utf8.ValidString(data) {
 			t.Skip()
 		}
-		verifyScorecardWorkflow(data)
+		verifyScorecardWorkflow(data, nil)
 	})
 }

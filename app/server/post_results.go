@@ -231,7 +231,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 	}
 
 	// Verify scorecard workflow.
-	if err := verifyScorecardWorkflow(workflowContent); err != nil {
+	if err := verifyScorecardWorkflow(workflowContent, nil); err != nil {
 		return fmt.Errorf("workflow could not be verified: %v", err)
 	}
 	return nil

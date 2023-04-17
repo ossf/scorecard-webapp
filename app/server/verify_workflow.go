@@ -15,10 +15,13 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
+	"github.com/google/go-github/v42/github"
 	"github.com/rhysd/actionlint"
 )
 
@@ -47,7 +50,7 @@ var ubuntuRunners = map[string]bool{
 	"ubuntu-18.04":  true,
 }
 
-func verifyScorecardWorkflow(workflowContent string) error {
+func verifyScorecardWorkflow(workflowContent string, client *github.Client) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil || workflow == nil {
@@ -124,7 +127,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		if stepUses == nil {
 			return fmt.Errorf("%w", errEmptyStepUses)
 		}
-		stepName := getStepName(stepUses.Value)
+		stepName, ref := getStepName(stepUses.Value)
 
 		switch stepName {
 		case
@@ -132,9 +135,23 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",
-			"step-security/harden-runner",
-			// Needed for e2e tests
-			"gcr.io/openssf/scorecard-action":
+			"step-security/harden-runner":
+			if client != nil && isCommitHash(ref) {
+				s := strings.Split(stepName, "/")
+				owner := s[0]
+				repo := s[1]
+				diff, _, err := client.Repositories.CompareCommits(context.TODO(), owner, repo, "main", ref, &github.ListOptions{PerPage: 1})
+				if err != nil {
+					return fmt.Errorf("error comparing revisions: %w", err)
+				}
+				// Target should be behind or at the base ref if it is considered contained.
+				if diff.GetStatus() == "behind" || diff.GetStatus() == "identical" {
+					return nil
+				}
+				return fmt.Errorf("imposter commit detected")
+			}
+		// Needed for e2e tests
+		case "gcr.io/openssf/scorecard-action":
 		default:
 			return fmt.Errorf("%w: %s", errUnallowedStepName, stepName)
 		}
@@ -154,7 +171,7 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 			if stepUses == nil {
 				continue
 			}
-			stepName := getStepName(stepUses.Value)
+			stepName, _ := getStepName(stepUses.Value)
 			if stepName == "ossf/scorecard-action" ||
 				stepName == "gcr.io/openssf/scorecard-action" {
 				return job
@@ -164,21 +181,21 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 	return nil
 }
 
-func getStepName(step string) string {
+func getStepName(step string) (name, ref string) {
 	// Check for `uses: ossf/scorecard-action@ref`.
-	reRef := regexp.MustCompile(`^([^@]*)@.*$`)
+	reRef := regexp.MustCompile(`^([^@]*)@(.*)$`)
 	refMatches := reRef.FindStringSubmatch(step)
-	if len(refMatches) > 1 {
-		return refMatches[1]
+	if len(refMatches) > 2 {
+		return refMatches[1], refMatches[2]
 	}
 
 	// Check for `uses: docker://gcr.io/openssf/scorecard-action:tag`.
 	reDocker := regexp.MustCompile(`^docker://([^:]*):.*$`)
 	dockerMatches := reDocker.FindStringSubmatch(step)
 	if len(dockerMatches) > 1 {
-		return dockerMatches[1]
+		return dockerMatches[1], ""
 	}
-	return ""
+	return "", ""
 }
 
 func getStepUses(step *actionlint.Step) *actionlint.String {
@@ -190,4 +207,9 @@ func getStepUses(step *actionlint.Step) *actionlint.String {
 		return nil
 	}
 	return execAction.Uses
+}
+
+func isCommitHash(s string) bool {
+	reSHA := regexp.MustCompile(`^[0-9a-f]{40}$`)
+	return reSHA.MatchString(s)
 }

@@ -35,7 +35,6 @@ import (
 	"github.com/ossf/scorecard-webapp/app/server"
 )
 
-//nolint:lll // generated code
 //go:generate swagger generate server --target ../../generated --name Scorecard --spec ../../../openapi.yaml --principal interface{}
 
 var (

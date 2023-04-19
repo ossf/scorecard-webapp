@@ -18,6 +18,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
+	"fmt"
 	"net/url"
 	"testing"
 	"unicode/utf8"
@@ -256,7 +257,7 @@ func Test_splitFullPath(t *testing.T) {
 	}
 }
 
-// Test_getCertInfoFromCert tests the getCertInfoFromCert function
+// Test_getCertInfoFromCert tests the getCertInfoFromCert function.
 func Test_getCertPool(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -290,19 +291,20 @@ e0i4463IxAwWdpCk29FOn3o0GZAtCWhDznIM70bTunZxl6QRCjdN0Z2sDEl+jPit
 MYSKu39B6Q==
 -----END CERTIFICATE-----`), false, false},
 	}
+	for i, tt := range tests {
+		tt := tt
+		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+			t.Parallel()
+			got, err := getCertPool(tt.cert)
+			if (err != nil) != tt.wantError {
+				t.Errorf("getCertPool() error = %v, wantErr %v", err, tt.wantError)
+			}
 
-	for _, tt := range tests {
-		t.Parallel()
-		got, err := getCertPool(tt.cert)
-		if (err != nil) != tt.wantError {
-			t.Errorf("getCertPool() error = %v, wantErr %v", err, tt.wantError)
-			continue
-		}
-
-		if tt.shouldBeNil {
-			assert.Nil(t, got)
-		} else {
-			assert.NotNil(t, got)
-		}
+			if tt.shouldBeNil {
+				assert.Nil(t, got)
+			} else {
+				assert.NotNil(t, got)
+			}
+		})
 	}
 }

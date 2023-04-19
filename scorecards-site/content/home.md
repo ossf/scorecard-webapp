@@ -256,7 +256,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 | [Branch Protection](https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection)  | Does the project avoid dangerous coding patterns in GitHub Actions?                                                                                   | High     |
 | [Dangerous Workflow](https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection) | Does the project use [Branch Protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-protected-branches)? | Critical |
 | [Code Review](https://github.com/ossf/scorecard/blob/main/docs/checks.md#code-review)              | Does the project require code review before code is merged?                                                                                           | High     |
-| [Contributors](https://github.com/ossf/scorecard/blob/main/docs/checks.md#contributors)            | Does the project have contributors from at least two different organizations?                                                                         | Low      |
+| [Contributors](https://github.com/ossf/scorecard/blob/main/docs/checks.md#contributors)            | Does the project have contributors from multiple organizations?                                                                         | Low      |
 
 #### Build risk assessment
 

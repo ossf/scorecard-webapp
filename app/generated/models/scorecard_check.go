@@ -135,11 +135,11 @@ func (m *ScorecardCheck) UnmarshalBinary(b []byte) error {
 // swagger:model ScorecardCheckDocumentation
 type ScorecardCheckDocumentation struct {
 
-	// short
-	Short string `json:"short,omitempty"`
-
 	// url
 	URL string `json:"url,omitempty"`
+
+	// short
+	Short string `json:"short,omitempty"`
 }
 
 // Validate validates this scorecard check documentation

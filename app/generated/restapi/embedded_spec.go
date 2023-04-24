@@ -236,10 +236,12 @@ func init() {
           "type": "object",
           "properties": {
             "short": {
-              "type": "string"
+              "type": "string",
+              "x-order": 1
             },
             "url": {
-              "type": "string"
+              "type": "string",
+              "x-order": 0
             }
           },
           "x-order": 4
@@ -275,6 +277,8 @@ func init() {
         },
         "metadata": {
           "type": "string",
+          "x-nullable": true,
+          "x-omitempty": false,
           "x-order": 5
         },
         "repo": {
@@ -567,10 +571,12 @@ func init() {
           "type": "object",
           "properties": {
             "short": {
-              "type": "string"
+              "type": "string",
+              "x-order": 1
             },
             "url": {
-              "type": "string"
+              "type": "string",
+              "x-order": 0
             }
           },
           "x-order": 4
@@ -594,10 +600,12 @@ func init() {
       "type": "object",
       "properties": {
         "short": {
-          "type": "string"
+          "type": "string",
+          "x-order": 1
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "x-order": 0
         }
       },
       "x-order": 4
@@ -618,6 +626,8 @@ func init() {
         },
         "metadata": {
           "type": "string",
+          "x-nullable": true,
+          "x-omitempty": false,
           "x-order": 5
         },
         "repo": {

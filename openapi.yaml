@@ -167,6 +167,8 @@ definitions:
           $ref: '#/definitions/ScorecardCheck'
       metadata:
         type: string
+        x-nullable: true
+        x-omitempty: false
         x-order: 5
 
   Repo:
@@ -219,8 +221,10 @@ definitions:
         properties:
           url:
             type: string
+            x-order: 0
           short:
             type: string
+            x-order: 1
 
   VerifiedScorecardResult:
     type: object

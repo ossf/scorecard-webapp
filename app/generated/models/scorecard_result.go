@@ -50,7 +50,7 @@ type ScorecardResult struct {
 	Checks []*ScorecardCheck `json:"checks"`
 
 	// metadata
-	Metadata string `json:"metadata,omitempty"`
+	Metadata *string `json:"metadata"`
 }
 
 // Validate validates this scorecard result

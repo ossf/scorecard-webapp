@@ -230,7 +230,7 @@ func init() {
           "items": {
             "type": "string"
           },
-          "x-order": 4
+          "x-order": 0
         },
         "documentation": {
           "type": "object",
@@ -242,11 +242,11 @@ func init() {
               "type": "string"
             }
           },
-          "x-order": 3
+          "x-order": 4
         },
         "name": {
           "type": "string",
-          "x-order": 0
+          "x-order": 3
         },
         "reason": {
           "type": "string",
@@ -561,7 +561,7 @@ func init() {
           "items": {
             "type": "string"
           },
-          "x-order": 4
+          "x-order": 0
         },
         "documentation": {
           "type": "object",
@@ -573,11 +573,11 @@ func init() {
               "type": "string"
             }
           },
-          "x-order": 3
+          "x-order": 4
         },
         "name": {
           "type": "string",
-          "x-order": 0
+          "x-order": 3
         },
         "reason": {
           "type": "string",
@@ -600,7 +600,7 @@ func init() {
           "type": "string"
         }
       },
-      "x-order": 3
+      "x-order": 4
     },
     "ScorecardResult": {
       "type": "object",

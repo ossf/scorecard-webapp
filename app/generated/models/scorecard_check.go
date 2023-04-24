@@ -33,8 +33,8 @@ import (
 // swagger:model ScorecardCheck
 type ScorecardCheck struct {
 
-	// name
-	Name string `json:"name,omitempty"`
+	// details
+	Details []string `json:"details"`
 
 	// score
 	Score int64 `json:"score"`
@@ -42,8 +42,8 @@ type ScorecardCheck struct {
 	// reason
 	Reason string `json:"reason,omitempty"`
 
-	// details
-	Details []string `json:"details"`
+	// name
+	Name string `json:"name,omitempty"`
 
 	// documentation
 	Documentation *ScorecardCheckDocumentation `json:"documentation,omitempty"`

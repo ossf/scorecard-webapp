@@ -198,9 +198,11 @@ definitions:
   ScorecardCheck:
     type: object
     properties:
-      name:
-        type: string
+      details:
+        type: array
         x-order: 0
+        items:
+          type: string
       score:
         type: integer
         x-omitempty: false
@@ -208,19 +210,17 @@ definitions:
       reason:
         type: string
         x-order: 2
+      name:
+        type: string
+        x-order: 3
       documentation:
         type: object
-        x-order: 3
+        x-order: 4
         properties:
           url:
             type: string
           short:
             type: string
-      details:
-        type: array
-        x-order: 4
-        items:
-          type: string
 
   VerifiedScorecardResult:
     type: object

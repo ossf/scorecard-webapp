@@ -230,8 +230,12 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("error decoding workflow contents: %v", err)
 	}
 
+	verifier := &githubVerifier{
+		ctx:    ctx,
+		client: client,
+	}
 	// Verify scorecard workflow.
-	if err := verifyScorecardWorkflow(workflowContent, nil); err != nil {
+	if err := verifyScorecardWorkflow(workflowContent, verifier); err != nil {
 		return fmt.Errorf("workflow could not be verified: %v", err)
 	}
 	return nil

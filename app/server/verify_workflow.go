@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -39,6 +40,7 @@ var (
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
+	errImposterCommit               = errors.New("ref does not belong to repo")
 )
 
 // TODO(#290): retrieve the runners dynamically.
@@ -50,7 +52,30 @@ var ubuntuRunners = map[string]bool{
 	"ubuntu-18.04":  true,
 }
 
-func verifyScorecardWorkflow(workflowContent string, client *github.Client) error {
+type commitVerifier interface {
+	contains(owner, repo, base, target string) (bool, error)
+}
+
+type githubVerifier struct {
+	ctx    context.Context
+	client *github.Client
+}
+
+func (g *githubVerifier) contains(owner, repo, base, target string) (bool, error) {
+	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, base, target, &github.ListOptions{PerPage: 1})
+	if err != nil {
+		if resp.StatusCode == http.StatusNotFound {
+			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
+			return false, nil
+		}
+		return false, fmt.Errorf("error comparing revisions: %w", err)
+	}
+
+	// Target should be behind or at the base ref if it is considered contained.
+	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+}
+
+func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil || workflow == nil {
@@ -136,19 +161,19 @@ func verifyScorecardWorkflow(workflowContent string, client *github.Client) erro
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",
 			"step-security/harden-runner":
-			if client != nil && isCommitHash(ref) {
+			if isCommitHash(ref) {
 				s := strings.Split(stepName, "/")
 				owner := s[0]
 				repo := s[1]
-				diff, _, err := client.Repositories.CompareCommits(context.TODO(), owner, repo, "main", ref, &github.ListOptions{PerPage: 1})
+				// TODO all of these repos have main as their default branch. is that good enough?
+				const base = "main"
+				contains, err := verifier.contains(owner, repo, base, ref)
 				if err != nil {
-					return fmt.Errorf("error comparing revisions: %w", err)
+					return err
 				}
-				// Target should be behind or at the base ref if it is considered contained.
-				if diff.GetStatus() == "behind" || diff.GetStatus() == "identical" {
-					return nil
+				if !contains {
+					return errImposterCommit
 				}
-				return fmt.Errorf("imposter commit detected")
 			}
 		// Needed for e2e tests
 		case "gcr.io/openssf/scorecard-action":

@@ -40,7 +40,7 @@ var (
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
-	errImposterCommit               = errors.New("ref does not belong to repo")
+	errImposterCommit               = errors.New("imposter commit: ref does not belong to repo")
 )
 
 // TODO(#290): retrieve the runners dynamically.

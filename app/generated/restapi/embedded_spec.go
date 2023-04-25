@@ -230,23 +230,25 @@ func init() {
           "items": {
             "type": "string"
           },
-          "x-order": 4
+          "x-order": 0
         },
         "documentation": {
           "type": "object",
           "properties": {
             "short": {
-              "type": "string"
+              "type": "string",
+              "x-order": 1
             },
             "url": {
-              "type": "string"
+              "type": "string",
+              "x-order": 0
             }
           },
-          "x-order": 3
+          "x-order": 4
         },
         "name": {
           "type": "string",
-          "x-order": 0
+          "x-order": 3
         },
         "reason": {
           "type": "string",
@@ -275,6 +277,8 @@ func init() {
         },
         "metadata": {
           "type": "string",
+          "x-nullable": true,
+          "x-omitempty": false,
           "x-order": 5
         },
         "repo": {
@@ -561,23 +565,25 @@ func init() {
           "items": {
             "type": "string"
           },
-          "x-order": 4
+          "x-order": 0
         },
         "documentation": {
           "type": "object",
           "properties": {
             "short": {
-              "type": "string"
+              "type": "string",
+              "x-order": 1
             },
             "url": {
-              "type": "string"
+              "type": "string",
+              "x-order": 0
             }
           },
-          "x-order": 3
+          "x-order": 4
         },
         "name": {
           "type": "string",
-          "x-order": 0
+          "x-order": 3
         },
         "reason": {
           "type": "string",
@@ -594,13 +600,15 @@ func init() {
       "type": "object",
       "properties": {
         "short": {
-          "type": "string"
+          "type": "string",
+          "x-order": 1
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "x-order": 0
         }
       },
-      "x-order": 3
+      "x-order": 4
     },
     "ScorecardResult": {
       "type": "object",
@@ -618,6 +626,8 @@ func init() {
         },
         "metadata": {
           "type": "string",
+          "x-nullable": true,
+          "x-omitempty": false,
           "x-order": 5
         },
         "repo": {

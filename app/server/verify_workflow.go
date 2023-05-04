@@ -41,6 +41,9 @@ var (
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
 	errImposterCommit               = errors.New("imposter commit: ref does not belong to repo")
+	errNoDefaultBranch              = errors.New("no default branch")
+
+	reCommitSHA = regexp.MustCompile(`^[0-9a-f]{40}$`)
 )
 
 // TODO(#290): retrieve the runners dynamically.
@@ -53,26 +56,7 @@ var ubuntuRunners = map[string]bool{
 }
 
 type commitVerifier interface {
-	contains(owner, repo, base, target string) (bool, error)
-}
-
-type githubVerifier struct {
-	ctx    context.Context
-	client *github.Client
-}
-
-func (g *githubVerifier) contains(owner, repo, base, target string) (bool, error) {
-	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, base, target, &github.ListOptions{PerPage: 1})
-	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
-			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
-			return false, nil
-		}
-		return false, fmt.Errorf("error comparing revisions: %w", err)
-	}
-
-	// Target should be behind or at the base ref if it is considered contained.
-	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+	contains(owner, repo, hash string) (bool, error)
 }
 
 func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) error {
@@ -163,11 +147,9 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 			"step-security/harden-runner":
 			if isCommitHash(ref) {
 				s := strings.Split(stepName, "/")
-				owner := s[0]
-				repo := s[1]
-				// TODO all of these repos have main as their default branch. is that good enough?
-				const base = "main"
-				contains, err := verifier.contains(owner, repo, base, ref)
+				// no need to length check as the step name is one of the ones above
+				owner, repo := s[0], s[1]
+				contains, err := verifier.contains(owner, repo, ref)
 				if err != nil {
 					return err
 				}
@@ -235,6 +217,42 @@ func getStepUses(step *actionlint.Step) *actionlint.String {
 }
 
 func isCommitHash(s string) bool {
-	reSHA := regexp.MustCompile(`^[0-9a-f]{40}$`)
-	return reSHA.MatchString(s)
+	return reCommitSHA.MatchString(s)
+}
+
+type githubVerifier struct {
+	ctx    context.Context
+	client *github.Client
+}
+
+// contains currently makes two "core" API calls: one for the default branch, and one to compare the target hash
+// This could also be done with the search commits API and a query of q=hash:<sha>+repo:<owner>/<repo>.
+func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
+	defaultBranch, err := g.defaultBranch(owner, repo)
+	if err != nil {
+		return false, err
+	}
+	opts := &github.ListOptions{PerPage: 1}
+	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, defaultBranch, hash, opts)
+	if err != nil {
+		if resp.StatusCode == http.StatusNotFound {
+			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
+			return false, nil
+		}
+		return false, fmt.Errorf("error comparing revisions: %w", err)
+	}
+
+	// Target should be behind or at the base ref if it is considered contained.
+	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+}
+
+func (g *githubVerifier) defaultBranch(owner, repo string) (string, error) {
+	githubRepository, _, err := g.client.Repositories.Get(g.ctx, owner, repo)
+	if err != nil {
+		return "", fmt.Errorf("fetching repository info: %w", err)
+	}
+	if githubRepository == nil || githubRepository.DefaultBranch == nil {
+		return "", errNoDefaultBranch
+	}
+	return *githubRepository.DefaultBranch, nil
 }

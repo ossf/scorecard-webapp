@@ -26,8 +26,8 @@ type allowListVerifier struct {
 	allowed map[string]bool
 }
 
-func (a *allowListVerifier) contains(owner, repo, base, target string) (bool, error) {
-	return a.allowed[target], nil
+func (a *allowListVerifier) contains(owner, repo, hash string) (bool, error) {
+	return a.allowed[hash], nil
 }
 
 var allowCommitVerifier = &allowListVerifier{

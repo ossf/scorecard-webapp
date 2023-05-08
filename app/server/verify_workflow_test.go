@@ -89,12 +89,24 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	}
 }
 
-//nolint
 func FuzzVerifyWorkflow(f *testing.F) {
+	testfiles := []string{
+		"testdata/workflow-valid.yml",
+		"testdata/workflow-valid-noglobalperm.yml",
+		"testdata/workflow-valid-e2e.yml",
+		"testdata/workflow-valid-tagged-action.yml",
+	}
+	for _, file := range testfiles {
+		content, err := os.ReadFile(file)
+		if err != nil {
+			f.Fatal(err)
+		}
+		f.Add(string(content))
+	}
 	f.Fuzz(func(t *testing.T, data string) {
 		if !utf8.ValidString(data) {
 			t.Skip()
 		}
-		verifyScorecardWorkflow(data, nil)
+		verifyScorecardWorkflow(data, allowCommitVerifier)
 	})
 }

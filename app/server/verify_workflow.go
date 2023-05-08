@@ -136,7 +136,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		if stepUses == nil {
 			return fmt.Errorf("%w", errEmptyStepUses)
 		}
-		stepName, ref := getStepName(stepUses.Value)
+		stepName, ref := parseStep(stepUses.Value)
 
 		switch stepName {
 		case
@@ -178,7 +178,7 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 			if stepUses == nil {
 				continue
 			}
-			stepName, _ := getStepName(stepUses.Value)
+			stepName, _ := parseStep(stepUses.Value)
 			if stepName == "ossf/scorecard-action" ||
 				stepName == "gcr.io/openssf/scorecard-action" {
 				return job
@@ -188,7 +188,7 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 	return nil
 }
 
-func getStepName(step string) (name, ref string) {
+func parseStep(step string) (name, ref string) {
 	// Check for `uses: ossf/scorecard-action@ref`.
 	reRef := regexp.MustCompile(`^([^@]*)@(.*)$`)
 	refMatches := reRef.FindStringSubmatch(step)
@@ -200,6 +200,7 @@ func getStepName(step string) (name, ref string) {
 	reDocker := regexp.MustCompile(`^docker://([^:]*):.*$`)
 	dockerMatches := reDocker.FindStringSubmatch(step)
 	if len(dockerMatches) > 1 {
+		// TODO don't currently need ref for the docker images
 		return dockerMatches[1], ""
 	}
 	return "", ""

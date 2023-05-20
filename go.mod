@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/google/go-github/v42 v42.0.0
 	github.com/rhysd/actionlint v1.6.24
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 )
 
 require (

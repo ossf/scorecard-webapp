@@ -325,6 +325,9 @@ func init() {
         },
         "result": {
           "type": "string"
+        },
+        "tlogIndex": {
+          "type": "integer"
         }
       }
     }
@@ -674,6 +677,9 @@ func init() {
         },
         "result": {
           "type": "string"
+        },
+        "tlogIndex": {
+          "type": "integer"
         }
       }
     }

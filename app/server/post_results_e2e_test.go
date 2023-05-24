@@ -34,7 +34,7 @@ var _ = Describe("E2E Test: extractAndVerifyCertForPayload", func() {
 			payload, err := io.ReadAll(testFile)
 			Expect(err).Should(BeNil())
 
-			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload)
+			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload, noTlogIndex)
 			Expect(errCertExtract).Should(BeNil())
 		})
 	}
@@ -68,7 +68,7 @@ var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
 			Expect(err).Should(BeNil())
 
 			ctx := context.Background()
-			cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload)
+			cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload, noTlogIndex)
 			Expect(errCertExtract).Should(BeNil())
 
 			info, errCertExtractInfo := extractCertInfo(cert)

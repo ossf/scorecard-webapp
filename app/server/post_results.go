@@ -52,6 +52,7 @@ const (
 	fulcioRepoSHAKey  = "1.3.6.1.4.1.57264.1.3"
 	resultsBucket     = "gs://ossf-scorecard-results"
 	resultsFile       = "results.json"
+	noTlogIndex       = 0
 )
 
 var (
@@ -62,6 +63,7 @@ var (
 	errCertMissingURI           = errors.New("certificate has no URIs")
 	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
 	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
+	errNoTlogEntry              = errors.New("no transparency log entry found")
 )
 
 type certInfo struct {
@@ -134,7 +136,7 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 
 func processRequest(host, org, repo string, scorecardResult *models.VerifiedScorecardResult) error {
 	ctx := context.Background()
-	cert, err := extractAndVerifyCertForPayload(ctx, []byte(scorecardResult.Result))
+	cert, err := extractAndVerifyCertForPayload(ctx, []byte(scorecardResult.Result), scorecardResult.TlogIndex)
 	if err != nil {
 		return fmt.Errorf("error extracting cert: %w", err)
 	}
@@ -257,25 +259,36 @@ func writeToBlobStore(ctx context.Context, bucketURL, filename string, data []by
 	return nil
 }
 
-func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.Certificate, error) {
-	// Get most recent Rekor entry uuid.
-	uuids, err := getUUIDsByPayload(ctx, payload)
-	if err != nil || len(uuids) == 0 {
-		return nil, fmt.Errorf("error finding tlog entries corresponding to payload: %w", err)
-	}
-	// TODO(#135): We can't simply take the latest UUID. Either:
-	// (a) iterate through all returned UUIDs to find the right one.
-	// (b) send tlog index in the POST payload to identify the corresponding UUID.
-	uuid := uuids[len(uuids)-1] // ignore past entries.
+func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogIndex int64) (*x509.Certificate, error) {
+	var entry *tlogEntry
+	var uuid string
+	var err error
 
-	// Get tlog entry from the UUID.
-	entry, err := getTLogEntry(ctx, uuid)
-	if err != nil {
-		return nil, fmt.Errorf("error fetching tlog entry: %w", err)
+	if tlogIndex == noTlogIndex { // older versions of scorecard action wont send the tlog index
+		// Get most recent Rekor entry uuid.
+		uuids, err := getUUIDsByPayload(ctx, payload)
+		if err != nil || len(uuids) == 0 {
+			return nil, fmt.Errorf("error finding tlog entries corresponding to payload: %w", err)
+		}
+		// TODO(#135): We can't simply take the latest UUID. Either:
+		// (a) iterate through all returned UUIDs to find the right one.
+		// (b) send tlog index in the POST payload to identify the corresponding UUID.
+		uuid = uuids[len(uuids)-1] // ignore past entries.
+
+		// Get tlog entry from the UUID.
+		entry, err = getTLogEntryByUUID(ctx, uuid)
+		if err != nil {
+			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
+		}
+	} else {
+		uuid, entry, err = getTLogEntryByIndex(ctx, tlogIndex)
+		if err != nil {
+			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
+		}
 	}
 
 	// Verify inclusion proof.
-	if err := verifyInclusionProof(uuid, entry); err != nil {
+	if err = verifyInclusionProof(uuid, entry); err != nil {
 		return nil, fmt.Errorf("verifying inclusion proof for Rekor: %w", err)
 	}
 
@@ -289,7 +302,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 	}
 
 	cert := certs[0]
-	if err := verifyCert(certs[0], time.Unix(entry.IntegratedTime, 0)); err != nil {
+	if err = verifyCert(certs[0], time.Unix(entry.IntegratedTime, 0)); err != nil {
 		return nil, fmt.Errorf("verifying cert: %w", err)
 	}
 	return cert, nil
@@ -334,32 +347,42 @@ func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
 	return rekorResult, nil
 }
 
-// getTLogEntry returns the tlog entry corresponding to the given UUID.
-// It queries the Rekor server for the entry.
-func getTLogEntry(ctx context.Context, uuid string) (*tlogEntry, error) {
-	rekorReq, err := http.NewRequestWithContext(ctx,
-		http.MethodGet,
-		fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries/%s", uuid),
-		nil)
+// getTLogEntryHelper gets the uuid and tlog entry from Rekor using either a uuid or a tlog index.
+func getTLogEntryHelper(ctx context.Context, url string) (uuid string, entry *tlogEntry, err error) {
+	rekorReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("creating new HTTP request: %w", err)
+		return "", nil, fmt.Errorf("creating new HTTP request: %w", err)
 	}
 	rekorReq.Header.Add("accept", "application/json")
 	resp, err := http.DefaultClient.Do(rekorReq)
 	if err != nil {
-		return nil, fmt.Errorf("looking up Rekor index: %w", err)
+		return "", nil, fmt.Errorf("looking up Rekor index: %w", err)
 	}
 	defer resp.Body.Close()
 
 	var rekorResult map[string]tlogEntry
 	if err := json.NewDecoder(resp.Body).Decode(&rekorResult); err != nil {
-		return nil, fmt.Errorf("decoding Rekor response: %w", err)
+		return "", nil, fmt.Errorf("decoding Rekor response: %w", err)
 	}
 
-	for _, res := range rekorResult {
-		return &res, nil
+	for uuid, res := range rekorResult {
+		return uuid, &res, nil
 	}
-	return nil, fmt.Errorf("unexpected error: entry for uuid %s not found", uuid)
+	return "", nil, errNoTlogEntry
+}
+
+// getTLogEntryByIndex returns the UUID and tlog entry corresponding to the given Rekor tlog index.
+func getTLogEntryByIndex(ctx context.Context, index int64) (uuid string, entry *tlogEntry, err error) {
+	url := fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries?logIndex=%d", index)
+	return getTLogEntryHelper(ctx, url)
+}
+
+// getTLogEntryByUUID returns the tlog entry corresponding to the given UUID.
+// It queries the Rekor server for the entry.
+func getTLogEntryByUUID(ctx context.Context, uuid string) (*tlogEntry, error) {
+	url := fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries/%s", uuid)
+	_, entry, err := getTLogEntryHelper(ctx, url)
+	return entry, err
 }
 
 // verifyInclusionProof verifies the inclusion proof of the tlog entry.

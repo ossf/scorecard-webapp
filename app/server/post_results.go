@@ -280,11 +280,23 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 		if err != nil {
 			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 		}
+		fmt.Println(uuid, "verified by contents")
 	} else {
 		uuid, entry, err = getTLogEntryByIndex(ctx, tlogIndex)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 		}
+		fmt.Println(uuid, "verified by index", tlogIndex)
+	}
+
+	// verify  signature
+	hash, err := extractHash(entry)
+	if err != nil {
+		return nil, err
+	}
+	haveHash := fmt.Sprintf("%x", sha256.Sum256(payload))
+	if haveHash != hash {
+		return nil, fmt.Errorf("checksum mismatch")
 	}
 
 	// Verify inclusion proof.
@@ -594,4 +606,27 @@ func getCertPool(cert []byte) (*x509.CertPool, error) {
 		return nil, fmt.Errorf("unmarshalling PEM certificate")
 	}
 	return pool, nil
+}
+
+// extractCerts extracts the certificates from the tlog entry.
+// It base64 decodes the tlog Body and extracts the public key.
+// It uses the public key to pem decode the certificates.
+func extractHash(entry *tlogEntry) (string, error) {
+	b, err := base64.StdEncoding.DecodeString(entry.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var entryBody struct {
+		Spec struct {
+			Data struct {
+				Hash map[string]string `json:"hash"`
+			} `json:"data"`
+		} `json:"spec"`
+	}
+	if err := json.Unmarshal(b, &entryBody); err != nil {
+		return "", err
+	}
+
+	return entryBody.Spec.Data.Hash["value"], nil
 }

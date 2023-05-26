@@ -56,14 +56,14 @@ func verifyScorecardWorkflow(workflowContent string) error {
 
 	// Verify that there are no global env vars or defaults.
 	if workflow.Env != nil || workflow.Defaults != nil {
-		return fmt.Errorf("%w", errGlobalVarsOrDefaults)
+		return errGlobalVarsOrDefaults
 	}
 
 	if workflow.Permissions != nil {
 		globalPerms := workflow.Permissions
 		// Verify that the all scope, if set, isn't write-all.
 		if globalPerms.All != nil && globalPerms.All.Value == "write-all" {
-			return fmt.Errorf("%w", errGlobalWriteAll)
+			return errGlobalWriteAll
 		}
 
 		// Verify that there are no global permissions (including id-token) set to write.
@@ -78,7 +78,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	// Find the (first) job with a step that calls scorecard-action.
 	scorecardJob := findScorecardJob(workflow.Jobs)
 	if scorecardJob == nil {
-		return fmt.Errorf("%w", errScorecardJobNotFound)
+		return errScorecardJobNotFound
 	}
 
 	// Make sure other jobs don't have id-token permissions.
@@ -86,19 +86,19 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		if job != scorecardJob && job.Permissions != nil {
 			idToken := job.Permissions.Scopes["id-token"]
 			if idToken != nil && idToken.Value.Value == "write" {
-				return fmt.Errorf("%w", errNonScorecardJobHasTokenWrite)
+				return errNonScorecardJobHasTokenWrite
 			}
 		}
 	}
 
 	// Verify that there is no job container or services.
 	if scorecardJob.Container != nil || len(scorecardJob.Services) > 0 {
-		return fmt.Errorf("%w", errJobHasContainerOrServices)
+		return errJobHasContainerOrServices
 	}
 
 	labels := scorecardJob.RunsOn.Labels
 	if len(labels) != 1 {
-		return fmt.Errorf("%w", errScorecardJobRunsOn)
+		return errScorecardJobRunsOn
 	}
 	label := labels[0].Value
 	if _, ok := ubuntuRunners[label]; !ok {
@@ -107,12 +107,12 @@ func verifyScorecardWorkflow(workflowContent string) error {
 
 	// Verify that there are no job env vars set.
 	if scorecardJob.Env != nil {
-		return fmt.Errorf("%w", errScorecardJobEnvVars)
+		return errScorecardJobEnvVars
 	}
 
 	// Verify that there are no job defaults set.
 	if scorecardJob.Defaults != nil {
-		return fmt.Errorf("%w", errScorecardJobDefaults)
+		return errScorecardJobDefaults
 	}
 
 	// Get steps in job.
@@ -122,7 +122,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 	for _, step := range steps {
 		stepUses := getStepUses(step)
 		if stepUses == nil {
-			return fmt.Errorf("%w", errEmptyStepUses)
+			return errEmptyStepUses
 		}
 		stepName := getStepName(stepUses.Value)
 

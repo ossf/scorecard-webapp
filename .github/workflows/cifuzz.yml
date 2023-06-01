@@ -6,13 +6,13 @@ jobs:
     steps:
     - name: Build Fuzzers
       id: build
-      uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@79f4ed33d9ece2694593e0c7d8af63c936fa3dea
+      uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@0c39db7b0ddff51f31cae1abe25ba30224e7b7a4
       with:
         oss-fuzz-project-name: 'scorecard-web'
         dry-run: false
         language: go
     - name: Run Fuzzers
-      uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@95d5e613e7a88ed6746bdefaff1f1649b463873a
+      uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@0c39db7b0ddff51f31cae1abe25ba30224e7b7a4
       with:
         oss-fuzz-project-name: 'scorecard-web'
         fuzz-seconds: 300

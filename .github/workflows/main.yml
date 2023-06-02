@@ -37,15 +37,15 @@ jobs:
       contents: read
     steps:
      - name: Clone the code
-       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v2.3.4
+       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
        with:
           fetch-depth: 0
      - name: Setup Go
-       uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v2.2.0
+       uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
        with:
          go-version: ${{ env.GO_VERSION }}
      - name: Run linter
-       uses: golangci/golangci-lint-action@v3
+       uses: golangci/golangci-lint-action@5f1fec7010f6ae3b84ea4f7b2129beb8639b564f # v3.5.0
        with:
          args: --config=.golangci.yml
      - name: Check license headers

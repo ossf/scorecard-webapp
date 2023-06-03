@@ -47,11 +47,12 @@ import (
 const (
 	// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
 	// TODO: retrieve these by name.
-	fulcioRepoRefKey  = "1.3.6.1.4.1.57264.1.6"
-	fulcioRepoPathKey = "1.3.6.1.4.1.57264.1.5"
-	fulcioRepoSHAKey  = "1.3.6.1.4.1.57264.1.3"
-	resultsBucket     = "gs://ossf-scorecard-results"
-	resultsFile       = "results.json"
+	fulcioRepoRefKey        = "1.3.6.1.4.1.57264.1.6"
+	fulcioRepoPathKey       = "1.3.6.1.4.1.57264.1.5"
+	fulcioRepoSHAKey        = "1.3.6.1.4.1.57264.1.3"
+	resultsBucket           = "gs://ossf-scorecard-results"
+	resultsFile             = "results.json"
+	workflowRestrictionLink = "https://github.com/ossf/scorecard-action#workflow-restrictions"
 )
 
 var (
@@ -112,7 +113,7 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 	if errors.Is(err, errMismatchedCertAndRequest) || errors.Is(err, errWorkflowVerification) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
-			Message: fmt.Sprintf("Your request failed validation. See foo.bar/explanation.md for details. %v", err),
+			Message: fmt.Sprintf("Workflow validation failed, see %s for details. %v", workflowRestrictionLink, err),
 		})
 	}
 	log.Println(err)
@@ -141,7 +142,7 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 
 	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
 		// TODO(go 1.20) wrap multiple errors https://go.dev/doc/go1.20#errors
-		return fmt.Errorf("%w: %v", errWorkflowVerification, err.Error())
+		return fmt.Errorf("%w: %v", errWorkflowVerification, err)
 	}
 
 	// Save scorecard results (results.json, score.txt) to GCS

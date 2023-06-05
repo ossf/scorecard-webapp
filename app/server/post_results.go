@@ -47,12 +47,11 @@ import (
 const (
 	// OID source: https://github.com/sigstore/fulcio/blob/96ef49cc7662912ba37d46f738757e8d8d5b5355/docs/oid-info.md#L33
 	// TODO: retrieve these by name.
-	fulcioRepoRefKey        = "1.3.6.1.4.1.57264.1.6"
-	fulcioRepoPathKey       = "1.3.6.1.4.1.57264.1.5"
-	fulcioRepoSHAKey        = "1.3.6.1.4.1.57264.1.3"
-	resultsBucket           = "gs://ossf-scorecard-results"
-	resultsFile             = "results.json"
-	workflowRestrictionLink = "https://github.com/ossf/scorecard-action#workflow-restrictions"
+	fulcioRepoRefKey  = "1.3.6.1.4.1.57264.1.6"
+	fulcioRepoPathKey = "1.3.6.1.4.1.57264.1.5"
+	fulcioRepoSHAKey  = "1.3.6.1.4.1.57264.1.3"
+	resultsBucket     = "gs://ossf-scorecard-results"
+	resultsFile       = "results.json"
 )
 
 var (
@@ -63,7 +62,7 @@ var (
 	errCertMissingURI           = errors.New("certificate has no URIs")
 	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
 	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
-	errWorkflowVerification     = errors.New("workflow verification failed")
+	errNotDefaultBranch         = errors.New("branch of cert isn't the repo's default branch")
 )
 
 type certInfo struct {
@@ -110,10 +109,11 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 	if err == nil {
 		return results.NewPostResultCreated().WithPayload("successfully verified and published ScorecardResult")
 	}
-	if errors.Is(err, errMismatchedCertAndRequest) || errors.Is(err, errWorkflowVerification) {
+	var vErr verificationError
+	if errors.As(err, &vErr) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
-			Message: fmt.Sprintf("%v, see %s for details.", err, workflowRestrictionLink),
+			Message: vErr.Error(),
 		})
 	}
 	log.Println(err)
@@ -137,12 +137,11 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if info.repoFullName != fullName(org, repo) ||
 		(info.repoBranchRef != scorecardResult.Branch &&
 			info.repoBranchRef != fmt.Sprintf("refs/heads/%s", scorecardResult.Branch)) {
-		return errMismatchedCertAndRequest
+		return verificationError{e: errMismatchedCertAndRequest}
 	}
 
 	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
-		// TODO(go 1.20) wrap multiple errors https://go.dev/doc/go1.20#errors
-		return fmt.Errorf("%w: %v", errWorkflowVerification, err)
+		return fmt.Errorf("workflow verification failed: %w", err)
 	}
 
 	// Save scorecard results (results.json, score.txt) to GCS
@@ -202,7 +201,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 	defaultBranch := repoClient.GetDefaultBranch()
 	if scorecardResult.Branch != defaultBranch &&
 		scorecardResult.Branch != fmt.Sprintf("refs/heads/%s", defaultBranch) {
-		return fmt.Errorf("branch of cert isn't the repo's default branch")
+		return verificationError{e: errNotDefaultBranch}
 	}
 
 	// Use the cert commit SHA if the workflow file is in the repo being analyzed.

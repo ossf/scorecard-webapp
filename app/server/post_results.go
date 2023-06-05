@@ -137,7 +137,7 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if info.repoFullName != fullName(org, repo) ||
 		(info.repoBranchRef != scorecardResult.Branch &&
 			info.repoBranchRef != fmt.Sprintf("refs/heads/%s", scorecardResult.Branch)) {
-		return fmt.Errorf("%w", errMismatchedCertAndRequest)
+		return errMismatchedCertAndRequest
 	}
 
 	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
@@ -274,7 +274,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 		return nil, fmt.Errorf("error extracting certificate from entry: %w", err)
 	}
 	if len(certs) > 1 {
-		return nil, fmt.Errorf("%w", errMultipleCerts)
+		return nil, errMultipleCerts
 	}
 
 	cert := certs[0]

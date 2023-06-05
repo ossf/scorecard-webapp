@@ -113,7 +113,7 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 	if errors.Is(err, errMismatchedCertAndRequest) || errors.Is(err, errWorkflowVerification) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
-			Message: fmt.Sprintf("Workflow validation failed, see %s for details. %v", workflowRestrictionLink, err),
+			Message: fmt.Sprintf("%v, see %s for details.", err, workflowRestrictionLink),
 		})
 	}
 	log.Println(err)

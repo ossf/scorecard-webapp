@@ -53,6 +53,7 @@ const (
 	resultsBucket     = "gs://ossf-scorecard-results"
 	resultsFile       = "results.json"
 	noTlogIndex       = 0
+	hashedRekordKind  = "hashedrekord"
 )
 
 var (
@@ -64,6 +65,8 @@ var (
 	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
 	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
 	errNoTlogEntry              = errors.New("no transparency log entry found")
+	errNotRekordEntry           = errors.New("not a rekord entry")
+	errMismatchedTlogEntry      = errors.New("tlog entry does not match payload")
 )
 
 type certInfo struct {
@@ -88,6 +91,25 @@ type tlogEntry struct {
 		} `json:"inclusionProof,omitempty"`
 		SignedEntryTimestamp strfmt.Base64 `json:"signedEntryTimestamp,omitempty"`
 	} `json:"verification"`
+}
+
+// https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/hashedrekord/v0.0.1/hashedrekord_v0_0_1_schema.json
+//
+//nolint:lll
+type hashedRekordBody struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Spec       struct {
+		Data struct {
+			Hash map[string]string `json:"hash"`
+		} `json:"data"`
+		Signature struct {
+			Content   string `json:"content"`
+			PublicKey struct {
+				Content string `json:"content"`
+			} `json:"publicKey"`
+		} `json:"signature"`
+	}
 }
 
 //go:embed fulcio_v1.crt.pem
@@ -289,14 +311,13 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 		fmt.Println(uuid, "verified by index", tlogIndex)
 	}
 
-	// verify  signature
-	hash, err := extractHash(entry)
+	rekordBody, err := entry.rekord()
 	if err != nil {
 		return nil, err
 	}
-	haveHash := fmt.Sprintf("%x", sha256.Sum256(payload))
-	if haveHash != hash {
-		return nil, fmt.Errorf("checksum mismatch")
+
+	if !rekordBody.matches(payload) {
+		return nil, errMismatchedTlogEntry
 	}
 
 	// Verify inclusion proof.
@@ -305,7 +326,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 	}
 
 	// Extract and verify certificate.
-	certs, err := extractCerts(entry)
+	certs, err := rekordBody.certs()
 	if err != nil || len(certs) == 0 {
 		return nil, fmt.Errorf("error extracting certificate from entry: %w", err)
 	}
@@ -553,32 +574,12 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	return ret, nil
 }
 
-// extractCerts extracts the certificates from the tlog entry.
-// It base64 decodes the tlog Body and extracts the public key.
+// extracts x509 certs from the hashedrekord tlog entry.
 // It uses the public key to pem decode the certificates.
-func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
-	b, err := base64.StdEncoding.DecodeString(entry.Body)
+func (hr hashedRekordBody) certs() ([]*x509.Certificate, error) {
+	publicKey, err := base64.StdEncoding.DecodeString(hr.Spec.Signature.PublicKey.Content)
 	if err != nil {
-		return nil, err
-	}
-
-	var entryBody struct {
-		Spec struct {
-			Signature struct {
-				PublicKey struct {
-					Content string `json:"content"`
-				} `json:"publicKey"`
-			} `json:"signature"`
-		} `json:"spec"`
-	}
-	if err := json.Unmarshal(b, &entryBody); err != nil {
-		return nil, err
-	}
-
-	publicKeyB64 := entryBody.Spec.Signature.PublicKey.Content
-	publicKey, err := base64.StdEncoding.DecodeString(publicKeyB64)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("decode rekord public key: %w", err)
 	}
 
 	remaining := publicKey
@@ -599,6 +600,17 @@ func extractCerts(entry *tlogEntry) ([]*x509.Certificate, error) {
 	return result, nil
 }
 
+// check if the rekord object matches a given blob (currently uses sha256).
+func (hr hashedRekordBody) matches(blob []byte) bool {
+	sha := sha256.Sum256(blob)
+	have := hex.EncodeToString(sha[:])
+	want, ok := hr.Spec.Data.Hash["sha256"]
+	if !ok {
+		log.Println("hashed rekord entry has no sha256")
+	}
+	return have == want
+}
+
 func getCertPool(cert []byte) (*x509.CertPool, error) {
 	pool := x509.NewCertPool()
 
@@ -608,25 +620,17 @@ func getCertPool(cert []byte) (*x509.CertPool, error) {
 	return pool, nil
 }
 
-// extractCerts extracts the certificates from the tlog entry.
-// It base64 decodes the tlog Body and extracts the public key.
-// It uses the public key to pem decode the certificates.
-func extractHash(entry *tlogEntry) (string, error) {
-	b, err := base64.StdEncoding.DecodeString(entry.Body)
+func (t tlogEntry) rekord() (hashedRekordBody, error) {
+	b, err := base64.StdEncoding.DecodeString(t.Body)
 	if err != nil {
-		return "", err
+		return hashedRekordBody{}, fmt.Errorf("decode rekord body: %w", err)
 	}
-
-	var entryBody struct {
-		Spec struct {
-			Data struct {
-				Hash map[string]string `json:"hash"`
-			} `json:"data"`
-		} `json:"spec"`
+	var body hashedRekordBody
+	if err := json.Unmarshal(b, &body); err != nil {
+		return hashedRekordBody{}, fmt.Errorf("unmarshal rekord body: %w", err)
 	}
-	if err := json.Unmarshal(b, &entryBody); err != nil {
-		return "", err
+	if body.Kind != hashedRekordKind {
+		return hashedRekordBody{}, errNotRekordEntry
 	}
-
-	return entryBody.Spec.Data.Hash["value"], nil
+	return body, nil
 }

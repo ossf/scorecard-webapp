@@ -290,13 +290,11 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 		if err != nil {
 			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 		}
-		fmt.Println(uuid, "verified by contents")
 	} else {
 		uuid, entry, err = getTLogEntryByIndex(ctx, tlogIndex)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching tlog entry: %w", err)
 		}
-		fmt.Println(uuid, "verified by index", tlogIndex)
 	}
 
 	rekordBody, err := entry.rekord()
@@ -368,8 +366,8 @@ func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
 	return rekorResult, nil
 }
 
-// getTLogEntryHelper gets the uuid and tlog entry from Rekor using either a uuid or a tlog index.
-func getTLogEntryHelper(ctx context.Context, url string) (uuid string, entry *tlogEntry, err error) {
+// tlog entry helper function, url should be a variation of the https://rekor.sigstore.dev/api/v1/log/entries endpoint.
+func getTLogEntryFromURL(ctx context.Context, url string) (uuid string, entry *tlogEntry, err error) {
 	rekorReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return "", nil, fmt.Errorf("creating new HTTP request: %w", err)
@@ -392,17 +390,16 @@ func getTLogEntryHelper(ctx context.Context, url string) (uuid string, entry *tl
 	return "", nil, errNoTlogEntry
 }
 
-// getTLogEntryByIndex returns the UUID and tlog entry corresponding to the given Rekor tlog index.
+// getTLogEntryByIndex fetches the UUID and tlog entry from Rekor by tlog index.
 func getTLogEntryByIndex(ctx context.Context, index int64) (uuid string, entry *tlogEntry, err error) {
 	url := fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries?logIndex=%d", index)
-	return getTLogEntryHelper(ctx, url)
+	return getTLogEntryFromURL(ctx, url)
 }
 
-// getTLogEntryByUUID returns the tlog entry corresponding to the given UUID.
-// It queries the Rekor server for the entry.
+// getTLogEntryByUUID fetches the tlog entry from Rekor by UUID.
 func getTLogEntryByUUID(ctx context.Context, uuid string) (*tlogEntry, error) {
 	url := fmt.Sprintf("https://rekor.sigstore.dev/api/v1/log/entries/%s", uuid)
-	_, entry, err := getTLogEntryHelper(ctx, url)
+	_, entry, err := getTLogEntryFromURL(ctx, url)
 	return entry, err
 }
 
@@ -588,14 +585,15 @@ func (hr hashedRekordBody) certs() ([]*x509.Certificate, error) {
 	return result, nil
 }
 
-// check if the rekord object matches a given blob (currently uses sha256).
+// check if the rekord object matches a given blob (currently compares sha256 hash).
 func (hr hashedRekordBody) matches(blob []byte) bool {
+	if hr.Spec.Data.Hash["algorithm"] != "sha256" {
+		log.Println("hashed rekord entry has no sha256")
+		return false
+	}
 	sha := sha256.Sum256(blob)
 	have := hex.EncodeToString(sha[:])
-	want, ok := hr.Spec.Data.Hash["sha256"]
-	if !ok {
-		log.Println("hashed rekord entry has no sha256")
-	}
+	want := hr.Spec.Data.Hash["value"]
 	return have == want
 }
 

@@ -274,15 +274,13 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 	var uuid string
 	var err error
 
-	if tlogIndex == noTlogIndex { // older versions of scorecard action wont send the tlog index
+	// #135 older versions of scorecard action wont send the tlog index, but newer ones will
+	if tlogIndex == noTlogIndex {
 		// Get most recent Rekor entry uuid.
 		uuids, err := getUUIDsByPayload(ctx, payload)
 		if err != nil || len(uuids) == 0 {
 			return nil, fmt.Errorf("error finding tlog entries corresponding to payload: %w", err)
 		}
-		// TODO(#135): We can't simply take the latest UUID. Either:
-		// (a) iterate through all returned UUIDs to find the right one.
-		// (b) send tlog index in the POST payload to identify the corresponding UUID.
 		uuid = uuids[len(uuids)-1] // ignore past entries.
 
 		// Get tlog entry from the UUID.

@@ -866,7 +866,7 @@
               <div class="d-flex flex-row">
                 <div class="d-flex flex-column check-info">
                   <div class="d-flex flex-row align-items-center check-title">
-                    <div class="fw-semibold text-truncate">{{replaceDashes name}}</div>
+                    <div class="fw-semibold text-truncate">{{name}}</div>
                     {{#if (getRiskLevel name)}}
                       <div title="Risk level" class="severity-badge fw-semibold badge-{{getRiskLevel name}}">{{getRiskLevel name}}</div>
                     {{/if}}
@@ -1098,10 +1098,6 @@
       Handlebars.registerHelper('scoreFormat', (x) => {
         if (x === undefined) return '-';
         return x.toFixed(1);
-      });
-
-      Handlebars.registerHelper('replaceDashes', (x) => {
-        return x.replace(/-/g, ' ');
       });
 
       Handlebars.registerHelper('shortCommit', (x) => {

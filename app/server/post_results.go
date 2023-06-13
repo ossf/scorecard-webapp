@@ -98,19 +98,23 @@ type tlogEntry struct {
 //
 //nolint:lll
 type hashedRekordBody struct {
-	APIVersion string `json:"apiVersion"`
-	Kind       string `json:"kind"`
-	Spec       struct {
-		Data struct {
-			Hash map[string]string `json:"hash"`
-		} `json:"data"`
-		Signature struct {
-			Content   string `json:"content"`
-			PublicKey struct {
-				Content string `json:"content"`
-			} `json:"publicKey"`
-		} `json:"signature"`
-	}
+	APIVersion string           `json:"apiVersion"`
+	Kind       string           `json:"kind"`
+	Spec       hashedRekordSpec `json:"spec"`
+}
+type hashedRekordSpec struct {
+	Data      hashedRekordData      `json:"data"`
+	Signature hashedRekordSignature `json:"signature"`
+}
+type hashedRekordData struct {
+	Hash map[string]string
+}
+type hashedRekordSignature struct {
+	Content   string                `json:"content"`
+	PublicKey hashedrekordPublicKey `json:"publicKey"`
+}
+type hashedrekordPublicKey struct {
+	Content string `json:"content"`
 }
 
 //go:embed fulcio_v1.crt.pem

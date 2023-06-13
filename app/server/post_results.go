@@ -42,6 +42,7 @@ import (
 
 	"github.com/ossf/scorecard-webapp/app/generated/models"
 	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/results"
+	"github.com/ossf/scorecard-webapp/app/server/internal/hashedrekord"
 )
 
 const (
@@ -53,7 +54,6 @@ const (
 	resultsBucket     = "gs://ossf-scorecard-results"
 	resultsFile       = "results.json"
 	noTlogIndex       = 0
-	hashedRekordKind  = "hashedrekord"
 )
 
 var (
@@ -92,29 +92,6 @@ type tlogEntry struct {
 		} `json:"inclusionProof,omitempty"`
 		SignedEntryTimestamp strfmt.Base64 `json:"signedEntryTimestamp,omitempty"`
 	} `json:"verification"`
-}
-
-// https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/hashedrekord/v0.0.1/hashedrekord_v0_0_1_schema.json
-//
-//nolint:lll
-type hashedRekordBody struct {
-	APIVersion string           `json:"apiVersion"`
-	Kind       string           `json:"kind"`
-	Spec       hashedRekordSpec `json:"spec"`
-}
-type hashedRekordSpec struct {
-	Data      hashedRekordData      `json:"data"`
-	Signature hashedRekordSignature `json:"signature"`
-}
-type hashedRekordData struct {
-	Hash map[string]string
-}
-type hashedRekordSignature struct {
-	Content   string                `json:"content"`
-	PublicKey hashedrekordPublicKey `json:"publicKey"`
-}
-type hashedrekordPublicKey struct {
-	Content string `json:"content"`
 }
 
 //go:embed fulcio_v1.crt.pem
@@ -304,7 +281,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 		return nil, err
 	}
 
-	if !rekordBody.matches(payload) {
+	if !rekordBody.Matches(payload) {
 		return nil, errMismatchedTlogEntry
 	}
 
@@ -314,7 +291,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 	}
 
 	// Extract and verify certificate.
-	certs, err := rekordBody.certs()
+	certs, err := rekordBody.Certs()
 	if err != nil || len(certs) == 0 {
 		return nil, fmt.Errorf("error extracting certificate from entry: %w", err)
 	}
@@ -561,44 +538,6 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 	return ret, nil
 }
 
-// extracts x509 certs from the hashedrekord tlog entry.
-// It uses the public key to pem decode the certificates.
-func (hr hashedRekordBody) certs() ([]*x509.Certificate, error) {
-	publicKey, err := base64.StdEncoding.DecodeString(hr.Spec.Signature.PublicKey.Content)
-	if err != nil {
-		return nil, fmt.Errorf("decode rekord public key: %w", err)
-	}
-
-	remaining := publicKey
-	var result []*x509.Certificate
-	for len(remaining) > 0 {
-		var certDer *pem.Block
-		certDer, remaining = pem.Decode(remaining)
-		if certDer == nil {
-			return nil, fmt.Errorf("error during PEM decoding: %w", err)
-		}
-
-		cert, err := x509.ParseCertificate(certDer.Bytes)
-		if err != nil {
-			return nil, fmt.Errorf("error during certificate parsing: %w", err)
-		}
-		result = append(result, cert)
-	}
-	return result, nil
-}
-
-// check if the rekord object matches a given blob (currently compares sha256 hash).
-func (hr hashedRekordBody) matches(blob []byte) bool {
-	if hr.Spec.Data.Hash["algorithm"] != "sha256" {
-		log.Println("hashed rekord entry has no sha256")
-		return false
-	}
-	sha := sha256.Sum256(blob)
-	have := hex.EncodeToString(sha[:])
-	want := hr.Spec.Data.Hash["value"]
-	return have == want
-}
-
 func getCertPool(cert []byte) (*x509.CertPool, error) {
 	pool := x509.NewCertPool()
 
@@ -608,17 +547,17 @@ func getCertPool(cert []byte) (*x509.CertPool, error) {
 	return pool, nil
 }
 
-func (t tlogEntry) rekord() (hashedRekordBody, error) {
+func (t tlogEntry) rekord() (hashedrekord.Body, error) {
 	b, err := base64.StdEncoding.DecodeString(t.Body)
 	if err != nil {
-		return hashedRekordBody{}, fmt.Errorf("decode rekord body: %w", err)
+		return hashedrekord.Body{}, fmt.Errorf("decode rekord body: %w", err)
 	}
-	var body hashedRekordBody
+	var body hashedrekord.Body
 	if err := json.Unmarshal(b, &body); err != nil {
-		return hashedRekordBody{}, fmt.Errorf("unmarshal rekord body: %w", err)
+		return hashedrekord.Body{}, fmt.Errorf("unmarshal rekord body: %w", err)
 	}
-	if body.Kind != hashedRekordKind {
-		return hashedRekordBody{}, errNotRekordEntry
+	if body.Kind != hashedrekord.Kind {
+		return hashedrekord.Body{}, errNotRekordEntry
 	}
 	return body, nil
 }

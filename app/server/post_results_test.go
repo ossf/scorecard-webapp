@@ -30,8 +30,9 @@ import (
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/ossf/scorecard-webapp/app/server/internal/hashedrekord"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ossf/scorecard-webapp/app/server/internal/hashedrekord"
 )
 
 func Test_extractCertInfo(t *testing.T) {

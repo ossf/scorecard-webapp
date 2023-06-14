@@ -17,7 +17,6 @@ package hashedrekord
 import (
 	"crypto/sha256"
 	"crypto/x509"
-	_ "embed"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"

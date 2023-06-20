@@ -399,9 +399,9 @@ func Test_tlogEntry_rekord(t *testing.T) {
 				Kind:       hashedrekord.Kind,
 				Spec: hashedrekord.Spec{
 					Data: hashedrekord.Data{
-						Hash: map[string]string{
-							"algorithm": "sha256",
-							"value":     "cd8327d867fce04bc97e149da50c3746340869575f7bf959a67284e34bfd46bc",
+						Hash: hashedrekord.Hash{
+							Algorithm: "sha256",
+							Value:     "cd8327d867fce04bc97e149da50c3746340869575f7bf959a67284e34bfd46bc",
 						},
 					},
 					Signature: hashedrekord.Signature{

@@ -24,6 +24,7 @@ import (
 	"log"
 )
 
+// https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/README.md
 const Kind = "hashedrekord"
 
 // https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/hashedrekord/v0.0.1/hashedrekord_v0_0_1_schema.json
@@ -39,7 +40,11 @@ type Spec struct {
 	Signature Signature `json:"signature"`
 }
 type Data struct {
-	Hash map[string]string
+	Hash Hash `json:"hash"`
+}
+type Hash struct {
+	Algorithm string `json:"algorithm"`
+	Value     string `json:"value"`
 }
 type Signature struct {
 	Content   string    `json:"content"`
@@ -51,18 +56,17 @@ type PublicKey struct {
 
 // check if the rekord object matches a given blob (currently compares sha256 hash).
 func (b Body) Matches(blob []byte) bool {
-	if b.Spec.Data.Hash["algorithm"] != "sha256" {
-		log.Println("hashed rekord entry has no sha256")
+	if b.Spec.Data.Hash.Algorithm != "sha256" {
+		log.Println("hashedrekord entry has no sha256")
 		return false
 	}
 	sha := sha256.Sum256(blob)
 	have := hex.EncodeToString(sha[:])
-	want := b.Spec.Data.Hash["value"]
+	want := b.Spec.Data.Hash.Value
 	return have == want
 }
 
-// extracts x509 certs from the hashedrekord tlog entry.
-// It uses the public key to pem decode the certificates.
+// extracts all x509 certs from the hashedrekord tlog entry public key.
 func (b Body) Certs() ([]*x509.Certificate, error) {
 	publicKey, err := base64.StdEncoding.DecodeString(b.Spec.Signature.PublicKey.Content)
 	if err != nil {

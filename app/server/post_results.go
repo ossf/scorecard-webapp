@@ -287,7 +287,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte, tlogInd
 
 	// Verify inclusion proof.
 	if err = verifyInclusionProof(uuid, entry); err != nil {
-		return nil, fmt.Errorf("verifying inclusion proof for Rekor: %w", err)
+		return nil, fmt.Errorf("unable to verify rekor inclusion proof: %w", err)
 	}
 
 	// Extract and verify certificate.

@@ -47,7 +47,7 @@ var (
 	errImposterCommit               = errors.New("imposter commit: ref does not belong to repo")
 	errNoDefaultBranch              = errors.New("no default branch")
 
-	reCommitSHA = regexp.MustCompile(`^[0-9a-f]{40}$`)
+	reCommitSHA = regexp.MustCompile(`^[0-9a-fA-F]{40}$`)
 )
 
 // TODO(#290): retrieve the runners dynamically.

@@ -40,6 +40,9 @@ type VerifiedScorecardResult struct {
 
 	// result
 	Result string `json:"result,omitempty"`
+
+	// tlog index
+	TlogIndex int64 `json:"tlogIndex,omitempty"`
 }
 
 // Validate validates this verified scorecard result

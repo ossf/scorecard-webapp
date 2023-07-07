@@ -231,6 +231,8 @@ definitions:
         type: string
       accessToken:
         type: string
+      tlogIndex:
+        type: integer
 
 responses:
   NotFound:

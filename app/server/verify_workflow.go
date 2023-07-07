@@ -15,10 +15,14 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"regexp"
+	"strings"
 
+	"github.com/google/go-github/v42/github"
 	"github.com/rhysd/actionlint"
 )
 
@@ -40,6 +44,10 @@ var (
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
+	errImposterCommit               = errors.New("imposter commit: ref does not belong to repo")
+	errNoDefaultBranch              = errors.New("no default branch")
+
+	reCommitSHA = regexp.MustCompile(`^[0-9a-fA-F]{40}$`)
 )
 
 // TODO(#290): retrieve the runners dynamically.
@@ -49,6 +57,10 @@ var ubuntuRunners = map[string]bool{
 	"ubuntu-22.04":  true,
 	"ubuntu-20.04":  true,
 	"ubuntu-18.04":  true,
+}
+
+type commitVerifier interface {
+	contains(owner, repo, hash string) (bool, error)
 }
 
 type verificationError struct {
@@ -63,7 +75,7 @@ func (ve verificationError) Unwrap() error {
 	return ve.e
 }
 
-func verifyScorecardWorkflow(workflowContent string) error {
+func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil || workflow == nil {
@@ -140,7 +152,7 @@ func verifyScorecardWorkflow(workflowContent string) error {
 		if stepUses == nil {
 			return verificationError{e: errEmptyStepUses}
 		}
-		stepName := getStepName(stepUses.Value)
+		stepName, ref := parseStep(stepUses.Value)
 
 		switch stepName {
 		case
@@ -148,9 +160,21 @@ func verifyScorecardWorkflow(workflowContent string) error {
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",
-			"step-security/harden-runner",
-			// Needed for e2e tests
-			"gcr.io/openssf/scorecard-action":
+			"step-security/harden-runner":
+			if isCommitHash(ref) {
+				s := strings.Split(stepName, "/")
+				// no need to length check as the step name is one of the ones above
+				owner, repo := s[0], s[1]
+				contains, err := verifier.contains(owner, repo, ref)
+				if err != nil {
+					return err
+				}
+				if !contains {
+					return errImposterCommit
+				}
+			}
+		// Needed for e2e tests
+		case "gcr.io/openssf/scorecard-action":
 		default:
 			return verificationError{e: fmt.Errorf("%w: %s", errUnallowedStepName, stepName)}
 		}
@@ -170,7 +194,7 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 			if stepUses == nil {
 				continue
 			}
-			stepName := getStepName(stepUses.Value)
+			stepName, _ := parseStep(stepUses.Value)
 			if stepName == "ossf/scorecard-action" ||
 				stepName == "gcr.io/openssf/scorecard-action" {
 				return job
@@ -180,21 +204,22 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 	return nil
 }
 
-func getStepName(step string) string {
+func parseStep(step string) (name, ref string) {
 	// Check for `uses: ossf/scorecard-action@ref`.
-	reRef := regexp.MustCompile(`^([^@]*)@.*$`)
+	reRef := regexp.MustCompile(`^([^@]*)@(.*)$`)
 	refMatches := reRef.FindStringSubmatch(step)
-	if len(refMatches) > 1 {
-		return refMatches[1]
+	if len(refMatches) > 2 {
+		return refMatches[1], refMatches[2]
 	}
 
 	// Check for `uses: docker://gcr.io/openssf/scorecard-action:tag`.
 	reDocker := regexp.MustCompile(`^docker://([^:]*):.*$`)
 	dockerMatches := reDocker.FindStringSubmatch(step)
 	if len(dockerMatches) > 1 {
-		return dockerMatches[1]
+		// TODO don't currently need ref for the docker images
+		return dockerMatches[1], ""
 	}
-	return ""
+	return "", ""
 }
 
 func getStepUses(step *actionlint.Step) *actionlint.String {
@@ -206,4 +231,45 @@ func getStepUses(step *actionlint.Step) *actionlint.String {
 		return nil
 	}
 	return execAction.Uses
+}
+
+func isCommitHash(s string) bool {
+	return reCommitSHA.MatchString(s)
+}
+
+type githubVerifier struct {
+	ctx    context.Context
+	client *github.Client
+}
+
+// contains currently makes two "core" API calls: one for the default branch, and one to compare the target hash
+// This could also be done with the search commits API and a query of q=hash:<sha>+repo:<owner>/<repo>.
+func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
+	defaultBranch, err := g.defaultBranch(owner, repo)
+	if err != nil {
+		return false, err
+	}
+	opts := &github.ListOptions{PerPage: 1}
+	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, defaultBranch, hash, opts)
+	if err != nil {
+		if resp.StatusCode == http.StatusNotFound {
+			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
+			return false, nil
+		}
+		return false, fmt.Errorf("error comparing revisions: %w", err)
+	}
+
+	// Target should be behind or at the base ref if it is considered contained.
+	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+}
+
+func (g *githubVerifier) defaultBranch(owner, repo string) (string, error) {
+	githubRepository, _, err := g.client.Repositories.Get(g.ctx, owner, repo)
+	if err != nil {
+		return "", fmt.Errorf("fetching repository info: %w", err)
+	}
+	if githubRepository == nil || githubRepository.DefaultBranch == nil {
+		return "", errNoDefaultBranch
+	}
+	return *githubRepository.DefaultBranch, nil
 }

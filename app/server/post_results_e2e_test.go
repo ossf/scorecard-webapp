@@ -59,21 +59,25 @@ func readGitHubTokens() (string, bool) {
 }
 
 var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
+	ctx := context.Background()
+	getPayload := func(filename string) []byte {
+		testFile, err := os.Open(filename)
+		Expect(err).Should(BeNil())
+		payload, err := io.ReadAll(testFile)
+		Expect(err).Should(BeNil())
+		return payload
+	}
+	extractCertInfo := func(payload []byte) certInfo {
+		cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload)
+		Expect(errCertExtract).Should(BeNil())
+		info, errCertExtractInfo := extractCertInfo(cert)
+		Expect(errCertExtractInfo).Should(BeNil())
+		return info
+	}
 	AssertValidWorkflowContent := func(filename string) {
-		It("Should successfully extract cert and verify workflow for payload", func() {
-			testFile, err := os.Open(filename)
-			Expect(err).Should(BeNil())
-
-			payload, err := io.ReadAll(testFile)
-			Expect(err).Should(BeNil())
-
-			ctx := context.Background()
-			cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload)
-			Expect(errCertExtract).Should(BeNil())
-
-			info, errCertExtractInfo := extractCertInfo(cert)
-			Expect(errCertExtractInfo).Should(BeNil())
-
+		It("Should pass workflow verifcation", func() {
+			payload := getPayload(filename)
+			info := extractCertInfo(payload)
 			token, _ := readGitHubTokens()
 			scorecardResult := &models.VerifiedScorecardResult{
 				AccessToken: token,
@@ -83,10 +87,27 @@ var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
 			Expect(getAndVerifyWorkflowContent(ctx, scorecardResult, info)).Should(BeNil())
 		})
 	}
+	AssertInvalidWorkflowContent := func(filename string, errSubstr string) {
+		It("Should fail workflow verifcation", func() {
+			payload := getPayload(filename)
+			info := extractCertInfo(payload)
+			token, _ := readGitHubTokens()
+			scorecardResult := &models.VerifiedScorecardResult{
+				AccessToken: token,
+				Branch:      "main",
+				Result:      string(payload),
+			}
+			err := getAndVerifyWorkflowContent(ctx, scorecardResult, info)
+			Expect(err).Should(MatchError(ContainSubstring(errSubstr)))
+		})
+	}
 	Context("E2E Test: Validate functionality intra-repo", func() {
 		AssertValidWorkflowContent("testdata/results/reusable-workflow-intra-repo-results.json")
 	})
 	Context("E2E Test: Validate functionality inter-repo", func() {
 		AssertValidWorkflowContent("testdata/results/reusable-workflow-inter-repo-results.json")
+	})
+	Context("E2E Test: Fail on imposter commit", func() {
+		AssertInvalidWorkflowContent("testdata/results/imposter-commit-results.json", "imposter commit")
 	})
 })

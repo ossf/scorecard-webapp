@@ -226,8 +226,12 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("error decoding workflow contents: %w", err)
 	}
 
+	verifier := &githubVerifier{
+		ctx:    ctx,
+		client: client,
+	}
 	// Verify scorecard workflow.
-	return verifyScorecardWorkflow(workflowContent)
+	return verifyScorecardWorkflow(workflowContent, verifier)
 }
 
 func writeToBlobStore(ctx context.Context, bucketURL, filename string, data []byte) error {

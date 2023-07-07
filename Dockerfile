@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.20.5@sha256:4b1fc02d16fca272e5e6e6adc98396219b43ef663a377eef4a97e881d364393f AS builder
+FROM golang:1.20.5@sha256:20ee7c8a2be2fb81580e4db1b036c7237a363bac2d0f6b773e7291370d588d7b AS builder
 ENV APP_ROOT=/opt/app-root
 ENV GOPATH=$APP_ROOT
 
@@ -25,7 +25,7 @@ ARG TARGETARCH
 RUN CGO_ENABLED=0 make scorecard-webapp
 
 # Multi-Stage production build
-FROM golang:1.20.5@sha256:4b1fc02d16fca272e5e6e6adc98396219b43ef663a377eef4a97e881d364393f as deploy
+FROM golang:1.20.5@sha256:20ee7c8a2be2fb81580e4db1b036c7237a363bac2d0f6b773e7291370d588d7b as deploy
 # Retrieve the binary from the previous stage
 COPY --from=builder /opt/app-root/src/scorecard-webapp /usr/local/bin/scorecard-webapp
 

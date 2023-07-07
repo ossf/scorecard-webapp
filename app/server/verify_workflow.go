@@ -26,6 +26,10 @@ import (
 	"github.com/rhysd/actionlint"
 )
 
+const (
+	workflowRestrictionLink = "https://github.com/ossf/scorecard-action#workflow-restrictions"
+)
+
 var (
 	errActionlintParse              = errors.New("errors during actionlint.Parse")
 	errGlobalVarsOrDefaults         = errors.New("workflow contains global env vars or defaults")
@@ -59,6 +63,18 @@ type commitVerifier interface {
 	contains(owner, repo, hash string) (bool, error)
 }
 
+type verificationError struct {
+	e error
+}
+
+func (ve verificationError) Error() string {
+	return fmt.Sprintf("workflow verification failed: %v, see %s for details.", ve.e, workflowRestrictionLink)
+}
+
+func (ve verificationError) Unwrap() error {
+	return ve.e
+}
+
 func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) error {
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
@@ -68,21 +84,21 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 
 	// Verify that there are no global env vars or defaults.
 	if workflow.Env != nil || workflow.Defaults != nil {
-		return fmt.Errorf("%w", errGlobalVarsOrDefaults)
+		return verificationError{e: errGlobalVarsOrDefaults}
 	}
 
 	if workflow.Permissions != nil {
 		globalPerms := workflow.Permissions
 		// Verify that the all scope, if set, isn't write-all.
 		if globalPerms.All != nil && globalPerms.All.Value == "write-all" {
-			return fmt.Errorf("%w", errGlobalWriteAll)
+			return verificationError{e: errGlobalWriteAll}
 		}
 
 		// Verify that there are no global permissions (including id-token) set to write.
 		for globalPerm, val := range globalPerms.Scopes {
 			if val.Value.Value == "write" {
-				return fmt.Errorf("%w: permission for %v is set to write",
-					errGlobalWrite, globalPerm)
+				return verificationError{e: fmt.Errorf("%w: permission for %v is set to write",
+					errGlobalWrite, globalPerm)}
 			}
 		}
 	}
@@ -90,7 +106,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 	// Find the (first) job with a step that calls scorecard-action.
 	scorecardJob := findScorecardJob(workflow.Jobs)
 	if scorecardJob == nil {
-		return fmt.Errorf("%w", errScorecardJobNotFound)
+		return verificationError{e: errScorecardJobNotFound}
 	}
 
 	// Make sure other jobs don't have id-token permissions.
@@ -98,19 +114,19 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		if job != scorecardJob && job.Permissions != nil {
 			idToken := job.Permissions.Scopes["id-token"]
 			if idToken != nil && idToken.Value.Value == "write" {
-				return fmt.Errorf("%w", errNonScorecardJobHasTokenWrite)
+				return verificationError{e: errNonScorecardJobHasTokenWrite}
 			}
 		}
 	}
 
 	// Verify that there is no job container or services.
 	if scorecardJob.Container != nil || len(scorecardJob.Services) > 0 {
-		return fmt.Errorf("%w", errJobHasContainerOrServices)
+		return verificationError{e: errJobHasContainerOrServices}
 	}
 
 	labels := scorecardJob.RunsOn.Labels
 	if len(labels) != 1 {
-		return fmt.Errorf("%w", errScorecardJobRunsOn)
+		return verificationError{e: errScorecardJobRunsOn}
 	}
 	label := labels[0].Value
 	if _, ok := ubuntuRunners[label]; !ok {
@@ -119,12 +135,12 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 
 	// Verify that there are no job env vars set.
 	if scorecardJob.Env != nil {
-		return fmt.Errorf("%w", errScorecardJobEnvVars)
+		return verificationError{e: errScorecardJobEnvVars}
 	}
 
 	// Verify that there are no job defaults set.
 	if scorecardJob.Defaults != nil {
-		return fmt.Errorf("%w", errScorecardJobDefaults)
+		return verificationError{e: errScorecardJobDefaults}
 	}
 
 	// Get steps in job.
@@ -134,7 +150,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 	for _, step := range steps {
 		stepUses := getStepUses(step)
 		if stepUses == nil {
-			return fmt.Errorf("%w", errEmptyStepUses)
+			return verificationError{e: errEmptyStepUses}
 		}
 		stepName, ref := parseStep(stepUses.Value)
 
@@ -160,7 +176,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		// Needed for e2e tests
 		case "gcr.io/openssf/scorecard-action":
 		default:
-			return fmt.Errorf("%w: %s", errUnallowedStepName, stepName)
+			return verificationError{e: fmt.Errorf("%w: %s", errUnallowedStepName, stepName)}
 		}
 	}
 

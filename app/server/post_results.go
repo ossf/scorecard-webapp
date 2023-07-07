@@ -62,6 +62,7 @@ var (
 	errCertMissingURI           = errors.New("certificate has no URIs")
 	errCertWorkflowPathEmpty    = errors.New("cert workflow path is empty")
 	errMismatchedCertAndRequest = errors.New("repository and branch of cert doesn't match that of request")
+	errNotDefaultBranch         = errors.New("branch of cert isn't the repo's default branch")
 )
 
 type certInfo struct {
@@ -108,21 +109,11 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 	if err == nil {
 		return results.NewPostResultCreated().WithPayload("successfully verified and published ScorecardResult")
 	}
-	if errors.Is(err, errMismatchedCertAndRequest) ||
-		errors.Is(err, errGlobalVarsOrDefaults) ||
-		errors.Is(err, errGlobalWriteAll) ||
-		errors.Is(err, errGlobalWrite) ||
-		errors.Is(err, errScorecardJobNotFound) ||
-		errors.Is(err, errNonScorecardJobHasTokenWrite) ||
-		errors.Is(err, errJobHasContainerOrServices) ||
-		errors.Is(err, errScorecardJobRunsOn) ||
-		errors.Is(err, errUnallowedStepName) ||
-		errors.Is(err, errScorecardJobEnvVars) ||
-		errors.Is(err, errScorecardJobDefaults) ||
-		errors.Is(err, errEmptyStepUses) {
+	var vErr verificationError
+	if errors.As(err, &vErr) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
-			Message: err.Error(),
+			Message: vErr.Error(),
 		})
 	}
 	log.Println(err)
@@ -146,11 +137,11 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if info.repoFullName != fullName(org, repo) ||
 		(info.repoBranchRef != scorecardResult.Branch &&
 			info.repoBranchRef != fmt.Sprintf("refs/heads/%s", scorecardResult.Branch)) {
-		return fmt.Errorf("%w", errMismatchedCertAndRequest)
+		return verificationError{e: errMismatchedCertAndRequest}
 	}
 
 	if err := getAndVerifyWorkflowContent(ctx, scorecardResult, info); err != nil {
-		return fmt.Errorf("error verifying workflow: %w", err)
+		return fmt.Errorf("workflow verification failed: %w", err)
 	}
 
 	// Save scorecard results (results.json, score.txt) to GCS
@@ -210,7 +201,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 	defaultBranch := repoClient.GetDefaultBranch()
 	if scorecardResult.Branch != defaultBranch &&
 		scorecardResult.Branch != fmt.Sprintf("refs/heads/%s", defaultBranch) {
-		return fmt.Errorf("branch of cert isn't the repo's default branch")
+		return verificationError{e: errNotDefaultBranch}
 	}
 
 	// Use the cert commit SHA if the workflow file is in the repo being analyzed.
@@ -222,12 +213,12 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 
 	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, path, opts)
 	if err != nil {
-		return fmt.Errorf("error downloading workflow contents from repo: %v", err)
+		return fmt.Errorf("error downloading workflow contents from repo: %w", err)
 	}
 
 	workflowContent, err := contents.GetContent()
 	if err != nil {
-		return fmt.Errorf("error decoding workflow contents: %v", err)
+		return fmt.Errorf("error decoding workflow contents: %w", err)
 	}
 
 	verifier := &githubVerifier{
@@ -235,10 +226,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		client: client,
 	}
 	// Verify scorecard workflow.
-	if err := verifyScorecardWorkflow(workflowContent, verifier); err != nil {
-		return fmt.Errorf("workflow could not be verified: %v", err)
-	}
-	return nil
+	return verifyScorecardWorkflow(workflowContent, verifier)
 }
 
 func writeToBlobStore(ctx context.Context, bucketURL, filename string, data []byte) error {
@@ -289,7 +277,7 @@ func extractAndVerifyCertForPayload(ctx context.Context, payload []byte) (*x509.
 		return nil, fmt.Errorf("error extracting certificate from entry: %w", err)
 	}
 	if len(certs) > 1 {
-		return nil, fmt.Errorf("%w", errMultipleCerts)
+		return nil, errMultipleCerts
 	}
 
 	cert := certs[0]

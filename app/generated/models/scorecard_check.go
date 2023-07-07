@@ -33,8 +33,8 @@ import (
 // swagger:model ScorecardCheck
 type ScorecardCheck struct {
 
-	// details
-	Details []string `json:"details"`
+	// name
+	Name string `json:"name,omitempty"`
 
 	// score
 	Score int64 `json:"score"`
@@ -42,8 +42,8 @@ type ScorecardCheck struct {
 	// reason
 	Reason string `json:"reason,omitempty"`
 
-	// name
-	Name string `json:"name,omitempty"`
+	// details
+	Details []string `json:"details"`
 
 	// documentation
 	Documentation *ScorecardCheckDocumentation `json:"documentation,omitempty"`
@@ -135,11 +135,11 @@ func (m *ScorecardCheck) UnmarshalBinary(b []byte) error {
 // swagger:model ScorecardCheckDocumentation
 type ScorecardCheckDocumentation struct {
 
-	// url
-	URL string `json:"url,omitempty"`
-
 	// short
 	Short string `json:"short,omitempty"`
+
+	// url
+	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this scorecard check documentation

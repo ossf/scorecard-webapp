@@ -44,7 +44,6 @@ var (
 	errScorecardJobEnvVars          = errors.New("scorecard job contains env vars")
 	errScorecardJobDefaults         = errors.New("scorecard job must not have defaults set")
 	errEmptyStepUses                = errors.New("scorecard job must only have steps with `uses`")
-	errImposterCommit               = errors.New("imposter commit: ref does not belong to repo")
 	errNoDefaultBranch              = errors.New("no default branch")
 
 	reCommitSHA = regexp.MustCompile(`^[0-9a-fA-F]{40}$`)
@@ -73,6 +72,14 @@ func (ve verificationError) Error() string {
 
 func (ve verificationError) Unwrap() error {
 	return ve.e
+}
+
+type imposterCommitError struct {
+	action, ref string
+}
+
+func (i imposterCommitError) Error() string {
+	return fmt.Sprintf("imposter commit: %s does not belong to %s", i.ref, i.action)
 }
 
 func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) error {
@@ -170,7 +177,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 					return err
 				}
 				if !contains {
-					return errImposterCommit
+					return verificationError{e: imposterCommitError{ref: ref, action: stepName}}
 				}
 			}
 		// Needed for e2e tests

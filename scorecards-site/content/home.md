@@ -155,7 +155,7 @@ It was created by OSS developers to help improve the health of critical projects
 
 You can use it to proactively assess and make informed decisions about accepting security risks within your codebase. You can also use the tool to evaluate other projects and dependencies, and work with maintainers to improve codebases you might want to integrate.
 
-Scorecard help you enforce best practices that can guard against:
+Scorecard helps you enforce best practices that can guard against:
 
 <section class="grid grid-cols-1 grid-rows-1 md:grid-cols-2 md:grid-cols-2">
 

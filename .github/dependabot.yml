@@ -8,7 +8,7 @@ updates:
   commit-message:
       prefix: ":seedling:"
   reviewers:
-    - ossf/scorecard-maintainers
+    - "ossf/scorecard-maintainers"
   open-pull-requests-limit: 10
   # For the website code in scorecards-site.
   - package-ecosystem: npm
@@ -18,9 +18,7 @@ updates:
       time: '00:00'
     open-pull-requests-limit: 10
     reviewers:
-      - ossf/scorecard-maintainers
-    assignees:
-      - ossf/scorecard-maintainers
+      - "ossf/scorecard-maintainers"
     commit-message:
       prefix: fix
       prefix-development: chore
@@ -33,7 +31,7 @@ updates:
     commit-message:
       prefix: ":seedling:"
     reviewers:
-      - ossf/scorecard-maintainers
+      - "ossf/scorecard-maintainers"
   # Dockerfiles
   - package-ecosystem: docker
     directory: "/"
@@ -42,5 +40,5 @@ updates:
     commit-message:
       prefix: ":seedling:"
     reviewers:
-      - ossf/scorecard-maintainers
+      - "ossf/scorecard-maintainers"
     open-pull-requests-limit: 10

@@ -2,14 +2,14 @@ version: 2
 updates:
   # For API code in app/
   - package-ecosystem: gomod
-  directory: "/"
-  schedule:
-    interval: daily
-  commit-message:
+    directory: "/"
+    schedule:
+      interval: daily
+    commit-message:
       prefix: ":seedling:"
-  reviewers:
-    - "ossf/scorecard-maintainers"
-  open-pull-requests-limit: 10
+    reviewers:
+      - "ossf/scorecard-maintainers"
+    open-pull-requests-limit: 10
   # For the website code in scorecards-site.
   - package-ecosystem: npm
     directory: '/'

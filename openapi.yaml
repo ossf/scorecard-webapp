@@ -34,6 +34,8 @@ x-google-allow: all
 paths:
   /projects/{platform}/{org}/{repo}/badge:
     get:
+      produces:
+        - image/svg+xml
       parameters:
         - in: query
           name: style

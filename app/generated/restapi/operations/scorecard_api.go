@@ -58,6 +58,7 @@ func NewScorecardAPI(spec *loads.Document) *ScorecardAPI {
 
 		JSONConsumer: runtime.JSONConsumer(),
 
+		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
 		BadgeGetBadgeHandler: badge.GetBadgeHandlerFunc(func(params badge.GetBadgeParams) middleware.Responder {
@@ -101,6 +102,9 @@ type ScorecardAPI struct {
 	//   - application/json
 	JSONConsumer runtime.Consumer
 
+	// BinProducer registers a producer for the following mime types:
+	//   - image/svg+xml
+	BinProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
@@ -184,6 +188,9 @@ func (o *ScorecardAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.BinProducer == nil {
+		unregistered = append(unregistered, "BinProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -243,6 +250,8 @@ func (o *ScorecardAPI) ProducersFor(mediaTypes []string) map[string]runtime.Prod
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "image/svg+xml":
+			result["image/svg+xml"] = o.BinProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		}

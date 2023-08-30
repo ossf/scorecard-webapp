@@ -60,7 +60,7 @@ func (a *Client) GetBadge(params *GetBadgeParams, opts ...ClientOption) error {
 		ID:                 "getBadge",
 		Method:             "GET",
 		PathPattern:        "/projects/{platform}/{org}/{repo}/badge",
-		ProducesMediaTypes: []string{"application/json"},
+		ProducesMediaTypes: []string{"image/svg+xml"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,

@@ -141,6 +141,9 @@ func init() {
     },
     "/projects/{platform}/{org}/{repo}/badge": {
       "get": {
+        "produces": [
+          "image/svg+xml"
+        ],
         "tags": [
           "badge"
         ],
@@ -472,6 +475,9 @@ func init() {
     },
     "/projects/{platform}/{org}/{repo}/badge": {
       "get": {
+        "produces": [
+          "image/svg+xml"
+        ],
         "tags": [
           "badge"
         ],

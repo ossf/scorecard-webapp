@@ -590,6 +590,14 @@
         font-size: 1.25rem;
       }
 
+      .form-content {
+        font-size: 1.25rem;
+      }
+
+      .form-content input {
+        font-size: 1.25rem;
+      }
+
       .error-code {
         background-color: var(--bg-color);
         overflow-x: scroll;
@@ -638,9 +646,13 @@
         .error-content {
           font-size: 1rem;
         }
-
+ 
         .error-code {
           font-size: 0.8rem;
+        }
+
+        .form-content {
+          font-size: 1rem;
         }
 
         .table td {
@@ -783,6 +795,23 @@
       </tr>
     </script>
 
+    <!-- Search template -->
+    <script id="search-template" type="text/x-handlebars-template">
+      <tr>
+        <td class="{{#if alignment}}text-{{alignment}}{{/if}}" colspan="2"">
+          <form action="" method="get">
+            <div class="table-cell form-content">
+              <label for="uri">Repo in <code>platform/org/repo</code> format: </label>
+              <input type="text" id="uri" name="uri" value="{{params.uri}}" placeholder="github.com/ossf/scorecard" size="45"/>
+            </div>
+            <div class="table-cell form-content">
+              <input type="submit">
+            </div>
+          </form>
+        </td>
+      </tr>
+    </script>
+
     <!-- OpenSSF scorecard report template -->
     <script id="scorecard-template" type="text/x-handlebars-template">
       {{#if isPlaceholder}}<div class="position-absolute loading-table"><div class="wave" role="status"></div></div>{{/if}}
@@ -919,6 +948,7 @@
     <script>
       const scorecardTmpl = document.getElementById('scorecard-template').innerHTML;
       const errorTmpl = document.getElementById('error-template').innerHTML;
+      const searchTmpl = document.getElementById('search-template').innerHTML;
       let section_open;
 
       const DEFAULT_SORT_BY = 'risk-level';
@@ -1316,18 +1346,8 @@
             }
           });
       } else {
-        let missingParams = [];
-        if (platform === null || platform === undefined) {
-          missingParams.push('platform');
-        }
-        if (repo === null || repo === undefined) {
-          missingParams.push('repo');
-        }
-        if (org === null || org === undefined) {
-          missingParams.push('org');
-        }
-        const template = Handlebars.compile(errorTmpl);
-        document.querySelector('#scorecard-content').innerHTML = template({ error: 'Some of the required query string arguments were not provided:', params: missingParams });
+        const template = Handlebars.compile(searchTmpl);
+        document.querySelector('#scorecard-content').innerHTML = template({params: params });
       }
     </script>
   </body>

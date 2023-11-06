@@ -1,0 +1,7 @@
+{
+  "url": "https://api.github.com/repos/github/codeql-action/compare/main...54d8b0da6bba52eaed1c8042082f6560bc02ecb6",
+  "status": "diverged",
+  "ahead_by": 193,
+  "behind_by": 1280,
+  "total_commits": 193
+}

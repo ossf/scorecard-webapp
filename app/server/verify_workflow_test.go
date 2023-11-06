@@ -15,10 +15,14 @@
 package server
 
 import (
+	"context"
+	"net/http"
 	"os"
+	"strings"
 	"testing"
 	"unicode/utf8"
 
+	"github.com/google/go-github/v42/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -86,6 +90,53 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 		workflowContent, _ := os.ReadFile(workflowFile)
 		err := verifyScorecardWorkflow(string(workflowContent), allowCommitVerifier)
 		assert.NotEqual(t, err, nil, workflowFile)
+	}
+}
+
+// suffix may not be the best term, but maps the final part of a path to a response file.
+// this is helpful when multiple API calls need to be made.
+// e.g. a call to /foo/bar/some/endpoint would have "endpoint" as a suffix.
+type suffixStubTripper struct {
+	// key is suffix, value is response file.
+	responsePaths map[string]string
+}
+
+func (s suffixStubTripper) RoundTrip(r *http.Request) (*http.Response, error) {
+	pathParts := strings.Split(r.URL.Path, "/")
+	suffix := pathParts[len(pathParts)-1]
+	f, err := os.Open(s.responsePaths[suffix])
+	if err != nil {
+		return nil, err
+	}
+	return &http.Response{
+		Status:     "200 OK",
+		StatusCode: http.StatusOK,
+		Body:       f,
+	}, nil
+}
+
+func Test_githubVerifier_contains(t *testing.T) {
+	t.Parallel()
+	httpClient := http.Client{
+		Transport: suffixStubTripper{
+			responsePaths: map[string]string{
+				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
+				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
+				"v1...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v1 branch
+			},
+		},
+	}
+	client := github.NewClient(&httpClient)
+	gv := githubVerifier{
+		ctx:    context.Background(),
+		client: client,
+	}
+	got, err := gv.contains("github", "codeql-action", "somehash")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != true {
+		t.Errorf("expected to contain hash, but it didnt")
 	}
 }
 

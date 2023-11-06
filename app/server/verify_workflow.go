@@ -249,25 +249,26 @@ type githubVerifier struct {
 	client *github.Client
 }
 
-// contains currently makes two "core" API calls: one for the default branch, and one to compare the target hash
-// This could also be done with the search commits API and a query of q=hash:<sha>+repo:<owner>/<repo>.
+// contains makes two "core" API calls: one for the default branch, and one to compare the target hash to a branch
+// if the repo is "github/codeql-action", also check releases/v1 before failing.
 func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
 	defaultBranch, err := g.defaultBranch(owner, repo)
 	if err != nil {
 		return false, err
 	}
-	opts := &github.ListOptions{PerPage: 1}
-	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, defaultBranch, hash, opts)
+	contains, err := g.branchContains(defaultBranch, owner, repo, hash)
 	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
-			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
-			return false, nil
-		}
-		return false, fmt.Errorf("error comparing revisions: %w", err)
+		return false, err
 	}
-
-	// Target should be behind or at the base ref if it is considered contained.
-	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+	if contains {
+		return true, nil
+	}
+	// github/codeql-action has commits from their v1 release branch that don't show up in the default branch
+	// this isn't the best approach for now, but theres no universal "does this commit belong to this repo" call
+	if owner == "github" && repo == "codeql-action" {
+		contains, err = g.branchContains("releases/v1", owner, repo, hash)
+	}
+	return contains, err
 }
 
 func (g *githubVerifier) defaultBranch(owner, repo string) (string, error) {
@@ -279,4 +280,19 @@ func (g *githubVerifier) defaultBranch(owner, repo string) (string, error) {
 		return "", errNoDefaultBranch
 	}
 	return *githubRepository.DefaultBranch, nil
+}
+
+func (g *githubVerifier) branchContains(branch, owner, repo, hash string) (bool, error) {
+	opts := &github.ListOptions{PerPage: 1}
+	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, branch, hash, opts)
+	if err != nil {
+		if resp.StatusCode == http.StatusNotFound {
+			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
+			return false, nil
+		}
+		return false, fmt.Errorf("error comparing revisions: %w", err)
+	}
+
+	// Target should be behind or at the base ref if it is considered contained.
+	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
 }

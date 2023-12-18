@@ -115,14 +115,40 @@ func (s suffixStubTripper) RoundTrip(r *http.Request) (*http.Response, error) {
 	}, nil
 }
 
-func Test_githubVerifier_contains(t *testing.T) {
+func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
 	t.Parallel()
 	httpClient := http.Client{
 		Transport: suffixStubTripper{
 			responsePaths: map[string]string{
 				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
 				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
+				"v2...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v2 branch
 				"v1...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v1 branch
+			},
+		},
+	}
+	client := github.NewClient(&httpClient)
+	gv := githubVerifier{
+		ctx:    context.Background(),
+		client: client,
+	}
+	got, err := gv.contains("github", "codeql-action", "somehash")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != true {
+		t.Errorf("expected to contain hash, but it didnt")
+	}
+}
+
+func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
+	t.Parallel()
+	httpClient := http.Client{
+		Transport: suffixStubTripper{
+			responsePaths: map[string]string{
+				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
+				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
+				"v2...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v2 branch
 			},
 		},
 	}

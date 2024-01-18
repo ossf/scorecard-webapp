@@ -19,7 +19,7 @@ require (
 	github.com/go-openapi/swag v0.22.7
 	github.com/go-openapi/validate v0.22.6
 	github.com/google/go-cmp v0.6.0
-	github.com/onsi/ginkgo/v2 v2.14.0
+	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.30.0
 	github.com/rs/cors v1.10.1
 	github.com/spf13/pflag v1.0.5

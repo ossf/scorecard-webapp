@@ -6,14 +6,17 @@
   >
     <div class="container">
       <div class="flex flex-wrap justify-between items-start">
-        <a href="/" title="Home" class="logo"
-          ><Logo
+        <!-- Anchor tag wrapping the image for the logo -->
+        <a href="/" title="Home" class="logo">
+          <!-- Image tag for the SVG logo -->
+          <img src="./logo.svg" alt="Company Logo" class="logo-image"
             :class="[
               $route.params.slug === 'trust-security'
                 ? 'logo-white'
                 : 'logo-black',
             ]"
-        /></a>
+          />
+        </a>
         <RepoButton :stars="stars" :commits="commits" />
       </div>
     </div>

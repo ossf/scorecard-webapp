@@ -178,7 +178,7 @@ module.exports = {
         dark: '#FF4D00',
       },
       pastel: {
-        white: '#FDECE3',
+        white: '#FFFEFE',
         light: 'rgba(255, 234, 215, 1)',
         neutral: '#E9E9E9',
         blue: '#DDEFF1',

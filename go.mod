@@ -5,13 +5,13 @@ go 1.19
 require (
 	github.com/google/go-github/v42 v42.0.0
 	github.com/rhysd/actionlint v1.6.26
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20220824214621-3c06a36a6952
 	github.com/cyberphone/json-canonicalization v0.0.0-20220623050100-57a0ce2678a7
-	github.com/go-openapi/errors v0.21.0
+	github.com/go-openapi/errors v0.21.1
 	github.com/go-openapi/loads v0.21.5
 	github.com/go-openapi/runtime v0.27.1
 	github.com/go-openapi/spec v0.20.14

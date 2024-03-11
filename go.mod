@@ -11,11 +11,11 @@ require (
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20220824214621-3c06a36a6952
 	github.com/cyberphone/json-canonicalization v0.0.0-20220623050100-57a0ce2678a7
-	github.com/go-openapi/errors v0.21.1
+	github.com/go-openapi/errors v0.22.0
 	github.com/go-openapi/loads v0.21.6
 	github.com/go-openapi/runtime v0.27.1
 	github.com/go-openapi/spec v0.20.15
-	github.com/go-openapi/strfmt v0.22.2
+	github.com/go-openapi/strfmt v0.23.0
 	github.com/go-openapi/swag v0.22.10
 	github.com/go-openapi/validate v0.23.2
 	github.com/google/go-cmp v0.6.0

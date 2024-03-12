@@ -4,7 +4,7 @@
       class="flex justify-center items-center relative min-h-mobile md:min-h-threeQuarters"
     >
       <div class="mx-auto w-full md:w-4/6 text-center hero-text">
-        <div class="pt-20 pb-32 text-22" style="background-color:white;">
+        <div class="pt-20 pb-32 text-22">
           Take the <a href="https://forms.gle/aqxZwmVQzWJkNuso8">OpenSSF Scorecard User Survey</a>
         </div>
         <h1>

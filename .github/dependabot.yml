@@ -10,6 +10,10 @@ updates:
     reviewers:
       - "ossf/scorecard-maintainers"
     open-pull-requests-limit: 10
+    groups:
+      go-openapi:
+        patterns:
+          - "github.com/go-openapi/*"
   # For the website code in scorecards-site.
   - package-ecosystem: npm
     directory: '/'

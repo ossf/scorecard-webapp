@@ -573,7 +573,12 @@
         color: inherit;
       }
 
-      .btn-link:hover {
+      .btn-muted-link {
+        text-decoration: none;
+        font-size: 0.75rem;
+      }
+
+      .btn-link:hover .btn-muted-link:hover {
         text-decoration: underline;
       }
 
@@ -852,7 +857,7 @@
               </div>
               <div class="content"><small class="fw-semibold">API URL:</small>
                 {{#if apiURL}}
-                  <a class="btn-link text-muted" href="{{apiURL}}" target="_blank" rel="noopener noreferrer">
+                  <a class="btn-muted-link" href="{{apiURL}}" target="_blank" rel="noopener noreferrer">
                     https://api.scorecard.dev/{{data.repo.name}}
                   </a>
                 {{else}}

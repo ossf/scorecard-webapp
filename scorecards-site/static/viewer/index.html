@@ -1334,7 +1334,7 @@
 
       if (platform && org && repo) {
         // Load placeholder
-        renderDataTemplate({ data: {...PLACEHOLDER, checks: sortChecks(PLACEHOLDER.checks), repo: {name: `${platform}/${org}/${repo}`, commit: ""}}, isPlaceholder: true, sortBy: sortBy, sortDirection: sortDirection });
+        renderDataTemplate({ data: {...PLACEHOLDER, checks: sortChecks(PLACEHOLDER.checks), apiURL: apiURL, repo: {name: `${platform}/${org}/${repo}`, commit: ""}}, isPlaceholder: true, sortBy: sortBy, sortDirection: sortDirection });
 
         apiFetch(platform, org, repo, params.commit)
           .then((data) => {

@@ -1339,7 +1339,7 @@
         apiFetch(platform, org, repo, params.commit)
           .then((data) => {
             scoreData = data;
-            renderDataTemplate({ data: {...data, checks: sortChecks(data.checks)}, isPlaceholder: false, sortBy: sortBy, sortDirection: sortDirection });
+            renderDataTemplate({ data: {...data, checks: sortChecks(data.checks)}, apiURL: apiURL, isPlaceholder: false, sortBy: sortBy, sortDirection: sortDirection });
           })
           .catch((error) => {
             const template = Handlebars.compile(errorTmpl);

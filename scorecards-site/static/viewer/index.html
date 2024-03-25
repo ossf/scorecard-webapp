@@ -1313,7 +1313,7 @@
       }
 
       async function apiFetch(platform, org, repo, commit) {
-        const response = await fetch(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}${commit ? `?commit=${commit}` : ''}`);
+        const response = await fetch(`https://api.scorecard.dev/projects/${platform}/${org}/${repo}${commit ? `?commit=${commit}` : ''}`);
         if (response.ok) {
           const data = await response.json();
           return data;

@@ -850,6 +850,17 @@
                   </a>
                   </div>
               </div>
+              <div class="content"><small class="fw-semibold">API:</small>
+                {{#if data.repo.name}}
+                  {{#if data.repo.commit}}
+                    <a class="btn-link text-muted" href="https://api.scorecard.dev/{{data.repo.name}}?commit={{data.repo.commit}}" target="_blank" rel="noopener noreferrer"></a>
+                  {{else}}
+                    <a class="btn-link text-muted" href="https://api.scorecard.dev/{{data.repo.name}}" target="_blank" rel="noopener noreferrer"></a>
+                  {{/if}}
+                {{else}}
+                  <span class="text-muted">-</span>
+                {{/if}}
+              </div>
               <div class="content text-truncate"><small class="fw-semibold">COMMIT:</small>
                 {{#if data.repo.commit}}
                   <span class="d-none d-sm-inline-block text-muted">{{data.repo.commit}}</span>

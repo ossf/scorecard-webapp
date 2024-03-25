@@ -876,6 +876,13 @@
                   <span class="text-muted">-</span>
                 {{/if}}
               </div>
+              <div class="content"><small class="fw-semibold">SCORECARD VERSION:</small>
+                {{#if data.scorecard.version}}
+                  <span class="text-muted">{{data.scorecard.version}}</span>
+                {{else}}
+                  <span class="text-muted">-</span>
+                {{/if}}
+              </div>
             </div>
             <div class="d-none d-md-inline-block select-wrapper">
               <div class="d-flex flex-row align-items-center">

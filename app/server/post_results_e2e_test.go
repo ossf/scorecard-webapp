@@ -17,8 +17,10 @@ package server
 import (
 	"context"
 	"io"
+	"net/http"
 	"os"
 
+	"github.com/google/go-github/v42/github"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -110,5 +112,38 @@ var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
 	})
 	Context("E2E Test: Fail on imposter commit", func() {
 		AssertInvalidWorkflowContent("testdata/results/imposter-commit-results.json", "imposter commit")
+	})
+})
+
+// helper function to setup a github verifier with an appropriately set token.
+func getGithubVerifier() githubVerifier {
+	httpClient := http.DefaultClient
+	token, _ := readGitHubTokens()
+	if token != "" {
+		httpClient.Transport = githubTransport{
+			token: token,
+		}
+	}
+	return githubVerifier{
+		ctx:    context.Background(),
+		client: github.NewClient(httpClient),
+	}
+}
+
+var _ = Describe("E2E Test: githubVerifier_contains", func() {
+	Context("E2E Test: Validate known good commits", func() {
+		It("can detect actions/upload-artifact v3-node20 commits", func() {
+			gv := getGithubVerifier()
+			c, err := gv.contains("actions", "upload-artifact", "97a0fba1372883ab732affbe8f94b823f91727db")
+			Expect(err).Should(BeNil())
+			Expect(c).To(BeTrue())
+		})
+
+		It("can detect github/codeql-action backport commits", func() {
+			gv := getGithubVerifier()
+			c, err := gv.contains("github", "codeql-action", "a82bad71823183e5b120ab52d521460ecb0585fe")
+			Expect(err).Should(BeNil())
+			Expect(c).To(BeTrue())
+		})
 	})
 })

@@ -573,7 +573,17 @@
         color: inherit;
       }
 
-      .btn-link:hover {
+      .btn-muted-link {
+        text-decoration: none;
+        font-size: 0.75rem;
+        color: var(--muted)
+      }
+
+      .btn-muted-link:visited {
+        color: var(--muted)
+      }
+
+      .btn-link:hover .btn-muted-link:hover {
         text-decoration: underline;
       }
 
@@ -850,6 +860,15 @@
                   </a>
                   </div>
               </div>
+              <div class="content"><small class="fw-semibold">API URL:</small>
+                {{#if apiURL}}
+                  <a class="btn-muted-link" href="{{apiURL}}" target="_blank" rel="noopener noreferrer">
+                    https://api.scorecard.dev/projects/{{data.repo.name}}
+                  </a>
+                {{else}}
+                  <span class="text-muted">-</span>
+                {{/if}}
+              </div>
               <div class="content text-truncate"><small class="fw-semibold">COMMIT:</small>
                 {{#if data.repo.commit}}
                   <span class="d-none d-sm-inline-block text-muted">{{data.repo.commit}}</span>
@@ -861,6 +880,13 @@
               <div class="content"><small class="fw-semibold">GENERATED AT:</small>
                 {{#if data.date}}
                   <span class="text-muted">{{data.date}}</span>
+                {{else}}
+                  <span class="text-muted">-</span>
+                {{/if}}
+              </div>
+              <div class="content"><small class="fw-semibold">SCORECARD VERSION:</small>
+                {{#if data.scorecard.version}}
+                  <span class="text-muted">{{data.scorecard.version}}</span>
                 {{else}}
                   <span class="text-muted">-</span>
                 {{/if}}
@@ -1126,7 +1152,7 @@
         document.getElementsByClassName('table-wrapper')[0].classList.add('embedded');
       }
 
-      let platform, org, repo;
+      let platform, org, repo, apiURL;
 
       if (params.uri) {
         [platform, org, repo] = params.uri.split('/');
@@ -1295,7 +1321,8 @@
       }
 
       async function apiFetch(platform, org, repo, commit) {
-        const response = await fetch(`https://api.securityscorecards.dev/projects/${platform}/${org}/${repo}${commit ? `?commit=${commit}` : ''}`);
+        apiURL =`https://api.scorecard.dev/projects/${platform}/${org}/${repo}${commit ? `?commit=${commit}` : ''}` 
+        const response = await fetch(apiURL);
         if (response.ok) {
           const data = await response.json();
           return data;
@@ -1317,12 +1344,12 @@
 
       if (platform && org && repo) {
         // Load placeholder
-        renderDataTemplate({ data: {...PLACEHOLDER, checks: sortChecks(PLACEHOLDER.checks), repo: {name: `${platform}/${org}/${repo}`, commit: ""}}, isPlaceholder: true, sortBy: sortBy, sortDirection: sortDirection });
+        renderDataTemplate({ data: {...PLACEHOLDER, checks: sortChecks(PLACEHOLDER.checks), apiURL: apiURL, repo: {name: `${platform}/${org}/${repo}`, commit: ""}}, isPlaceholder: true, sortBy: sortBy, sortDirection: sortDirection });
 
         apiFetch(platform, org, repo, params.commit)
           .then((data) => {
             scoreData = data;
-            renderDataTemplate({ data: {...data, checks: sortChecks(data.checks)}, isPlaceholder: false, sortBy: sortBy, sortDirection: sortDirection });
+            renderDataTemplate({ data: {...data, checks: sortChecks(data.checks)}, apiURL: apiURL, isPlaceholder: false, sortBy: sortBy, sortDirection: sortDirection });
           })
           .catch((error) => {
             const template = Handlebars.compile(errorTmpl);

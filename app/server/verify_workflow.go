@@ -265,15 +265,18 @@ func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
 	}
 
 	switch {
-	// github/codeql-action has commits from their v1 and v2 release branch that don't show up in the default branch
+	// github/codeql-action has commits from their release branches that don't show up in the default branch
 	// this isn't the best approach for now, but theres no universal "does this commit belong to this repo" call
 	case owner == "github" && repo == "codeql-action":
-		contains, err = g.branchContains("releases/v2", owner, repo, hash)
-		if err != nil {
-			return false, err
-		}
-		if !contains {
-			contains, err = g.branchContains("releases/v1", owner, repo, hash)
+		releaseBranches := []string{"releases/v3", "releases/v2", "releases/v1"}
+		for _, branch := range releaseBranches {
+			contains, err = g.branchContains(branch, owner, repo, hash)
+			if err != nil {
+				return false, err
+			}
+			if contains {
+				return true, nil
+			}
 		}
 
 	// add fallback lookup for actions/upload-artifact v3/node20 branch

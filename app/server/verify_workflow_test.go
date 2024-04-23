@@ -122,6 +122,7 @@ func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
 			responsePaths: map[string]string{
 				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
 				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
+				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch
 				"v2...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v2 branch
 				"v1...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v1 branch
 			},
@@ -148,6 +149,7 @@ func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
 			responsePaths: map[string]string{
 				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
 				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
+				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch either
 				"v2...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v2 branch
 			},
 		},

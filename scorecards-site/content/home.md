@@ -149,7 +149,7 @@ That’s where Security Scorecards *[i.e., OpenSSF Scorecard]* is helping. Its f
 
 ### What is OpenSSF Scorecard?
 
-##### Scorecard assesses open source projects for security risks through a series of automated checks
+##### Scorecard assesses open source projects for security risks through a series of automated checks.
 
 It was created by OSS developers to help improve the health of critical projects that the community depends on.
 

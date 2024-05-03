@@ -12,7 +12,8 @@
           ]"
       /></a>
       <div class="text-14 mb-12">
-        © 2022 The Linux Foundation, under the terms of the Apache License 2.0.
+        Copyright © OpenSSF Scorecard a Series of LF Projects, LLC
+        For web site terms of use, trademark policy and other project policies please see https://lfprojects.org.
       </div>
       <div class="text-14">
         <strong>Privacy statement: </strong> We use

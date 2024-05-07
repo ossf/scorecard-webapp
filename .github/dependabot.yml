@@ -31,11 +31,15 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     commit-message:
       prefix: ":seedling:"
     reviewers:
       - "ossf/scorecard-maintainers"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
   # Dockerfiles
   - package-ecosystem: docker
     directory: "/"

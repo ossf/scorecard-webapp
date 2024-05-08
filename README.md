@@ -1,13 +1,13 @@
 # OpenSSF Scorecard API and website
 
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/ossf/scorecard-webapp/badge)](https://api.securityscorecards.dev/projects/github.com/ossf/scorecard-webapp)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ossf/scorecard-webapp/badge)](https://api.scorecard.dev/projects/github.com/ossf/scorecard-webapp)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d631bbe2-0e67-48ae-81a7-d7015195c9fd/deploy-status)](https://app.netlify.com/sites/ossf-scorecard/deploys)
 
 ## scorecard-webapp
 
-Code for https://securityscorecards.dev
+Code for https://scorecard.dev
 ([`./scorecards-site`](./scorecards-site)) and
-https://api.securityscorecards.dev ([`./app`](./app)).
+https://api.scorecard.dev ([`./app`](./app)).
 
 The site is deployed on Netlify and the deployment configuration is in
 [netlify.toml](./netlify.toml). Any changes committed to

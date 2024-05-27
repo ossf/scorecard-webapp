@@ -53,6 +53,7 @@ var (
 // List below is from https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners.
 var ubuntuRunners = map[string]bool{
 	"ubuntu-latest": true,
+	"ubuntu-24.04":  true,
 	"ubuntu-22.04":  true,
 	"ubuntu-20.04":  true,
 	"ubuntu-18.04":  true,

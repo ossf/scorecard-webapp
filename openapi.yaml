@@ -17,7 +17,7 @@ info:
   title: OpenSSF Scorecard API
   description: API to interact with a project's published Scorecard result
   version: 1.0.0
-host: api.securityscorecards.dev
+host: api.scorecard.dev
 schemes:
   - http
 

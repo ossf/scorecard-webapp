@@ -128,7 +128,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 	}
 
 	// Verify that there is no job container or services.
-	if scorecardJob.Container != nil || len(scorecardJob.Services) > 0 {
+	if scorecardJob.Container != nil || hasServices(scorecardJob) {
 		return verificationError{e: errJobHasContainerOrServices}
 	}
 
@@ -312,4 +312,11 @@ func (g *githubVerifier) branchContains(branch, owner, repo, hash string) (bool,
 
 	// Target should be behind or at the base ref if it is considered contained.
 	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
+}
+
+func hasServices(j *actionlint.Job) bool {
+	if j == nil {
+		return false
+	}
+	return j.Services != nil && len(j.Services.Value) > 0
 }

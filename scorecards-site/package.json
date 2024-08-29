@@ -49,7 +49,7 @@
     "vue-intersect-directive": "^1.1.1",
     "vue-server-renderer": "^2.6.14",
     "vue-template-compiler": "^2.6.14",
-    "webpack": "^4.46.0"
+    "webpack": "^5.94.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",

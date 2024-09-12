@@ -1,6 +1,6 @@
 module github.com/ossf/scorecard-webapp
 
-go 1.19
+go 1.23.0
 
 require (
 	github.com/google/go-github/v42 v42.0.0

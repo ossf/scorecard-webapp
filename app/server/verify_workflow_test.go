@@ -22,7 +22,7 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/google/go-github/v42/github"
+	"github.com/google/go-github/v65/github"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/google/go-github/v42/github"
+	"github.com/google/go-github/v65/github"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 

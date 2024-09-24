@@ -40,7 +40,7 @@ func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
 		ctx:    context.Background(),
 		client: client,
 	}
-	got, err := gv.contains("github", "codeql-action", "somehash")
+	got, err := gv.contains(commit{"github", "codeql-action", "somehash"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -66,7 +66,7 @@ func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
 		ctx:    context.Background(),
 		client: client,
 	}
-	got, err := gv.contains("github", "codeql-action", "somehash")
+	got, err := gv.contains(commit{"github", "codeql-action", "somehash"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

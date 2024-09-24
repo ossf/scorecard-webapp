@@ -56,8 +56,12 @@ var ubuntuRunners = map[string]bool{
 	"ubuntu-18.04":  true,
 }
 
+type commit struct {
+	owner, repo, hash string
+}
+
 type commitVerifier interface {
-	contains(owner, repo, hash string) (bool, error)
+	contains(c commit) (bool, error)
 }
 
 type verificationError struct {
@@ -169,8 +173,12 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 			if isCommitHash(ref) {
 				s := strings.Split(stepName, "/")
 				// no need to length check as the step name is one of the ones above
-				owner, repo := s[0], s[1]
-				contains, err := verifier.contains(owner, repo, ref)
+				c := commit{
+					owner: s[0],
+					repo:  s[1],
+					hash:  ref,
+				}
+				contains, err := verifier.contains(c)
 				if err != nil {
 					return err
 				}

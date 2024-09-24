@@ -29,7 +29,8 @@ type githubVerifier struct {
 
 // contains makes two "core" API calls: one for the default branch, and one to compare the target hash to a branch
 // if the repo is "github/codeql-action", also check releases/v1 before failing.
-func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
+func (g *githubVerifier) contains(c commit) (bool, error) {
+	owner, repo, hash := c.owner, c.repo, c.hash
 	defaultBranch, err := g.defaultBranch(owner, repo)
 	if err != nil {
 		return false, err

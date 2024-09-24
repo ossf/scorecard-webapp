@@ -134,14 +134,14 @@ var _ = Describe("E2E Test: githubVerifier_contains", func() {
 	Context("E2E Test: Validate known good commits", func() {
 		It("can detect actions/upload-artifact v3-node20 commits", func() {
 			gv := getGithubVerifier()
-			c, err := gv.contains("actions", "upload-artifact", "97a0fba1372883ab732affbe8f94b823f91727db")
+			c, err := gv.contains(commit{"actions", "upload-artifact", "97a0fba1372883ab732affbe8f94b823f91727db"})
 			Expect(err).Should(BeNil())
 			Expect(c).To(BeTrue())
 		})
 
 		It("can detect github/codeql-action backport commits", func() {
 			gv := getGithubVerifier()
-			c, err := gv.contains("github", "codeql-action", "a82bad71823183e5b120ab52d521460ecb0585fe")
+			c, err := gv.contains(commit{"github", "codeql-action", "a82bad71823183e5b120ab52d521460ecb0585fe"})
 			Expect(err).Should(BeNil())
 			Expect(c).To(BeTrue())
 		})

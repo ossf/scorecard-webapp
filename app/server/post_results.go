@@ -226,10 +226,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return fmt.Errorf("error decoding workflow contents: %w", err)
 	}
 
-	verifier := &githubVerifier{
-		ctx:    ctx,
-		client: client,
-	}
+	verifier := newGitHubVerifier(ctx, client)
 	// Verify scorecard workflow.
 	return verifyScorecardWorkflow(workflowContent, verifier)
 }

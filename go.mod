@@ -25,6 +25,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/transparency-dev/merkle v0.0.2
 	gocloud.dev v0.37.0
+	golang.org/x/mod v0.20.0
 	golang.org/x/net v0.29.0
 )
 

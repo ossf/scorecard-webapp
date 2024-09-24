@@ -27,6 +27,7 @@ func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
 	httpClient := http.Client{
 		Transport: suffixStubTripper{
 			responsePaths: map[string]string{
+				"tags":            "./testdata/api/github/codeqlV3Tags.json",   // start lookback from v3
 				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
 				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
 				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch
@@ -36,11 +37,8 @@ func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
 		},
 	}
 	client := github.NewClient(&httpClient)
-	gv := githubVerifier{
-		ctx:    context.Background(),
-		client: client,
-	}
-	got, err := gv.contains(commit{"github", "codeql-action", "somehash"})
+	gv := newGitHubVerifier(context.Background(), client)
+	got, err := gv.contains(commit{owner: "github", repo: "codeql-action", hash: "somehash"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -54,6 +52,7 @@ func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
 	httpClient := http.Client{
 		Transport: suffixStubTripper{
 			responsePaths: map[string]string{
+				"tags":            "./testdata/api/github/codeqlV3Tags.json",   // start lookback from v3
 				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
 				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
 				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch either
@@ -62,11 +61,8 @@ func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
 		},
 	}
 	client := github.NewClient(&httpClient)
-	gv := githubVerifier{
-		ctx:    context.Background(),
-		client: client,
-	}
-	got, err := gv.contains(commit{"github", "codeql-action", "somehash"})
+	gv := newGitHubVerifier(context.Background(), client)
+	got, err := gv.contains(commit{owner: "github", repo: "codeql-action", hash: "somehash"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

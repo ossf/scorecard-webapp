@@ -116,7 +116,7 @@ var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
 })
 
 // helper function to setup a github verifier with an appropriately set token.
-func getGithubVerifier() githubVerifier {
+func getGithubVerifier() *githubVerifier {
 	httpClient := http.DefaultClient
 	token, _ := readGitHubTokens()
 	if token != "" {
@@ -124,14 +124,12 @@ func getGithubVerifier() githubVerifier {
 			token: token,
 		}
 	}
-	return githubVerifier{
-		ctx:    context.Background(),
-		client: github.NewClient(httpClient),
-	}
+	return newGitHubVerifier(context.Background(), github.NewClient(httpClient))
 }
 
 var _ = Describe("E2E Test: githubVerifier_contains", func() {
 	Context("E2E Test: Validate known good commits", func() {
+		// https://github.com/actions/starter-workflows/pull/2348#discussion_r1536228344
 		It("can detect actions/upload-artifact v3-node20 commits", func() {
 			gv := getGithubVerifier()
 			c, err := gv.contains(commit{"actions", "upload-artifact", "97a0fba1372883ab732affbe8f94b823f91727db"})
@@ -142,6 +140,14 @@ var _ = Describe("E2E Test: githubVerifier_contains", func() {
 		It("can detect github/codeql-action backport commits", func() {
 			gv := getGithubVerifier()
 			c, err := gv.contains(commit{"github", "codeql-action", "a82bad71823183e5b120ab52d521460ecb0585fe"})
+			Expect(err).Should(BeNil())
+			Expect(c).To(BeTrue())
+		})
+
+		// https://github.com/ossf/scorecard-action/issues/1367#issuecomment-2333175627
+		It("can detect release branch commits", func() {
+			gv := getGithubVerifier()
+			c, err := gv.contains(commit{"actions", "upload-artifact", "ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5"})
 			Expect(err).Should(BeNil())
 			Expect(c).To(BeTrue())
 		})

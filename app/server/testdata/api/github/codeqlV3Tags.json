@@ -1,0 +1,12 @@
+[
+  {
+    "name": "v3.26.9",
+    "zipball_url": "https://api.github.com/repos/github/codeql-action/zipball/refs/tags/v3.26.9",
+    "tarball_url": "https://api.github.com/repos/github/codeql-action/tarball/refs/tags/v3.26.9",
+    "commit": {
+      "sha": "461ef6c76dfe95d5c364de2f431ddbd31a417628",
+      "url": "https://api.github.com/repos/github/codeql-action/commits/461ef6c76dfe95d5c364de2f431ddbd31a417628"
+    },
+    "node_id": "MDM6UmVmMjU5NDQ1ODc4OnJlZnMvdGFncy92My4yNi45"
+  }
+]

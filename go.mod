@@ -3,7 +3,7 @@ module github.com/ossf/scorecard-webapp
 go 1.23.0
 
 require (
-	github.com/google/go-github/v42 v42.0.0
+	github.com/google/go-github/v65 v65.0.0
 	github.com/rhysd/actionlint v1.7.1
 	github.com/stretchr/testify v1.9.0
 )
@@ -25,6 +25,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/transparency-dev/merkle v0.0.2
 	gocloud.dev v0.37.0
+	golang.org/x/mod v0.20.0
 	golang.org/x/net v0.29.0
 )
 

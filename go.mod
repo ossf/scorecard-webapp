@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/google/go-github/v42 v42.0.0
-	github.com/rhysd/actionlint v1.7.2
+	github.com/rhysd/actionlint v1.7.3
 	github.com/stretchr/testify v1.9.0
 )
 

@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/google/go-github/v42 v42.0.0
-	github.com/rhysd/actionlint v1.7.3
+	github.com/rhysd/actionlint v1.7.4
 	github.com/stretchr/testify v1.9.0
 )
 
@@ -36,6 +36,7 @@ require (
 	cloud.google.com/go/iam v1.1.13 // indirect
 	cloud.google.com/go/storage v1.43.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect

@@ -1155,7 +1155,10 @@
       let platform, org, repo, apiURL;
 
       if (params.uri) {
-        [platform, org, repo] = params.uri.split('/');
+        const parts = params.uri.split('/');
+        platform = parts[0];
+        org = parts.slice(1, -1).join('/');
+        repo = parts[parts.length - 1];
       } else {
         platform = params.platform;
         org = params.org;

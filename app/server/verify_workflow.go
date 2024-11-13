@@ -182,7 +182,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 				}
 			}
 		// Needed for e2e tests
-		case "gcr.io/openssf/scorecard-action":
+		case "gcr.io/openssf/scorecard-action", "ghcr.io/ossf/scorecard-action":
 		default:
 			return verificationError{e: fmt.Errorf("%w: %s", errUnallowedStepName, stepName)}
 		}

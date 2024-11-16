@@ -204,7 +204,8 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 			}
 			stepName, _ := parseStep(stepUses.Value)
 			if stepName == "ossf/scorecard-action" ||
-				stepName == "gcr.io/openssf/scorecard-action" {
+				stepName == "gcr.io/openssf/scorecard-action" ||
+				stepName == "ghcr.io/ossf/scorecard-action" {
 				return job
 			}
 		}

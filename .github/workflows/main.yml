@@ -28,6 +28,7 @@ on:
 env:
   PROTOC_VERSION: 3.17.3
   GO_VERSION: 1.23
+  GOLANGCI_LINT_VERSION: v1.63
 
 jobs:
   build-scorecard-webapp:
@@ -48,6 +49,7 @@ jobs:
        uses: golangci/golangci-lint-action@051d91933864810ecd5e2ea2cfd98f6a5bca5347 # v6.3.2
        with:
          args: --config=.golangci.yml
+         version: ${{ env.GOLANGCI_LINT_VERSION }}
      - name: Check license headers
        run: |
           go env -w GOFLAGS=-mod=mod

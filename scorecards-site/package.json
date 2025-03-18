@@ -35,7 +35,7 @@
     "highlight.js": "^11.4.0",
     "nuxt": "^2.15.8",
     "prism-themes": "^1.9.0",
-    "prismjs": "^1.27.0",
+    "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
     "remark-emoji": "^3.0.2",
     "remark-gemoji": "^7.0.1",

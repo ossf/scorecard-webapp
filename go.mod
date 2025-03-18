@@ -11,12 +11,12 @@ require (
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20220824214621-3c06a36a6952
 	github.com/cyberphone/json-canonicalization v0.0.0-20220623050100-57a0ce2678a7
-	github.com/go-openapi/errors v0.22.0
+	github.com/go-openapi/errors v0.22.1
 	github.com/go-openapi/loads v0.22.0
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-openapi/spec v0.21.0
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/go-openapi/swag v0.23.0
+	github.com/go-openapi/swag v0.23.1
 	github.com/go-openapi/validate v0.24.0
 	github.com/google/go-cmp v0.7.0
 	github.com/onsi/ginkgo/v2 v2.23.0
@@ -57,7 +57,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect

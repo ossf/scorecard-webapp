@@ -22,9 +22,9 @@ linters:
   disable-all: true
   enable:
     - asciicheck
+    - copyloopvar
     - dogsled
     - exhaustive
-    - exportloopref
     - gci
     - gochecknoinits
     - goconst

@@ -2,8 +2,6 @@ module github.com/ossf/scorecard-webapp
 
 go 1.23.0
 
-toolchain go1.24.1
-
 require (
 	github.com/google/go-github/v42 v42.0.0
 	github.com/rhysd/actionlint v1.7.7

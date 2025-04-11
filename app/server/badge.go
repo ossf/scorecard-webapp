@@ -29,7 +29,7 @@ import (
 
 const (
 	shieldsURL   = "https://img.shields.io/ossf-scorecard"
-	badgeLabel   = "openssf scorecard"
+	badgeLabel   = "openssf+scorecard"
 	defaultStyle = "flat"
 )
 

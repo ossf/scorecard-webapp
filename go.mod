@@ -20,12 +20,12 @@ require (
 	github.com/go-openapi/validate v0.24.0
 	github.com/google/go-cmp v0.7.0
 	github.com/onsi/ginkgo/v2 v2.23.3
-	github.com/onsi/gomega v1.36.3
+	github.com/onsi/gomega v1.37.0
 	github.com/rs/cors v1.11.1
 	github.com/spf13/pflag v1.0.6
 	github.com/transparency-dev/merkle v0.0.2
 	gocloud.dev v0.40.0
-	golang.org/x/net v0.37.0
+	golang.org/x/net v0.38.0
 )
 
 require (

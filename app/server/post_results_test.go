@@ -177,7 +177,6 @@ func Test_extractCertInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := extractCertInfo(tt.args.cert)
@@ -253,7 +252,6 @@ func Test_splitFullPath(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			o, r, p, ok := splitFullPath(tt.path)
@@ -300,7 +298,6 @@ MYSKu39B6Q==
 -----END CERTIFICATE-----`), false, false},
 	}
 	for i, tt := range tests {
-		tt := tt
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			t.Parallel()
 			got, err := getCertPool(tt.cert)
@@ -342,7 +339,6 @@ func Test_getTLogEntryFromURL(t *testing.T) {
 	}
 	ctx := context.Background()
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			url := setupServer(t) + tt.responsePath
@@ -417,7 +413,6 @@ func Test_tlogEntry_rekord(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			r, err := tt.entry.rekord()

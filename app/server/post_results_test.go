@@ -220,6 +220,48 @@ func FuzzExtractCertInfo(f *testing.F) {
 	})
 }
 
+func Test_splitRepoName(t *testing.T) {
+	t.Parallel()
+	type results struct {
+		org, repo string
+		ok        bool
+	}
+	tests := []struct {
+		name string
+		path string
+		want results
+	}{
+		{
+			name: "valid path",
+			path: "org/repo",
+			want: results{
+				org:  "org",
+				repo: "repo",
+				ok:   true,
+			},
+		},
+		{
+			name: "malformed path",
+			path: "malformed",
+			want: results{
+				org:  "",
+				repo: "",
+				ok:   false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			o, r, ok := splitRepoName(tt.path)
+			assert.Equal(t, tt.want.ok, ok)
+			assert.Equal(t, tt.want.org, o)
+			assert.Equal(t, tt.want.repo, r)
+		})
+	}
+}
+
 func Test_splitFullPath(t *testing.T) {
 	t.Parallel()
 	type results struct {

@@ -250,7 +250,6 @@ func Test_splitRepoName(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			o, r, ok := splitRepoName(tt.path)

@@ -53,7 +53,6 @@ func Test_Body_certs(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			certs, err := tt.body.Certs()
@@ -122,7 +121,6 @@ func Test_Body_Matches(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			b, err := os.ReadFile(tt.blobPath)

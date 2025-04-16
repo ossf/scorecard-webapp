@@ -177,18 +177,21 @@ func splitFullPath(path string) (org, repo, subPath string, ok bool) {
 	return parts[0], parts[1], parts[2], true
 }
 
+// splitRepoName extracts the org, repo from a full repository name.
+func splitRepoName(path string) (org, repo string, ok bool) {
+	parts := strings.SplitN(path, "/", 2)
+	if len(parts) < 2 {
+		return "", "", false
+	}
+	return parts[0], parts[1], true
+}
+
 // getAndVerifyWorkflowContent retrieves the workflow content from the repository and verifies it.
 // It verifies the branch is a default branch and gets the scorecard workflow from the repository
 // from the specific commit and verifies it to ensure that it hasn't been tampered with.
 func getAndVerifyWorkflowContent(ctx context.Context,
 	scorecardResult *models.VerifiedScorecardResult, info certInfo,
 ) error {
-	org, repo, path, ok := splitFullPath(info.workflowPath)
-	if !ok {
-		return fmt.Errorf("cert workflow path is malformed")
-	}
-	workflowRepoFullName := fullName(org, repo)
-
 	// Get the corresponding GitHub repository.
 	httpClient := http.DefaultClient
 	if scorecardResult.AccessToken != "" {
@@ -197,6 +200,11 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		}
 	}
 	client := github.NewClient(httpClient)
+	// Organization and repo of the project being analyzed
+	org, repo, ok := splitRepoName(info.repoFullName)
+	if !ok {
+		return fmt.Errorf("cert repository name is malformed")
+	}
 	repoClient, _, err := client.Repositories.Get(ctx, org, repo)
 	if err != nil {
 		return fmt.Errorf("error getting repository: %w", err)
@@ -209,6 +217,13 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		return verificationError{e: errNotDefaultBranch}
 	}
 
+	// Organization and repo of the (possibly) reusable workflow
+	workflowOrg, workflowRepo, path, ok := splitFullPath(info.workflowPath)
+	if !ok {
+		return fmt.Errorf("cert workflow path is malformed")
+	}
+	workflowRepoFullName := fullName(workflowOrg, workflowRepo)
+
 	// Use the cert commit SHA if the workflow file is in the repo being analyzed.
 	// Otherwise fall back to the workflowRef, which may be a commit SHA, or it may be more vague e.g. refs/heads/main
 	opts := &github.RepositoryContentGetOptions{Ref: info.repoSHA}
@@ -216,7 +231,7 @@ func getAndVerifyWorkflowContent(ctx context.Context,
 		opts.Ref = info.workflowRef
 	}
 
-	contents, _, _, err := client.Repositories.GetContents(ctx, org, repo, path, opts)
+	contents, _, _, err := client.Repositories.GetContents(ctx, workflowOrg, workflowRepo, path, opts)
 	if err != nil {
 		return fmt.Errorf("error downloading workflow contents from repo: %w", err)
 	}

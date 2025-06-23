@@ -165,6 +165,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		switch stepName {
 		case
 			"actions/checkout",
+			"actions/create-github-app-token",
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",

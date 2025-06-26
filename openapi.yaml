@@ -223,6 +223,11 @@ definitions:
         x-order: 4
         items:
           type: string
+      maintainersAnnotation:
+        type: array
+        x-order: 5
+        items:
+          type: string
 
   VerifiedScorecardResult:
     type: object

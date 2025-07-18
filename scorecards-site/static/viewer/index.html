@@ -1351,6 +1351,16 @@
 
         apiFetch(platform, org, repo, params.commit)
           .then((data) => {
+            const presentCheckNames = data.checks.map(c => c.name);
+            PLACEHOLDER.checks.forEach(placeholderCheck => {
+              if (!presentCheckNames.includes(placeholderCheck.name)) {
+                data.checks.push({
+                  ...placeholderCheck,
+                  score: -1,
+                  reason: "Check not found in API response"
+                });
+              }
+            });
             scoreData = data;
             renderDataTemplate({ data: {...data, checks: sortChecks(data.checks)}, apiURL: apiURL, isPlaceholder: false, sortBy: sortBy, sortDirection: sortDirection });
           })

@@ -22,7 +22,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.25.3
 	github.com/onsi/gomega v1.38.2
 	github.com/rs/cors v1.11.1
-	github.com/spf13/pflag v1.0.9
+	github.com/spf13/pflag v1.0.10
 	github.com/transparency-dev/merkle v0.0.2
 	gocloud.dev v0.40.0
 	golang.org/x/net v0.43.0

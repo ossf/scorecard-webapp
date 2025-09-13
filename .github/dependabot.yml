@@ -23,7 +23,7 @@ updates:
           - "golang.org/x/*"
   # For the website code in scorecards-site.
   - package-ecosystem: npm
-    directory: '/'
+    directory: '/scorecards-site'
     schedule:
       interval: daily
       time: '00:00'

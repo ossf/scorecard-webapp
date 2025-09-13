@@ -43,7 +43,7 @@
     "sass-loader": "10",
     "shiki": "^3.12.2",
     "swiper": "6.x",
-    "vue": "^2.6.14",
+    "vue": "^3.5.21",
     "vue-awesome-swiper": "^4.1.1",
     "vue-intersect": "^1.1.6",
     "vue-intersect-directive": "^1.1.1",

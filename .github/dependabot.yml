@@ -9,9 +9,18 @@ updates:
       prefix: ":seedling:"
     open-pull-requests-limit: 10
     groups:
+      gomod:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "github.com/go-openapi/*"
+          - "golang.org/x/*"
       go-openapi:
         patterns:
           - "github.com/go-openapi/*"
+      golang-x:
+        patterns:
+          - "golang.org/x/*"
   # For the website code in scorecards-site.
   - package-ecosystem: npm
     directory: '/'
@@ -34,6 +43,17 @@ updates:
       github-actions:
         patterns:
           - "*"
+        exclude-patterns:
+          - "actions/*"
+          - "github/*"
+          - "golangci/*"
+      github-owned:
+        patterns:
+          - "actions/*"
+          - "github/*"
+      golangci:
+        patterns:
+          - "golangci/*"
   # Dockerfiles
   - package-ecosystem: docker
     directory: "/"

@@ -39,7 +39,7 @@
     "rehype-add-classes": "^1.0.0",
     "remark-emoji": "^3.0.2",
     "remark-gemoji": "^7.0.1",
-    "retext-emoji": "^8.1.0",
+    "retext-emoji": "^9.0.0",
     "sass-loader": "10",
     "shiki": "^3.12.2",
     "swiper": "6.x",

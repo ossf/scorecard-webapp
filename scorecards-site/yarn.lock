@@ -2210,10 +2210,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/nlcst@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/nlcst/-/nlcst-1.0.0.tgz#9dacd7e9a32bcf0451873be62bdc373aed735b46"
-  integrity sha512-3TGCfOcy8R8mMQ4CNSNOe3PG66HttvjcLzCoOpvXvDtfWOTi+uT/rxeOKm/qEwbM4SNe1O/PjdiBK2YcTjU4OQ==
+"@types/nlcst@^2.0.0":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/nlcst/-/nlcst-2.0.3.tgz#31cad346eaab48a9a8a58465d3d05e2530dda762"
+  integrity sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==
   dependencies:
     "@types/unist" "*"
 
@@ -4962,12 +4962,17 @@ elliptic@^6.5.3, elliptic@^6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
+emoji-regex@^10.0.0:
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-10.5.0.tgz#be23498b9e39db476226d8e81e467f39aca26b78"
+  integrity sha512-lb49vf1Xzfx080OKA0o6l8DQQpV+6Vg95zyCJX9VB/BqKYlhG7N4wgROUUHRA+ZPUefLnteQOad7z1kT2bV7bg==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
   integrity sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
 
-emoji-regex@^9.0.0, emoji-regex@^9.2.2:
+emoji-regex@^9.2.2:
   version "9.2.2"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-9.2.2.tgz#840c8803b0d8047f4ff0cf963176b32d4ef3ed72"
   integrity sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==
@@ -5820,6 +5825,11 @@ gemoji@^7.0.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/gemoji/-/gemoji-7.1.0.tgz#165403777681a9690d649aabd104da037bdd7739"
   integrity sha512-wI0YWDIfQraQMDs0yXAVQiVBZeMm/rIYssf8LZlMDdssKF19YqJKOHkv4zvwtVQTBJ0LNmErv1S+DqlVUudz8g==
+
+gemoji@^8.0.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/gemoji/-/gemoji-8.1.0.tgz#3d47a26e569c51efa95198822a6f483d7a7ae600"
+  integrity sha512-HA4Gx59dw2+tn+UAa7XEV4ufUKI4fH1KgcbenVA9YKSj1QJTT0xh5Mwv5HMFNN3l2OtUe3ZIfuRwSyZS5pLIWw==
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
@@ -8382,45 +8392,47 @@ neo-async@^2.5.0, neo-async@^2.6.1, neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nlcst-affix-emoticon-modifier@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/nlcst-affix-emoticon-modifier/-/nlcst-affix-emoticon-modifier-2.1.0.tgz#3f0619b63a0419018631bbfa9e4ccd72f93c9188"
-  integrity sha512-YUHwK/PXOpAiDWpFbbg21dXiTozl1CD1jaCbmkottJFLxALa3WXbgfSKyuEZA9pEsCd+GftZ/rzzvThezOBkOw==
+nlcst-affix-emoticon-modifier@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/nlcst-affix-emoticon-modifier/-/nlcst-affix-emoticon-modifier-3.0.0.tgz#196bfff2d251300709ea978245caf58d891abbcd"
+  integrity sha512-2J+Opv9cU4A6SzLVi7+JCJ86FbMa/Tpq0eCrDJbAs0nMM0jxRu9GI6YVaYeFM4Q95pOwKD5uvHVRUPJ++xDkUA==
   dependencies:
-    "@types/nlcst" "^1.0.0"
-    "@types/unist" "^2.0.0"
-    unist-util-modify-children "^3.0.0"
+    "@types/nlcst" "^2.0.0"
+    "@types/unist" "^3.0.0"
+    nlcst-emoticon-modifier "^3.0.0"
+    unist-util-modify-children "^4.0.0"
 
-nlcst-emoji-modifier@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/nlcst-emoji-modifier/-/nlcst-emoji-modifier-5.1.0.tgz#cba4eb17f0d5ce8e3f0e59afa41ca2931286c3c6"
-  integrity sha512-3mzelmB72PpkSIU0RdYHkKkkDAA/gWjdRDQpAO7MWDv8uIU7C+ZFBAPud1J3H69y/NaQ3rLGUggvSTuAkFMpfQ==
+nlcst-emoji-modifier@^6.0.0:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/nlcst-emoji-modifier/-/nlcst-emoji-modifier-6.0.2.tgz#f1d3fb9efe4ab1a39390fb1c5788a88639151cff"
+  integrity sha512-sfLe9vsNBqvfr7Vg7L3RxBbI1J3Ab1K6JUj52usGbLuJycYtP4Kj+uXU183yL6o8WdH63ID89p00MwizyDkVdA==
   dependencies:
-    "@types/nlcst" "^1.0.0"
-    emoji-regex "^9.0.0"
-    gemoji "^7.0.0"
-    nlcst-to-string "^3.0.0"
-    unist-util-generated "^2.0.0"
-    unist-util-position "^4.0.0"
-    unist-util-visit "^4.0.0"
+    "@types/nlcst" "^2.0.0"
+    emoji-regex "^10.0.0"
+    gemoji "^8.0.0"
+    nlcst-emoticon-modifier "^3.0.0"
+    nlcst-to-string "^4.0.0"
+    unist-util-generated "^3.0.0"
+    unist-util-position "^5.0.0"
+    unist-util-visit-parents "^6.0.0"
 
-nlcst-emoticon-modifier@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/nlcst-emoticon-modifier/-/nlcst-emoticon-modifier-2.1.0.tgz#afe79e473417b4935ecfbc5bf9087be03b74e407"
-  integrity sha512-wSK07RilTzcH4S2GMhqJBOvxQXy3Zpiydsa8Shay2vbGHh5mPH3jqS/X4AqTwNRoyVD5e9f17zbqB1qj57s8eA==
+nlcst-emoticon-modifier@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/nlcst-emoticon-modifier/-/nlcst-emoticon-modifier-3.0.1.tgz#c1fab7322ba6c6e98ddef89bfbaf153c33a831b2"
+  integrity sha512-m1WS/jg4w4v3mSoZ765h2LNdwi6WA2+L5sZM4X3aLVjBFXHmM997qoCJXCKv0LipJ3+GLyRhIH447MbmhdpNgg==
   dependencies:
-    "@types/nlcst" "^1.0.0"
-    "@types/unist" "^2.0.0"
+    "@types/nlcst" "^2.0.0"
+    "@types/unist" "^3.0.0"
     emoticon "^4.0.0"
-    nlcst-to-string "^3.0.0"
-    unist-util-modify-children "^3.0.0"
+    nlcst-to-string "^4.0.0"
+    unist-util-modify-children "^4.0.0"
 
-nlcst-to-string@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/nlcst-to-string/-/nlcst-to-string-3.1.0.tgz#359519a16f086114538fcbb454e86967c471f823"
-  integrity sha512-Y8HQWKw/zrHTCnu2zcFBN1dV6vN0NUG7s5fkEj380G8tF3R+vA2KG+tDl2QoHVQCTHGHVXwoni2RQkDSFQb1PA==
+nlcst-to-string@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/nlcst-to-string/-/nlcst-to-string-4.0.0.tgz#05511e8461ebfb415952eb0b7e9a1a7d40471bd4"
+  integrity sha512-YKLBCcUYKAg0FNlOBT6aI91qFmSiFKiluk655WzPF+DDMA02qIyy8uiRqI8QXtcFpEvll12LpL5MXqEmAZ+dcA==
   dependencies:
-    "@types/nlcst" "^1.0.0"
+    "@types/nlcst" "^2.0.0"
 
 no-case@^2.2.0:
   version "2.3.2"
@@ -10660,20 +10672,20 @@ ret@~0.1.10:
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
-retext-emoji@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/retext-emoji/-/retext-emoji-8.1.0.tgz#07dcd9593ead4e928162c493b6df6289bb51246a"
-  integrity sha512-cvT53Ttn6XXgNprhmI8p4qtwujxNwoHW8hHe2B0JLEMxrMzGTbxwKqnwGslLk/FDsH4dSYStmqnpE20auNSrNg==
+retext-emoji@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/retext-emoji/-/retext-emoji-9.0.0.tgz#e1f82d315049e5b3a63181076f4b5ec3d76a7f30"
+  integrity sha512-kaaX+Uh3QMrJN91Yid1AlbO/AoRgSEslqmq7Qiecw6yYPwV9o8Q14qr43xOY1RSqQHqL5bAo9zuTFdVW5u+NUw==
   dependencies:
-    "@types/nlcst" "^1.0.0"
+    "@types/nlcst" "^2.0.0"
     emoticon "^4.0.0"
-    gemoji "^7.0.0"
-    nlcst-affix-emoticon-modifier "^2.0.0"
-    nlcst-emoji-modifier "^5.0.0"
-    nlcst-emoticon-modifier "^2.0.0"
-    nlcst-to-string "^3.0.0"
-    unified "^10.0.0"
-    unist-util-visit "^4.0.0"
+    gemoji "^8.0.0"
+    nlcst-affix-emoticon-modifier "^3.0.0"
+    nlcst-emoji-modifier "^6.0.0"
+    nlcst-emoticon-modifier "^3.0.0"
+    nlcst-to-string "^4.0.0"
+    unified "^11.0.0"
+    unist-util-visit "^5.0.0"
 
 retry@^0.12.0:
   version "0.12.0"
@@ -12118,6 +12130,19 @@ unified@^10.0.0:
     trough "^2.0.0"
     vfile "^5.0.0"
 
+unified@^11.0.0:
+  version "11.0.5"
+  resolved "https://registry.yarnpkg.com/unified/-/unified-11.0.5.tgz#f66677610a5c0a9ee90cab2b8d4d66037026d9e1"
+  integrity sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    bail "^2.0.0"
+    devlop "^1.0.0"
+    extend "^3.0.0"
+    is-plain-obj "^4.0.0"
+    trough "^2.0.0"
+    vfile "^6.0.0"
+
 unified@^9.0.0, unified@^9.2.1:
   version "9.2.2"
   resolved "https://registry.yarnpkg.com/unified/-/unified-9.2.2.tgz#67649a1abfc3ab85d2969502902775eb03146975"
@@ -12174,10 +12199,10 @@ unist-util-generated@^1.0.0:
   resolved "https://registry.yarnpkg.com/unist-util-generated/-/unist-util-generated-1.1.6.tgz#5ab51f689e2992a472beb1b35f2ce7ff2f324d4b"
   integrity sha512-cln2Mm1/CZzN5ttGK7vkoGw+RZ8VcUH6BtGbq98DDtRGquAAOXig1mrBQYelOwMXYS8rK+vZDyyojSjp7JX+Lg==
 
-unist-util-generated@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/unist-util-generated/-/unist-util-generated-2.0.0.tgz#86fafb77eb6ce9bfa6b663c3f5ad4f8e56a60113"
-  integrity sha512-TiWE6DVtVe7Ye2QxOVW9kqybs6cZexNwTwSMVgkfjEReqy/xwGpAXb99OxktoWwmL+Z+Epb0Dn8/GNDYP1wnUw==
+unist-util-generated@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/unist-util-generated/-/unist-util-generated-3.0.0.tgz#5a73bc28d61626394122e446afc29af800b0bdf2"
+  integrity sha512-yUjV3LueHK6gH74UKRwZ/Frc43/Mil9oYBHgiQp3z+v0+yS43pJ+Ye8RvZtApW0Xnx1cdWR0z4f3OZhSruF0/Q==
 
 unist-util-is@^4.0.0:
   version "4.1.0"
@@ -12196,23 +12221,18 @@ unist-util-is@^6.0.0:
   dependencies:
     "@types/unist" "^3.0.0"
 
-unist-util-modify-children@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/unist-util-modify-children/-/unist-util-modify-children-3.0.0.tgz#fe2cc1b26f841100b79bf1a9a04bcae6c78c4c42"
-  integrity sha512-cbDbx+4BeR4UzJXzvOgw6M/b69dKiaezt3gvN3ZbaJnGr0q719GKQCkMhdjPQiOBH6DnQ7TfHZs2aPY3vOkPyg==
+unist-util-modify-children@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/unist-util-modify-children/-/unist-util-modify-children-4.0.0.tgz#981d6308e887b005d1f491811d3cbcc254b315e9"
+  integrity sha512-+tdN5fGNddvsQdIzUF3Xx82CU9sMM+fA0dLgR9vOmT0oPT2jH+P1nd5lSqfCfXAw+93NhcXNY2qqvTUtE4cQkw==
   dependencies:
-    "@types/unist" "^2.0.0"
+    "@types/unist" "^3.0.0"
     array-iterate "^2.0.0"
 
 unist-util-position@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/unist-util-position/-/unist-util-position-3.1.0.tgz#1c42ee6301f8d52f47d14f62bbdb796571fa2d47"
   integrity sha512-w+PkwCbYSFw8vpgWD0v7zRCl1FpY3fjDSQ3/N/wNd9Ffa4gPi8+4keqt99N3XW6F99t/mUzp2xAhNmfKWp95QA==
-
-unist-util-position@^4.0.0:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/unist-util-position/-/unist-util-position-4.0.1.tgz#f8484b2da19a897a0180556d160c28633070dbb9"
-  integrity sha512-mgy/zI9fQ2HlbOtTdr2w9lhVaiFUHWQnZrFF2EUoVOqtAUdzqMtNiD99qA5a1IcjWVR8O6aVYE9u7Z2z1v0SQA==
 
 unist-util-position@^5.0.0:
   version "5.0.0"

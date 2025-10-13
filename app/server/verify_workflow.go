@@ -31,7 +31,7 @@ const (
 )
 
 var (
-	errActionlintParse              = errors.New("errors during actionlint.Parse")
+	errWorkflowParse                = errors.New("unable to parse github workflow")
 	errGlobalVarsOrDefaults         = errors.New("workflow contains global env vars or defaults")
 	errGlobalWriteAll               = errors.New("global perm is set to write-all")
 	errGlobalWrite                  = errors.New("global perm is set to write")
@@ -87,7 +87,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil || workflow == nil {
-		return fmt.Errorf("%w: %v", errActionlintParse, lintErrs)
+		return fmt.Errorf("%w: %v", errWorkflowParse, lintErrs)
 	}
 
 	// Verify that there are no global env vars or defaults.

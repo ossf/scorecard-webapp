@@ -115,10 +115,10 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 		return results.NewPostResultCreated().WithPayload("successfully verified and published ScorecardResult")
 	}
 	var vErr verificationError
-	if errors.As(err, &vErr) {
+	if errors.As(err, &vErr) || errors.Is(err, errWorkflowParse) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
-			Message: vErr.Error(),
+			Message: err.Error(),
 		})
 	}
 	log.Println(err)

@@ -271,7 +271,7 @@ func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
 	// github/codeql-action has commits from their release branches that don't show up in the default branch
 	// this isn't the best approach for now, but theres no universal "does this commit belong to this repo" call
 	case owner == "github" && repo == "codeql-action":
-		releaseBranches := []string{"releases/v3", "releases/v2", "releases/v1"}
+		releaseBranches := []string{"releases/v4", "releases/v3", "releases/v2", "releases/v1"}
 		for _, branch := range releaseBranches {
 			contains, err = g.branchContains(branch, owner, repo, hash)
 			if err != nil {

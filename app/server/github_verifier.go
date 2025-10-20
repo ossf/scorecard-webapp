@@ -158,12 +158,12 @@ func (g *githubVerifier) checkReleaseBranches(owner, repo, hash, defaultBranch s
 	switch {
 	// special case: github/codeql-action releases all come from "main", even though the tags are on different branches
 	case owner == "github" && repo == "codeql-action":
-		branches, err = g.getCodeQLBranches()
+		branches, err = g.getCodeQLReleaseBranches()
 		if err != nil {
 			return false, err
 		}
 	default:
-		branches, err = g.getBranches(owner, repo)
+		branches, err = g.getReleaseBranches(owner, repo)
 		if err != nil {
 			return false, err
 		}
@@ -212,7 +212,7 @@ func parseCodeQLVersion(version string) (int, error) {
 
 // these branches follow the releases/v3 pattern, so we can make assumptions about what they're called.
 // this should be called after g.getTags(), because it requires g.codeqlActionMajor to be set.
-func (g *githubVerifier) getCodeQLBranches() ([]string, error) {
+func (g *githubVerifier) getCodeQLReleaseBranches() ([]string, error) {
 	if g.codeqlActionMajor == "" {
 		return nil, nil
 	}
@@ -228,7 +228,11 @@ func (g *githubVerifier) getCodeQLBranches() ([]string, error) {
 	return branches, nil
 }
 
-func (g *githubVerifier) getBranches(owner, repo string) ([]string, error) {
+// fetch the last 100 releases and return any branches referenced by a release
+//
+// note: releases may refer to commits, so for API efficiency, this method also
+// does some bookkeeping for any commits encountered.
+func (g *githubVerifier) getReleaseBranches(owner, repo string) ([]string, error) {
 	var branches []string
 	seen := map[string]struct{}{}
 

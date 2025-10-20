@@ -7,22 +7,27 @@ updates:
       interval: daily
     commit-message:
       prefix: ":seedling:"
-    reviewers:
-      - "ossf/scorecard-maintainers"
     open-pull-requests-limit: 10
     groups:
+      gomod:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "github.com/go-openapi/*"
+          - "golang.org/x/*"
       go-openapi:
         patterns:
           - "github.com/go-openapi/*"
+      golang-x:
+        patterns:
+          - "golang.org/x/*"
   # For the website code in scorecards-site.
   - package-ecosystem: npm
-    directory: '/'
+    directory: '/scorecards-site'
     schedule:
       interval: daily
       time: '00:00'
     open-pull-requests-limit: 10
-    reviewers:
-      - "ossf/scorecard-maintainers"
     commit-message:
       prefix: fix
       prefix-development: chore
@@ -34,12 +39,21 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: ":seedling:"
-    reviewers:
-      - "ossf/scorecard-maintainers"
     groups:
       github-actions:
         patterns:
           - "*"
+        exclude-patterns:
+          - "actions/*"
+          - "github/*"
+          - "golangci/*"
+      github-owned:
+        patterns:
+          - "actions/*"
+          - "github/*"
+      golangci:
+        patterns:
+          - "golangci/*"
   # Dockerfiles
   - package-ecosystem: docker
     directory: "/"
@@ -47,6 +61,4 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: ":seedling:"
-    reviewers:
-      - "ossf/scorecard-maintainers"
     open-pull-requests-limit: 10

@@ -28,7 +28,7 @@ const (
 )
 
 var (
-	errActionlintParse              = errors.New("errors during actionlint.Parse")
+	errWorkflowParse                = errors.New("unable to parse github workflow")
 	errGlobalVarsOrDefaults         = errors.New("workflow contains global env vars or defaults")
 	errGlobalWriteAll               = errors.New("global perm is set to write-all")
 	errGlobalWrite                  = errors.New("global perm is set to write")
@@ -88,7 +88,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 	// Verify workflow contents using actionlint.
 	workflow, lintErrs := actionlint.Parse([]byte(workflowContent))
 	if lintErrs != nil || workflow == nil {
-		return fmt.Errorf("%w: %v", errActionlintParse, lintErrs)
+		return fmt.Errorf("%w: %v", errWorkflowParse, lintErrs)
 	}
 
 	// Verify that there are no global env vars or defaults.
@@ -166,6 +166,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		switch stepName {
 		case
 			"actions/checkout",
+			"actions/create-github-app-token",
 			"ossf/scorecard-action",
 			"actions/upload-artifact",
 			"github/codeql-action/upload-sarif",
@@ -187,7 +188,7 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 				}
 			}
 		// Needed for e2e tests
-		case "gcr.io/openssf/scorecard-action":
+		case "gcr.io/openssf/scorecard-action", "ghcr.io/ossf/scorecard-action":
 		default:
 			return verificationError{e: fmt.Errorf("%w: %s", errUnallowedStepName, stepName)}
 		}
@@ -209,7 +210,8 @@ func findScorecardJob(jobs map[string]*actionlint.Job) *actionlint.Job {
 			}
 			stepName, _ := parseStep(stepUses.Value)
 			if stepName == "ossf/scorecard-action" ||
-				stepName == "gcr.io/openssf/scorecard-action" {
+				stepName == "gcr.io/openssf/scorecard-action" ||
+				stepName == "ghcr.io/ossf/scorecard-action" {
 				return job
 			}
 		}

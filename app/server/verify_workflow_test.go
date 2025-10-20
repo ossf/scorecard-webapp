@@ -48,6 +48,7 @@ func TestVerifyValidWorkflows(t *testing.T) {
 		"testdata/workflow-valid.yml",
 		"testdata/workflow-valid-noglobalperm.yml",
 		"testdata/workflow-valid-e2e.yml",
+		"testdata/workflow-valid-e2e-ghcr.yml",
 		"testdata/workflow-valid-tagged-action.yml",
 	}
 
@@ -118,6 +119,7 @@ func FuzzVerifyWorkflow(f *testing.F) {
 		"testdata/workflow-valid.yml",
 		"testdata/workflow-valid-noglobalperm.yml",
 		"testdata/workflow-valid-e2e.yml",
+		"testdata/workflow-valid-e2e-ghcr.yml",
 		"testdata/workflow-valid-tagged-action.yml",
 	}
 	for _, file := range testfiles {

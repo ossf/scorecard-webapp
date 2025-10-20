@@ -177,7 +177,6 @@ func Test_extractCertInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := extractCertInfo(tt.args.cert)
@@ -220,6 +219,47 @@ func FuzzExtractCertInfo(f *testing.F) {
 	})
 }
 
+func Test_splitRepoName(t *testing.T) {
+	t.Parallel()
+	type results struct {
+		org, repo string
+		ok        bool
+	}
+	tests := []struct {
+		name string
+		path string
+		want results
+	}{
+		{
+			name: "valid path",
+			path: "org/repo",
+			want: results{
+				org:  "org",
+				repo: "repo",
+				ok:   true,
+			},
+		},
+		{
+			name: "malformed path",
+			path: "malformed",
+			want: results{
+				org:  "",
+				repo: "",
+				ok:   false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			o, r, ok := splitRepoName(tt.path)
+			assert.Equal(t, tt.want.ok, ok)
+			assert.Equal(t, tt.want.org, o)
+			assert.Equal(t, tt.want.repo, r)
+		})
+	}
+}
+
 func Test_splitFullPath(t *testing.T) {
 	t.Parallel()
 	type results struct {
@@ -253,7 +293,6 @@ func Test_splitFullPath(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			o, r, p, ok := splitFullPath(tt.path)
@@ -300,7 +339,6 @@ MYSKu39B6Q==
 -----END CERTIFICATE-----`), false, false},
 	}
 	for i, tt := range tests {
-		tt := tt
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			t.Parallel()
 			got, err := getCertPool(tt.cert)
@@ -342,7 +380,6 @@ func Test_getTLogEntryFromURL(t *testing.T) {
 	}
 	ctx := context.Background()
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			url := setupServer(t) + tt.responsePath
@@ -417,7 +454,6 @@ func Test_tlogEntry_rekord(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			r, err := tt.entry.rekord()

@@ -71,7 +71,6 @@ func TestSanitizePath(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			gotPath, gotErr := sanitizeInputs(tt.host, tt.orgName, tt.repoName, tt.commit)

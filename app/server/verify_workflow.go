@@ -15,14 +15,11 @@
 package server
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"regexp"
 	"strings"
 
-	"github.com/google/go-github/v42/github"
 	"github.com/rhysd/actionlint"
 )
 
@@ -59,8 +56,12 @@ var ubuntuRunners = map[string]bool{
 	"ubuntu-18.04":  true,
 }
 
+type commit struct {
+	owner, repo, hash string
+}
+
 type commitVerifier interface {
-	contains(owner, repo, hash string) (bool, error)
+	contains(c commit) (bool, error)
 }
 
 type verificationError struct {
@@ -173,8 +174,12 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 			if isCommitHash(ref) {
 				s := strings.Split(stepName, "/")
 				// no need to length check as the step name is one of the ones above
-				owner, repo := s[0], s[1]
-				contains, err := verifier.contains(owner, repo, ref)
+				c := commit{
+					owner: s[0],
+					repo:  s[1],
+					hash:  ref,
+				}
+				contains, err := verifier.contains(c)
 				if err != nil {
 					return err
 				}
@@ -245,75 +250,6 @@ func getStepUses(step *actionlint.Step) *actionlint.String {
 
 func isCommitHash(s string) bool {
 	return reCommitSHA.MatchString(s)
-}
-
-type githubVerifier struct {
-	ctx    context.Context
-	client *github.Client
-}
-
-// contains makes two "core" API calls: one for the default branch, and one to compare the target hash to a branch
-// if the repo is "github/codeql-action", also check releases/v1 before failing.
-func (g *githubVerifier) contains(owner, repo, hash string) (bool, error) {
-	defaultBranch, err := g.defaultBranch(owner, repo)
-	if err != nil {
-		return false, err
-	}
-	contains, err := g.branchContains(defaultBranch, owner, repo, hash)
-	if err != nil {
-		return false, err
-	}
-	if contains {
-		return true, nil
-	}
-
-	switch {
-	// github/codeql-action has commits from their release branches that don't show up in the default branch
-	// this isn't the best approach for now, but theres no universal "does this commit belong to this repo" call
-	case owner == "github" && repo == "codeql-action":
-		releaseBranches := []string{"releases/v4", "releases/v3", "releases/v2", "releases/v1"}
-		for _, branch := range releaseBranches {
-			contains, err = g.branchContains(branch, owner, repo, hash)
-			if err != nil {
-				return false, err
-			}
-			if contains {
-				return true, nil
-			}
-		}
-
-	// add fallback lookup for actions/upload-artifact v3/node20 branch
-	// https://github.com/actions/starter-workflows/pull/2348#discussion_r1536228344
-	case owner == "actions" && repo == "upload-artifact":
-		contains, err = g.branchContains("v3/node20", owner, repo, hash)
-	}
-	return contains, err
-}
-
-func (g *githubVerifier) defaultBranch(owner, repo string) (string, error) {
-	githubRepository, _, err := g.client.Repositories.Get(g.ctx, owner, repo)
-	if err != nil {
-		return "", fmt.Errorf("fetching repository info: %w", err)
-	}
-	if githubRepository == nil || githubRepository.DefaultBranch == nil {
-		return "", errNoDefaultBranch
-	}
-	return *githubRepository.DefaultBranch, nil
-}
-
-func (g *githubVerifier) branchContains(branch, owner, repo, hash string) (bool, error) {
-	opts := &github.ListOptions{PerPage: 1}
-	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, branch, hash, opts)
-	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
-			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
-			return false, nil
-		}
-		return false, fmt.Errorf("error comparing revisions: %w", err)
-	}
-
-	// Target should be behind or at the base ref if it is considered contained.
-	return diff.GetStatus() == "behind" || diff.GetStatus() == "identical", nil
 }
 
 func hasServices(j *actionlint.Job) bool {

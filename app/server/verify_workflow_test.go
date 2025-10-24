@@ -15,14 +15,12 @@
 package server
 
 import (
-	"context"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
 	"unicode/utf8"
 
-	"github.com/google/go-github/v42/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,8 +28,8 @@ type allowListVerifier struct {
 	allowed map[string]bool
 }
 
-func (a *allowListVerifier) contains(owner, repo, hash string) (bool, error) {
-	return a.allowed[hash], nil
+func (a *allowListVerifier) contains(c commit) (bool, error) {
+	return a.allowed[c.hash], nil
 }
 
 var allowCommitVerifier = &allowListVerifier{
@@ -114,61 +112,6 @@ func (s suffixStubTripper) RoundTrip(r *http.Request) (*http.Response, error) {
 		StatusCode: http.StatusOK,
 		Body:       f,
 	}, nil
-}
-
-func Test_githubVerifier_contains_codeql_v1(t *testing.T) {
-	t.Parallel()
-	httpClient := http.Client{
-		Transport: suffixStubTripper{
-			responsePaths: map[string]string{
-				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
-				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
-				"v4...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v4 branch
-				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch
-				"v2...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v2 branch
-				"v1...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v1 branch
-			},
-		},
-	}
-	client := github.NewClient(&httpClient)
-	gv := githubVerifier{
-		ctx:    context.Background(),
-		client: client,
-	}
-	got, err := gv.contains("github", "codeql-action", "somehash")
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if got != true {
-		t.Errorf("expected to contain hash, but it didnt")
-	}
-}
-
-func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
-	t.Parallel()
-	httpClient := http.Client{
-		Transport: suffixStubTripper{
-			responsePaths: map[string]string{
-				"codeql-action":   "./testdata/api/github/repository.json",     // api call which finds the default branch
-				"main...somehash": "./testdata/api/github/divergent.json",      // doesnt belong to default branch
-				"v4...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v4 branch either
-				"v3...somehash":   "./testdata/api/github/divergent.json",      // doesnt belong to releases/v3 branch either
-				"v2...somehash":   "./testdata/api/github/containsCommit.json", // belongs to releases/v2 branch
-			},
-		},
-	}
-	client := github.NewClient(&httpClient)
-	gv := githubVerifier{
-		ctx:    context.Background(),
-		client: client,
-	}
-	got, err := gv.contains("github", "codeql-action", "somehash")
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if got != true {
-		t.Errorf("expected to contain hash, but it didnt")
-	}
 }
 
 func FuzzVerifyWorkflow(f *testing.F) {

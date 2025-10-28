@@ -53,6 +53,7 @@ func Test_extractCertInfo(t *testing.T) {
 					Subject: pkix.Name{
 						CommonName: "test",
 					},
+					Extensions: []pkix.Extension{issuerExt(githubOIDCIssuer)},
 				},
 			},
 			want:    certInfo{},
@@ -66,6 +67,7 @@ func Test_extractCertInfo(t *testing.T) {
 						CommonName: "test",
 					},
 					Extensions: []pkix.Extension{
+						issuerExt(githubOIDCIssuer),
 						{
 							Critical: true,
 							Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 6},
@@ -83,6 +85,7 @@ func Test_extractCertInfo(t *testing.T) {
 						CommonName: "test",
 					},
 					Extensions: []pkix.Extension{
+						issuerExt(githubOIDCIssuer),
 						{
 							Critical: true,
 							Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 5},
@@ -100,6 +103,7 @@ func Test_extractCertInfo(t *testing.T) {
 						CommonName: "test",
 					},
 					Extensions: []pkix.Extension{
+						issuerExt(githubOIDCIssuer),
 						{
 							Critical: true,
 							Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 5},
@@ -118,6 +122,7 @@ func Test_extractCertInfo(t *testing.T) {
 						CommonName: "test",
 					},
 					Extensions: []pkix.Extension{
+						issuerExt(githubOIDCIssuer),
 						{
 							Critical: true,
 							Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 5},
@@ -135,6 +140,24 @@ func Test_extractCertInfo(t *testing.T) {
 			errType: errCertWorkflowPathEmpty,
 		},
 		{
+			name: "cert not OIDC issued",
+			args: args{
+				cert: &x509.Certificate{
+					Subject: pkix.Name{
+						CommonName: "test",
+					},
+					Extensions: []pkix.Extension{issuerExt("https://github.com/login/oauth")},
+					URIs: []*url.URL{
+						{
+							Scheme: "https",
+							Host:   "test.com",
+						},
+					},
+				},
+			},
+			errType: errNotOIDC,
+		},
+		{
 			name: "Valid Cert",
 			args: args{
 				cert: &x509.Certificate{
@@ -142,6 +165,7 @@ func Test_extractCertInfo(t *testing.T) {
 						CommonName: "test",
 					},
 					Extensions: []pkix.Extension{
+						issuerExt(githubOIDCIssuer),
 						{
 							Critical: true,
 							Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 5},
@@ -173,6 +197,7 @@ func Test_extractCertInfo(t *testing.T) {
 				workflowRef:   "c8416b0b2bf627c349ca92fc8e3de51a64b005cf",
 				repoBranchRef: "https://test.com/",
 				repoSHA:       "https://test.com/",
+				issuer:        "https://token.actions.githubusercontent.com",
 			},
 		},
 	}
@@ -186,6 +211,13 @@ func Test_extractCertInfo(t *testing.T) {
 				assert.Equal(t, tt.want, got)
 			}
 		})
+	}
+}
+
+func issuerExt(issuer string) pkix.Extension {
+	return pkix.Extension{
+		Id:    asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 1, 1},
+		Value: []byte(issuer),
 	}
 }
 

@@ -51,9 +51,11 @@ const (
 	fulcioRepoRefKey  = "1.3.6.1.4.1.57264.1.6"
 	fulcioRepoPathKey = "1.3.6.1.4.1.57264.1.5"
 	fulcioRepoSHAKey  = "1.3.6.1.4.1.57264.1.3"
+	fulcioIssuerKey   = "1.3.6.1.4.1.57264.1.1"
 	resultsBucket     = "gs://ossf-scorecard-results"
 	resultsFile       = "results.json"
 	noTlogIndex       = 0
+	githubOIDCIssuer  = "https://token.actions.githubusercontent.com"
 )
 
 var (
@@ -68,6 +70,7 @@ var (
 	errNoTlogEntry              = errors.New("no transparency log entry found")
 	errNotRekordEntry           = errors.New("not a rekord entry")
 	errMismatchedTlogEntry      = errors.New("tlog entry does not match payload")
+	errNotOIDC                  = errors.New(`ensure your GitHub workflow has "id-token: write" permissions`)
 )
 
 type certInfo struct {
@@ -76,6 +79,7 @@ type certInfo struct {
 	repoSHA       string
 	workflowPath  string
 	workflowRef   string
+	issuer        string
 }
 
 type tlogEntry struct {
@@ -115,7 +119,7 @@ func PostResultsHandler(params results.PostResultParams) middleware.Responder {
 		return results.NewPostResultCreated().WithPayload("successfully verified and published ScorecardResult")
 	}
 	var vErr verificationError
-	if errors.As(err, &vErr) || errors.Is(err, errWorkflowParse) {
+	if errors.As(err, &vErr) || errors.Is(err, errWorkflowParse) || errors.Is(err, errNotOIDC) {
 		return results.NewPostResultBadRequest().WithPayload(&models.Error{
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
@@ -536,6 +540,14 @@ func extractCertInfo(cert *x509.Certificate) (certInfo, error) {
 		if ext.Id.String() == fulcioRepoSHAKey {
 			ret.repoSHA = string(ext.Value)
 		}
+		if ext.Id.String() == fulcioIssuerKey {
+			ret.issuer = string(ext.Value)
+		}
+	}
+
+	// if this is something else, like https://github.com/login/oauth then cosign couldnt get an ambient token
+	if ret.issuer != githubOIDCIssuer {
+		return ret, errNotOIDC
 	}
 
 	// Get workflow job ref from the certificate.

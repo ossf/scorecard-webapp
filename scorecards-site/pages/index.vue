@@ -220,7 +220,9 @@ export default {
     }
   },
   beforeDestroy() {
-    this.observer.disconnect()
+    if (this.observer) {
+      this.observer.disconnect()
+    }
   },
   mounted() {
     this.importAll(require.context('../assets/logos/', true, /\.svg$/))

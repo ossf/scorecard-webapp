@@ -77,6 +77,8 @@
     "@nuxtjs/svg/**/**/**/postcss": "^8.2.13",
     "@nuxtjs/svg/**/**/postcss": "^8.2.13",
     "rehype-add-classes/**/nth-check": "^2.0.1",
-    "@nuxtjs/svg/**/**/**/**/**/nth-check": "^2.0.1"
+    "@nuxtjs/svg/**/**/**/**/**/nth-check": "^2.0.1",
+    "postcss-nesting": "^10.2.0",
+    "postcss-preset-env/postcss-nesting": "^10.2.0"
   }
 }

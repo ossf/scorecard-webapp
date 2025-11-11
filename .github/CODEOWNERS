@@ -1,4 +1,4 @@
 * @ossf/scorecard-maintainers
 
 # Website
-/scorecards-site/ @ossf/scorecard-fe-maintainers
+/scorecards-site/ @ossf/scorecard-fe-maintainers @ossf/scorecard-maintainers

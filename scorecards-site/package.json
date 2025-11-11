@@ -70,7 +70,7 @@
     "sass-loader": "10"
   },
   "engines": {
-    "node": "14.x.x"
+    "node": "18"
   },
   "resolutions": {
     "nuxt/**/**/**/glob-parent": "5.1.2",

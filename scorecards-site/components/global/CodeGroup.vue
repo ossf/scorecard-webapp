@@ -70,11 +70,11 @@ export default {
     },
     activateCodeTab(index) {
       this.codeTabs.forEach((tab) => {
-        if (tab.elm) {
+        if (tab.elm && tab.elm.classList) {
           tab.elm.classList.remove('theme-code-block__active')
         }
       })
-      if (this.codeTabs[index]) {
+      if (this.codeTabs[index] && this.codeTabs[index].elm && this.codeTabs[index].elm.classList) {
         this.codeTabs[index].elm.classList.add('theme-code-block__active')
       }
     },

@@ -10,7 +10,7 @@
 
 ```bash
 # Get the supported Node version
-$ nvm install 18
+$ nvm install 22
 
 # install dependencies
 $ yarn install

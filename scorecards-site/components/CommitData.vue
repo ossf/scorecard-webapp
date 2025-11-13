@@ -11,7 +11,10 @@
 export default {
   name: 'Test',
   props: {
-    latestCommit: null,
+    latestCommit: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {}

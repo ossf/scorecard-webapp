@@ -2,9 +2,9 @@
 
 ## Pre-requisites
 
-*   [NVM](https://github.com/nvm-sh/nvm)
-*   NPM
-*   [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [NVM](https://github.com/nvm-sh/nvm)
+- NPM
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 
 ## Build Setup
 

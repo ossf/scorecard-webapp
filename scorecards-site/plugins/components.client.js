@@ -27,13 +27,9 @@ const animateOnScrollObserver = new IntersectionObserver(function (
       //   window.$nuxt.$emit("setActiveToc", id);
       //   console.log(id)
       if (entry.intersectionRatio > 0.1) {
-        document
-          .querySelectorAll(
-            '.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]'
-          )
-          .forEach((el) => {
-            console.log(el)
-          })
+        document.querySelectorAll(
+          '.nuxt-content-container .nuxt-content h2[id], .nuxt-content-container .nuxt-content h3[id]'
+        )
         // entry.target.classList.add('enter')
         // const headerEl = document.querySelector('header')
         // intersection ratio bigger than 90%

@@ -153,5 +153,22 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    postcss: {
+      postcssOptions: {
+        plugins: [
+          function replaceColorAdjust() {
+            return {
+              postcssPlugin: 'replace-color-adjust',
+              Declaration(decl) {
+                if (decl.prop && decl.prop.trim() === 'color-adjust') {
+                  decl.replaceWith({ prop: 'print-color-adjust', value: decl.value })
+                }
+              },
+            }
+          },
+        ],
+      },
+    },
+  },
 }

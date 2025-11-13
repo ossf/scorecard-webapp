@@ -22,6 +22,8 @@ deployed to the staging site only. To make changes to the production API, a new
 Git tag needs to be generated which will auto deploy the latest tag to
 production.
 
+The documentation for local development can be found [here](/scorecards-site/README.md)
+
 ## Release process
 
 ### GitHub release

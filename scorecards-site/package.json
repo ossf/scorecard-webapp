@@ -32,17 +32,14 @@
     "nuxt": "^2.15.8",
     "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
-    "retext-emoji": "^8.1.0",
     "sass-loader": "10",
-    "shiki": "^3.12.2",
     "swiper": "6.x",
     "vue": "^2.6.14",
     "vue-awesome-swiper": "^4.1.1",
     "vue-intersect": "^1.1.6",
     "vue-intersect-directive": "^1.1.1",
     "vue-server-renderer": "^2.6.14",
-    "vue-template-compiler": "^2.6.14",
-    "webpack": "^4.46.0"
+    "vue-template-compiler": "^2.6.14"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",

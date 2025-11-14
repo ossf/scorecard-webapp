@@ -957,6 +957,12 @@
                   <div class="text-muted detail-line">{{this}}</div>
                 {{/each}}
               {{/if}}
+              {{#if maintainersAnnotation}}
+                <div class="fw-semibold details-title">Maintainers Annotation</div>
+                {{#each maintainersAnnotation}}
+                  <div class="text-muted detail-line">{{this}}</div>
+                {{/each}}
+              {{/if}}
               <div class="link-wrapper">
                 <a class="btn-link fw-semibold" href="{{documentation.url}}" target="_blank" rel="noopener noreferrer">
                   <div class="d-flex flex-row align-items-center justify-content-end">

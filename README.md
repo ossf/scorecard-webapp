@@ -13,7 +13,8 @@ The site is deployed on Netlify and the deployment configuration is in
 [netlify.toml](./netlify.toml). Any changes committed to
 [netlify.toml](./netlify.toml) and [scorecards-site/](./scorecards-site) on
 `main` branch gets automatically deployed to production. So please make sure to
-review deploy previews when making changes to the site.
+review deploy previews when making changes to the site. The documentation for 
+local development can be found [here](/scorecards-site/README.md)
 
 The API uses [OpenAPI](https://www.openapis.org/) spec and
 [go-swagger](https://goswagger.io/) to auto-generate server and client code. Any

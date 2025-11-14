@@ -54,12 +54,35 @@ export default {
         hour12: false,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }
-      const response = await fetch(this.apiURL)
-      const data = await response.json()
-      const d = data[0].commit.committer.date
-      this.latestCommit = new Intl.DateTimeFormat('en-US', options).format(
-        new Date(d)
-      )
+      try {
+        const response = await fetch(this.apiURL)
+        const data = await response.json()
+
+        // Guard against empty responses or unexpected shapes
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          this.latestCommit = null
+          return
+        }
+
+        const first = data[0]
+        if (
+          !first ||
+          !first.commit ||
+          !first.commit.committer ||
+          !first.commit.committer.date
+        ) {
+          this.latestCommit = null
+          return
+        }
+
+        const d = first.commit.committer.date
+        this.latestCommit = new Intl.DateTimeFormat('en-US', options).format(
+          new Date(d)
+        )
+      } catch (e) {
+        // Network issues or rate limits can cause generate to fail; fail gracefully
+        this.latestCommit = null
+      }
     },
     async getTotalCommits(owner, repo) {
       // TODO: store this is state/cache so we do not have to load every time

@@ -16,8 +16,14 @@ export default {
     GithubRepoIcon,
   },
   props: {
-    commits: null,
-    stars: null,
+    commits: {
+      type: Number,
+      default: 0,
+    },
+    stars: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {

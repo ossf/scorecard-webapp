@@ -131,7 +131,7 @@ Scorecard also has standalone binaries and other platforms troubleshooting and c
 
 <h2 class="h1" id="learn-more">Learn more</h2>
 
-> We rely on Security Scorecards *[i.e., OpenSSF Scorecard]* to ensure we follow secure development best practices.
+> We rely on Security Scorecards _[i.e., OpenSSF Scorecard]_ to ensure we follow secure development best practices.
 
 <div class="text-right"><cite>Appu Goundan, <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a></cite></div>
 
@@ -141,7 +141,7 @@ By some estimates\* 84% of all codebases have at least one vulnerability, with a
 
 Even in large tech companies, the tedious process of reviewing code for vulnerabilities falls down the priority list, and there is little insight into known vulnerabilities and solutions that companies can draw on.
 
-That’s where Security Scorecards *[i.e., OpenSSF Scorecard]* is helping. Its focus is to understand the security posture of a project and assess the risks that dependencies introduce.
+That’s where Security Scorecards _[i.e., OpenSSF Scorecard]_ is helping. Its focus is to understand the security posture of a project and assess the risks that dependencies introduce.
 
 \*[Open Source Security and Risk Analysis Report](https://www.synopsys.com/software-integrity/resources/analyst-reports/open-source-security-risk-analysis.html?intcmp=sig-blog-ossra1) (Synopsys, 2021)
 
@@ -231,11 +231,11 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 #### Holistic security practises
 
 | Code vulnerabilities                                                                          | Description                                                                              | Risk |
-|-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|------|
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---- |
 | [Vulnerabilities](https://github.com/ossf/scorecard/blob/main/docs/checks.md#vulnerabilities) | Does the project have unfixed vulnerabilities? Uses the [OSV service](https://osv.dev/). | High |
 
 | Maintenance                                                                                                 | Description                                                                                                                                                                                                                                                                                          | Risk   |
-|-------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | [Dependency Update Tool](https://github.com/ossf/scorecard/blob/main/docs/checks.md#dependency-update-tool) | Does the project use tools to help update its dependencies e.g. [Dependabot](https://docs.github.com/en/code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/configuring-dependabot-security-updates), [RenovateBot](https://github.com/renovatebot/renovate)? | High   |
 | [Maintained](https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained)                         | Is the project maintained?                                                                                                                                                                                                                                                                           | High   |
 | [Security Policy](https://github.com/ossf/scorecard/blob/main/docs/checks.md#security-policy)               | Does the project contain a [security policy](https://docs.github.com/en/free-pro-team@latest/github/managing-security-vulnerabilities/adding-a-security-policy-to-your-repository)?                                                                                                                  | Medium |
@@ -243,7 +243,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 | [CII Best Practices](https://github.com/ossf/scorecard/blob/main/docs/checks.md#cii-best-practices)         | Does the project have a [CII Best Practices Badge](https://bestpractices.coreinfrastructure.org/en)?                                                                                                                                                                                                 | Low    |
 
 | Continuous testing                                                              | Description                                                                                                                                                                                                                                                                                                                    | Risk   |
-|---------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
 | [CI Tests](https://github.com/ossf/scorecard/blob/main/docs/checks.md#ci-tests) | Does the project run tests in CI, e.g. [GitHub Actions](https://docs.github.com/en/free-pro-team@latest/actions), [Prow](https://github.com/kubernetes/test-infra/tree/master/prow)?                                                                                                                                           | Low    |
 | [Fuzzing](https://github.com/ossf/scorecard/blob/main/docs/checks.md#fuzzing)   | Does the project use fuzzing tools, e.g. [OSS-Fuzz](https://github.com/google/oss-fuzz)?                                                                                                                                                                                                                                       | Medium |
 | [SAST](https://github.com/ossf/scorecard/blob/main/docs/checks.md#sast)         | Does the project use static code analysis tools, e.g. [CodeQL](https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/enabling-code-scanning-for-a-repository#enabling-code-scanning-using-actions), [LGTM](https://lgtm.com/), [SonarCloud](https://sonarcloud.io/)? | Medium |
@@ -251,17 +251,17 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 #### Source risk assessment
 
 | Name                                                                                                | Description                                                                                                                                           | Risk     |
-|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | [Binary Artifacts](https://github.com/ossf/scorecard/blob/main/docs/checks.md#binary-artifacts)     | Is the project free of checked-in binaries?                                                                                                           | High     |
 | [Branch Protection](https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection)   | Does the project use [Branch Protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-protected-branches)? | High     |
 | [Dangerous Workflow](https://github.com/ossf/scorecard/blob/main/docs/checks.md#dangerous-workflow) | Does the project avoid dangerous coding patterns in GitHub Actions?                                                                                   | Critical |
 | [Code Review](https://github.com/ossf/scorecard/blob/main/docs/checks.md#code-review)               | Does the project require code review before code is merged?                                                                                           | High     |
-| [Contributors](https://github.com/ossf/scorecard/blob/main/docs/checks.md#contributors)             | Does the project have contributors from multiple organizations?                                                                         | Low      |
+| [Contributors](https://github.com/ossf/scorecard/blob/main/docs/checks.md#contributors)             | Does the project have contributors from multiple organizations?                                                                                       | Low      |
 
 #### Build risk assessment
 
 | Name                                                                                                  | Description                                                                                                                                                                                                                      | Risk   |
-|-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | [Pinned Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md#pinned-dependencies) | Does the project declare and pin [dependencies](https://docs.github.com/en/free-pro-team@latest/github/visualizing-repository-data-with-graphs/about-the-dependency-graph#supported-package-ecosystems)?                         | Medium |
 | [Token Permissions](https://github.com/ossf/scorecard/blob/main/docs/checks.md#token-permissions)     | Does the project declare GitHub workflow tokens as [read only](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)?                                                                                       | High   |
 | [Packaging](https://github.com/ossf/scorecard/blob/main/docs/checks.md#packaging)                     | Does the project build and publish official packages from CI/CD, e.g. [GitHub Publishing](https://docs.github.com/en/free-pro-team@latest/actions/guides/about-packaging-with-github-actions#workflows-for-publishing-packages)? | Medium |
@@ -269,7 +269,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <br/>
 
-> Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards *[i.e., OpenSSF Scorecard]* into our dependency acceptance criteria.
+> Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards _[i.e., OpenSSF Scorecard]_ into our dependency acceptance criteria.
 
 <div class="text-right mb-60"><cite>Harvey Tuch, <a href="https://www.envoyproxy.io/">Envoy</a></cite></div>
 

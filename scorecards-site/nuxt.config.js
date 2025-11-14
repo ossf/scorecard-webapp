@@ -82,8 +82,6 @@ export default {
 
     '@nuxtjs/svg',
 
-    '@nuxtjs/dotenv',
-
     '@nuxtjs/redirect-module',
 
     '@nuxtjs/sitemap',

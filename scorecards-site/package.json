@@ -33,7 +33,6 @@
     "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
     "sass-loader": "10",
-    "shiki": "^3.12.2",
     "swiper": "6.x",
     "vue": "^2.6.14",
     "vue-awesome-swiper": "^4.1.1",

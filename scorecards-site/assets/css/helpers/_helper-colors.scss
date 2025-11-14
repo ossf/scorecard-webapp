@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .color,
 %color {
   &--black {
@@ -52,10 +54,10 @@
   }
 
   &--warning {
-    background-color: lighten($c-yellow, 5%);
+    background-color: color.adjust($c-yellow, $lightness: 5%);
   }
 
   &--alert {
-    background-color: lighten($c-red, 8%);
+    background-color: color.adjust($c-red, $lightness: 8%);
   }
 }

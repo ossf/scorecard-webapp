@@ -65,7 +65,12 @@ export default {
         }
 
         const first = data[0]
-        if (!first || !first.commit || !first.commit.committer || !first.commit.committer.date) {
+        if (
+          !first ||
+          !first.commit ||
+          !first.commit.committer ||
+          !first.commit.committer.date
+        ) {
           this.latestCommit = null
           return
         }

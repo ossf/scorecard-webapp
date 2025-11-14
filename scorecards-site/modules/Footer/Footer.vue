@@ -14,7 +14,8 @@
       <div class="text-14 mb-12">
         Copyright © OpenSSF Scorecard a Series of LF Projects, LLC
         <br />
-        For website terms of use, trademark policy, and other project policies, please see <a href="https://lfprojects.org">https://lfprojects.org</a>.
+        For website terms of use, trademark policy, and other project policies,
+        please see <a href="https://lfprojects.org">https://lfprojects.org</a>.
       </div>
       <div class="text-14">
         <strong>Privacy statement: </strong> We use

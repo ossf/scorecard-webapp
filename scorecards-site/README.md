@@ -29,6 +29,78 @@ $ yarn generate
 For detailed explanation on how things work, check out the
 [documentation](https://nuxtjs.org).
 
+## E2E testing
+
+In order to run the e2e tests we use Playwright, but we **do not include it as a project dependency**.  
+To run tests locally, you must install Playwright manually and avoid committing these changes.
+
+### Temporary local installation
+
+```sh
+yarn add -D @playwright/test@latest
+yarn playwright install --with-deps
+```
+
+These changes are temporary and should not be committed.
+
+For reference you can follow the steps in the[e2e testing pipeline](../.github/workflows/playwright.yml)
+
+### Run the tests
+
+Basic test run:
+
+```sh
+yarn playwright test
+```
+
+Run tests with visual (HTML) reporting:
+
+```sh
+yarn playwright test --reporter=html
+```
+
+Open the HTML report:
+
+```sh
+yarn playwright show-report
+```
+
+### Testing approach
+
+Test files are located in the `tests-e2e` directory.
+They are used to perform basic interaction tests such as:
+
+- clicking buttons
+- navigation and URL redirections
+- rendering checks
+- simple behavior flows
+
+To prevent visual regressions, we generate screenshots at key test steps and compare them against stored reference files.
+
+Snapshots are located in `tests-e2e/*-snapshots`
+
+If differences are detected, the HTML report will show a diff view and the tests will fail.
+
+### Important
+
+The E2E tests will **build the website and serve it locally during execution**.  
+Before running the tests:
+
+- stop any local development server you may have running
+- ensure that `http://localhost:3000` is **not in use**
+
+If this port is busy, the tests will fail.
+
+### Clean up
+
+Once you are done with the local tests:
+
+- Remove all temporarily installed Playwright dependencies: `rm -rf node_modules`
+- Discard the `devDependencies` modifications in `package.json` and `yarn.lock`.
+- Reinstall your project dependencies:`yarn`
+
+This restores your environment to a clean state.
+
 ## Special Directories
 
 You can create the following extra directories, some of which have special

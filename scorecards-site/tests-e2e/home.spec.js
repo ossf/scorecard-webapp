@@ -1,7 +1,7 @@
 // @ts-check
 import path from 'path'
 import fs from 'fs'
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@chromatic-com/playwright'
 
 const mockRepoDataPath = path.resolve(
   __dirname,
@@ -58,5 +58,9 @@ test('Home Page', async ({ page }) => {
   })
 
   // Prevent Visual Regressions
-  expect(await page.screenshot({ fullPage: true })).toMatchSnapshot('home.png')
+  if (process.env.ENABLE_SNAPSHOTS) {
+    expect(await page.screenshot({ fullPage: true })).toMatchSnapshot(
+      'home.png'
+    )
+  }
 })

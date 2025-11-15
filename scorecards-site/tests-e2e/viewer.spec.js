@@ -1,7 +1,7 @@
 // @ts-check
 import path from 'path'
 import fs from 'fs'
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@chromatic-com/playwright'
 
 const mockScorecardDataPath = path.resolve(
   __dirname,
@@ -14,9 +14,11 @@ test('viewer welcome', async ({ page }) => {
   await page.goto('http://localhost:3000/viewer')
 
   // Prevent Visual Regressions
-  expect(await page.screenshot({ fullPage: true })).toMatchSnapshot(
-    'viewer-welcome.png'
-  )
+  if (process.env.ENABLE_SNAPSHOTS) {
+    expect(await page.screenshot({ fullPage: true })).toMatchSnapshot(
+      'viewer-welcome.png'
+    )
+  }
 
   // Find input field and type the repo URL.
   const input = page.locator('input[placeholder="github.com/ossf/scorecard"]')
@@ -57,7 +59,9 @@ test('viewer details', async ({ page }) => {
   await page.waitForTimeout(5 * 1000)
 
   // Prevent Visual Regressions
-  expect(await page.screenshot({ fullPage: true })).toMatchSnapshot(
-    'viewer-details.png'
-  )
+  if (process.env.ENABLE_SNAPSHOTS) {
+    expect(await page.screenshot({ fullPage: true })).toMatchSnapshot(
+      'viewer-details.png'
+    )
+  }
 })

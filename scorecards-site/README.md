@@ -37,8 +37,7 @@ To run tests locally, you must install Playwright manually and avoid committing 
 ### Temporary local installation
 
 ```sh
-yarn add -D @playwright/test@latest
-yarn playwright install --with-deps
+yarn add -D @playwright/test chromatic @chromatic-com/playwright
 ```
 
 These changes are temporary and should not be committed.

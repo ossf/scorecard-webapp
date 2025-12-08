@@ -25,7 +25,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/transparency-dev/merkle v0.0.2
 	gocloud.dev v0.43.0
-	golang.org/x/mod v0.30.0
+	golang.org/x/mod v0.31.0
 	golang.org/x/net v0.47.0
 )
 
@@ -108,7 +108,7 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
-	golang.org/x/tools v0.38.0 // indirect
+	golang.org/x/tools v0.39.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/api v0.242.0 // indirect
 	google.golang.org/genproto v0.0.0-20250715232539-7130f93afb79 // indirect

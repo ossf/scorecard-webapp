@@ -10423,10 +10423,10 @@ sass-loader@10:
     schema-utils "^3.0.0"
     semver "^7.3.2"
 
-sass@^1.35.2:
-  version "1.94.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.94.0.tgz#a04198d8940358ca6ad537d2074051edbbe7c1a7"
-  integrity sha512-Dqh7SiYcaFtdv5Wvku6QgS5IGPm281L+ZtVD1U2FJa7Q0EFRlq8Z3sjYtz6gYObsYThUOz9ArwFqPZx+1azILQ==
+sass@^1.97.3:
+  version "1.97.3"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.97.3.tgz#9cb59339514fa7e2aec592b9700953ac6e331ab2"
+  integrity sha512-fDz1zJpd5GycprAbu4Q2PV/RprsRtKC/0z82z0JLgdytmcq0+ujJbJ/09bPGDxCLkKY3Np5cRAOcWiVkLXJURg==
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"

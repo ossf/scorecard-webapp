@@ -72,6 +72,16 @@ paths:
       responses:
         302:
           description: Scorecard badge for the repository
+          headers:
+            Surrogate-Control:
+              type: string
+              description: "TTL for Fastly CDN caching. Example: max-age=3600"
+            Cache-Control:
+              type: string
+              description: "TTL for browser caching. Example: max-age=3600"
+            Surrogate-Key:
+              type: string
+              description: "Surrogate key for Fastly CDN purging."
         default:
           $ref: '#/responses/InternalServerError'
 
@@ -106,6 +116,13 @@ paths:
       responses:
         200:
           description: A JSON object of the repository's ScorecardResult
+          headers:
+            Surrogate-Control:
+              type: string
+              description: "TTL for Fastly CDN caching. Example: max-age=3600"
+            Cache-Control:
+              type: string
+              description: "TTL for browser caching. Example: max-age=3600"
           schema:
             $ref: '#/definitions/ScorecardResult'
         400:
@@ -239,8 +256,22 @@ definitions:
 responses:
   NotFound:
     description: The content requested could not be found
+    headers:
+      Surrogate-Control:
+        type: string
+        description: "TTL for Fastly CDN caching. Example: max-age=3600"
+      Cache-Control:
+        type: string
+        description: "TTL for browser caching. Example: max-age=3600"
   BadRequest:
     description: The request provided to the server was invalid
+    headers:
+      Surrogate-Control:
+        type: string
+        description: "TTL for Fastly CDN caching. Example: max-age=3600"
+      Cache-Control:
+        type: string
+        description: "TTL for browser caching. Example: max-age=3600"
     schema:
       $ref: "#/definitions/Error"
   InternalServerError:

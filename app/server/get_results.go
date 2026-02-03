@@ -33,6 +33,10 @@ import (
 const (
 	scorecardResultBucketURL     = "gs://ossf-scorecard-results"
 	scorecardCronResultBucketURL = "gs://ossf-scorecard-cron-results"
+
+	// 1 year, invalidated if updated by the weekly scan or scorecard action.
+	fastlyTTL       = "max-age=31557600"
+	browserCacheTTL = "max-age=600" // 10 minutes
 )
 
 var errInvalidInputs = errors.New("invalid inputs provided")
@@ -41,15 +45,21 @@ func GetResultHandler(params results.GetResultParams) middleware.Responder {
 	res, err := getResults(params.Platform, params.Org, params.Repo, params.Commit)
 
 	if errors.Is(err, errNotFound) {
-		return results.NewGetResultNotFound()
+		return results.NewGetResultNotFound().
+			WithSurrogateControl(fastlyTTL).
+			WithCacheControl(browserCacheTTL)
 	}
 	if errors.Is(err, errInvalidInputs) {
-		return results.NewGetResultBadRequest()
+		return results.NewGetResultBadRequest().
+			WithSurrogateControl(fastlyTTL).
+			WithCacheControl(browserCacheTTL)
 	}
 	if err == nil {
 		var ret models.ScorecardResult
 		if err = ret.UnmarshalBinary(res); err == nil {
-			return results.NewGetResultOK().WithPayload(&ret)
+			return results.NewGetResultOK().WithPayload(&ret).
+				WithSurrogateControl(fastlyTTL).
+				WithCacheControl(browserCacheTTL)
 		}
 	}
 

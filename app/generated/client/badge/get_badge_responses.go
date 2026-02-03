@@ -67,6 +67,18 @@ GetBadgeFound describes a response with status code 302, with default header val
 Scorecard badge for the repository
 */
 type GetBadgeFound struct {
+
+	/* TTL for browser caching. Example: max-age=3600
+	 */
+	CacheControl string
+
+	/* TTL for Fastly CDN caching. Example: max-age=3600
+	 */
+	SurrogateControl string
+
+	/* Surrogate key for Fastly CDN purging.
+	 */
+	SurrogateKey string
 }
 
 // IsSuccess returns true when this get badge found response has a 2xx status code
@@ -103,6 +115,27 @@ func (o *GetBadgeFound) String() string {
 }
 
 func (o *GetBadgeFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// hydrates response header Cache-Control
+	hdrCacheControl := response.GetHeader("Cache-Control")
+
+	if hdrCacheControl != "" {
+		o.CacheControl = hdrCacheControl
+	}
+
+	// hydrates response header Surrogate-Control
+	hdrSurrogateControl := response.GetHeader("Surrogate-Control")
+
+	if hdrSurrogateControl != "" {
+		o.SurrogateControl = hdrSurrogateControl
+	}
+
+	// hydrates response header Surrogate-Key
+	hdrSurrogateKey := response.GetHeader("Surrogate-Key")
+
+	if hdrSurrogateKey != "" {
+		o.SurrogateKey = hdrSurrogateKey
+	}
 
 	return nil
 }

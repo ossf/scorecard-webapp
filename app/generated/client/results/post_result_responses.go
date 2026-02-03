@@ -134,6 +134,15 @@ PostResultBadRequest describes a response with status code 400, with default hea
 The request provided to the server was invalid
 */
 type PostResultBadRequest struct {
+
+	/* TTL for browser caching. Example: max-age=3600
+	 */
+	CacheControl string
+
+	/* TTL for Fastly CDN caching. Example: max-age=3600
+	 */
+	SurrogateControl string
+
 	Payload *models.Error
 }
 
@@ -175,6 +184,20 @@ func (o *PostResultBadRequest) GetPayload() *models.Error {
 }
 
 func (o *PostResultBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// hydrates response header Cache-Control
+	hdrCacheControl := response.GetHeader("Cache-Control")
+
+	if hdrCacheControl != "" {
+		o.CacheControl = hdrCacheControl
+	}
+
+	// hydrates response header Surrogate-Control
+	hdrSurrogateControl := response.GetHeader("Surrogate-Control")
+
+	if hdrSurrogateControl != "" {
+		o.SurrogateControl = hdrSurrogateControl
+	}
 
 	o.Payload = new(models.Error)
 

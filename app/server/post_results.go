@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -42,6 +43,7 @@ import (
 
 	"github.com/ossf/scorecard-webapp/app/generated/models"
 	"github.com/ossf/scorecard-webapp/app/generated/restapi/operations/results"
+	"github.com/ossf/scorecard-webapp/app/server/internal/cdn"
 	"github.com/ossf/scorecard-webapp/app/server/internal/hashedrekord"
 )
 
@@ -159,10 +161,19 @@ func processRequest(host, org, repo string, scorecardResult *models.VerifiedScor
 	if err := writeToBlobStore(ctx, bucketURL, objectPath, []byte(scorecardResult.Result)); err != nil {
 		return fmt.Errorf("%w: %v", errWritingBucket, err)
 	}
+	purger := getPurger()
+	path := fmt.Sprintf("/projects/%s/%s/%s", host, org, repo)
+	if err := purger.Purge(ctx, path); err != nil {
+		log.Println("error purging CDN for " + path + ": " + err.Error())
+	}
 
 	commitObjectPath := fmt.Sprintf("%s/%s/%s/%s/%s", host, org, repo, info.repoSHA, resultsFile)
 	if err := writeToBlobStore(ctx, bucketURL, commitObjectPath, []byte(scorecardResult.Result)); err != nil {
 		return fmt.Errorf("%w: %v", errWritingBucket, err)
+	}
+	path = fmt.Sprintf("/projects/%s/%s/%s?commit=%s", host, org, repo, info.repoSHA)
+	if err := purger.Purge(ctx, path); err != nil {
+		log.Println("error purging CDN for " + path + ": " + err.Error())
 	}
 
 	return nil
@@ -588,4 +599,30 @@ func (t tlogEntry) rekord() (hashedrekord.Body, error) {
 		return hashedrekord.Body{}, errNotRekordEntry
 	}
 	return body, nil
+}
+
+// Gets the relevant purger depending on if this is a local dev environment
+// or a hosted environmen (staging or prod).
+func getPurger() cdn.Purger {
+	// STORAGE_EMULATOR_HOST is set locally, so we don't want to purge the CDN.
+	if os.Getenv("STORAGE_EMULATOR_HOST") != "" {
+		log.Println("API result CDN purging disabled, STORAGE_EMULATOR_HOST is set")
+		return cdn.NewNoOpClient()
+	}
+
+	// the URL should have the scheme, e.g. API_BASE_URL=https://api.scorecard.dev
+	apiBaseURL := os.Getenv("API_BASE_URL")
+	if apiBaseURL == "" {
+		log.Println("API result CDN purging disabled, API_BASE_URL not set")
+		return cdn.NewNoOpClient()
+	}
+
+	purgeToken := os.Getenv("FASTLY_PURGE_TOKEN")
+	if purgeToken == "" {
+		log.Println("API result CDN purging disabled, FASTLY_PURGE_TOKEN not set")
+		return cdn.NewNoOpClient()
+	}
+
+	log.Println("API result CDN purging enabled for " + apiBaseURL)
+	return cdn.NewFastlyClient(purgeToken, apiBaseURL)
 }

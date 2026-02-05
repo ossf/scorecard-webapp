@@ -37,6 +37,14 @@ GetResultOK A JSON object of the repository's ScorecardResult
 swagger:response getResultOK
 */
 type GetResultOK struct {
+	/*TTL for browser caching. Example: max-age=3600
+
+	 */
+	CacheControl string `json:"Cache-Control"`
+	/*TTL for Fastly CDN caching. Example: max-age=3600
+
+	 */
+	SurrogateControl string `json:"Surrogate-Control"`
 
 	/*
 	  In: Body
@@ -48,6 +56,28 @@ type GetResultOK struct {
 func NewGetResultOK() *GetResultOK {
 
 	return &GetResultOK{}
+}
+
+// WithCacheControl adds the cacheControl to the get result o k response
+func (o *GetResultOK) WithCacheControl(cacheControl string) *GetResultOK {
+	o.CacheControl = cacheControl
+	return o
+}
+
+// SetCacheControl sets the cacheControl to the get result o k response
+func (o *GetResultOK) SetCacheControl(cacheControl string) {
+	o.CacheControl = cacheControl
+}
+
+// WithSurrogateControl adds the surrogateControl to the get result o k response
+func (o *GetResultOK) WithSurrogateControl(surrogateControl string) *GetResultOK {
+	o.SurrogateControl = surrogateControl
+	return o
+}
+
+// SetSurrogateControl sets the surrogateControl to the get result o k response
+func (o *GetResultOK) SetSurrogateControl(surrogateControl string) {
+	o.SurrogateControl = surrogateControl
 }
 
 // WithPayload adds the payload to the get result o k response
@@ -63,6 +93,20 @@ func (o *GetResultOK) SetPayload(payload *models.ScorecardResult) {
 
 // WriteResponse to the client
 func (o *GetResultOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Cache-Control
+
+	cacheControl := o.CacheControl
+	if cacheControl != "" {
+		rw.Header().Set("Cache-Control", cacheControl)
+	}
+
+	// response header Surrogate-Control
+
+	surrogateControl := o.SurrogateControl
+	if surrogateControl != "" {
+		rw.Header().Set("Surrogate-Control", surrogateControl)
+	}
 
 	rw.WriteHeader(200)
 	if o.Payload != nil {
@@ -82,6 +126,14 @@ GetResultBadRequest The request provided to the server was invalid
 swagger:response getResultBadRequest
 */
 type GetResultBadRequest struct {
+	/*TTL for browser caching. Example: max-age=3600
+
+	 */
+	CacheControl string `json:"Cache-Control"`
+	/*TTL for Fastly CDN caching. Example: max-age=3600
+
+	 */
+	SurrogateControl string `json:"Surrogate-Control"`
 
 	/*
 	  In: Body
@@ -93,6 +145,28 @@ type GetResultBadRequest struct {
 func NewGetResultBadRequest() *GetResultBadRequest {
 
 	return &GetResultBadRequest{}
+}
+
+// WithCacheControl adds the cacheControl to the get result bad request response
+func (o *GetResultBadRequest) WithCacheControl(cacheControl string) *GetResultBadRequest {
+	o.CacheControl = cacheControl
+	return o
+}
+
+// SetCacheControl sets the cacheControl to the get result bad request response
+func (o *GetResultBadRequest) SetCacheControl(cacheControl string) {
+	o.CacheControl = cacheControl
+}
+
+// WithSurrogateControl adds the surrogateControl to the get result bad request response
+func (o *GetResultBadRequest) WithSurrogateControl(surrogateControl string) *GetResultBadRequest {
+	o.SurrogateControl = surrogateControl
+	return o
+}
+
+// SetSurrogateControl sets the surrogateControl to the get result bad request response
+func (o *GetResultBadRequest) SetSurrogateControl(surrogateControl string) {
+	o.SurrogateControl = surrogateControl
 }
 
 // WithPayload adds the payload to the get result bad request response
@@ -108,6 +182,20 @@ func (o *GetResultBadRequest) SetPayload(payload *models.Error) {
 
 // WriteResponse to the client
 func (o *GetResultBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Cache-Control
+
+	cacheControl := o.CacheControl
+	if cacheControl != "" {
+		rw.Header().Set("Cache-Control", cacheControl)
+	}
+
+	// response header Surrogate-Control
+
+	surrogateControl := o.SurrogateControl
+	if surrogateControl != "" {
+		rw.Header().Set("Surrogate-Control", surrogateControl)
+	}
 
 	rw.WriteHeader(400)
 	if o.Payload != nil {
@@ -127,6 +215,14 @@ GetResultNotFound The content requested could not be found
 swagger:response getResultNotFound
 */
 type GetResultNotFound struct {
+	/*TTL for browser caching. Example: max-age=3600
+
+	 */
+	CacheControl string `json:"Cache-Control"`
+	/*TTL for Fastly CDN caching. Example: max-age=3600
+
+	 */
+	SurrogateControl string `json:"Surrogate-Control"`
 }
 
 // NewGetResultNotFound creates GetResultNotFound with default headers values
@@ -135,8 +231,44 @@ func NewGetResultNotFound() *GetResultNotFound {
 	return &GetResultNotFound{}
 }
 
+// WithCacheControl adds the cacheControl to the get result not found response
+func (o *GetResultNotFound) WithCacheControl(cacheControl string) *GetResultNotFound {
+	o.CacheControl = cacheControl
+	return o
+}
+
+// SetCacheControl sets the cacheControl to the get result not found response
+func (o *GetResultNotFound) SetCacheControl(cacheControl string) {
+	o.CacheControl = cacheControl
+}
+
+// WithSurrogateControl adds the surrogateControl to the get result not found response
+func (o *GetResultNotFound) WithSurrogateControl(surrogateControl string) *GetResultNotFound {
+	o.SurrogateControl = surrogateControl
+	return o
+}
+
+// SetSurrogateControl sets the surrogateControl to the get result not found response
+func (o *GetResultNotFound) SetSurrogateControl(surrogateControl string) {
+	o.SurrogateControl = surrogateControl
+}
+
 // WriteResponse to the client
 func (o *GetResultNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Cache-Control
+
+	cacheControl := o.CacheControl
+	if cacheControl != "" {
+		rw.Header().Set("Cache-Control", cacheControl)
+	}
+
+	// response header Surrogate-Control
+
+	surrogateControl := o.SurrogateControl
+	if surrogateControl != "" {
+		rw.Header().Set("Surrogate-Control", surrogateControl)
+	}
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 

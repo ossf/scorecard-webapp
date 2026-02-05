@@ -37,6 +37,18 @@ GetBadgeFound Scorecard badge for the repository
 swagger:response getBadgeFound
 */
 type GetBadgeFound struct {
+	/*TTL for browser caching. Example: max-age=3600
+
+	 */
+	CacheControl string `json:"Cache-Control"`
+	/*TTL for Fastly CDN caching. Example: max-age=3600
+
+	 */
+	SurrogateControl string `json:"Surrogate-Control"`
+	/*Surrogate key for Fastly CDN purging.
+
+	 */
+	SurrogateKey string `json:"Surrogate-Key"`
 }
 
 // NewGetBadgeFound creates GetBadgeFound with default headers values
@@ -45,8 +57,62 @@ func NewGetBadgeFound() *GetBadgeFound {
 	return &GetBadgeFound{}
 }
 
+// WithCacheControl adds the cacheControl to the get badge found response
+func (o *GetBadgeFound) WithCacheControl(cacheControl string) *GetBadgeFound {
+	o.CacheControl = cacheControl
+	return o
+}
+
+// SetCacheControl sets the cacheControl to the get badge found response
+func (o *GetBadgeFound) SetCacheControl(cacheControl string) {
+	o.CacheControl = cacheControl
+}
+
+// WithSurrogateControl adds the surrogateControl to the get badge found response
+func (o *GetBadgeFound) WithSurrogateControl(surrogateControl string) *GetBadgeFound {
+	o.SurrogateControl = surrogateControl
+	return o
+}
+
+// SetSurrogateControl sets the surrogateControl to the get badge found response
+func (o *GetBadgeFound) SetSurrogateControl(surrogateControl string) {
+	o.SurrogateControl = surrogateControl
+}
+
+// WithSurrogateKey adds the surrogateKey to the get badge found response
+func (o *GetBadgeFound) WithSurrogateKey(surrogateKey string) *GetBadgeFound {
+	o.SurrogateKey = surrogateKey
+	return o
+}
+
+// SetSurrogateKey sets the surrogateKey to the get badge found response
+func (o *GetBadgeFound) SetSurrogateKey(surrogateKey string) {
+	o.SurrogateKey = surrogateKey
+}
+
 // WriteResponse to the client
 func (o *GetBadgeFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Cache-Control
+
+	cacheControl := o.CacheControl
+	if cacheControl != "" {
+		rw.Header().Set("Cache-Control", cacheControl)
+	}
+
+	// response header Surrogate-Control
+
+	surrogateControl := o.SurrogateControl
+	if surrogateControl != "" {
+		rw.Header().Set("Surrogate-Control", surrogateControl)
+	}
+
+	// response header Surrogate-Key
+
+	surrogateKey := o.SurrogateKey
+	if surrogateKey != "" {
+		rw.Header().Set("Surrogate-Key", surrogateKey)
+	}
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 

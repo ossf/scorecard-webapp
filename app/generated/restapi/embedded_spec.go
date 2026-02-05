@@ -71,6 +71,16 @@ func init() {
             "description": "A JSON object of the repository's ScorecardResult",
             "schema": {
               "$ref": "#/definitions/ScorecardResult"
+            },
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              }
             }
           },
           "400": {
@@ -188,7 +198,21 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "Scorecard badge for the repository"
+            "description": "Scorecard badge for the repository",
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              },
+              "Surrogate-Key": {
+                "type": "string",
+                "description": "Surrogate key for Fastly CDN purging."
+              }
+            }
           },
           "default": {
             "$ref": "#/responses/InternalServerError"
@@ -336,6 +360,16 @@ func init() {
       "description": "The request provided to the server was invalid",
       "schema": {
         "$ref": "#/definitions/Error"
+      },
+      "headers": {
+        "Cache-Control": {
+          "type": "string",
+          "description": "TTL for browser caching. Example: max-age=3600"
+        },
+        "Surrogate-Control": {
+          "type": "string",
+          "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+        }
       }
     },
     "InternalServerError": {
@@ -345,7 +379,17 @@ func init() {
       }
     },
     "NotFound": {
-      "description": "The content requested could not be found"
+      "description": "The content requested could not be found",
+      "headers": {
+        "Cache-Control": {
+          "type": "string",
+          "description": "TTL for browser caching. Example: max-age=3600"
+        },
+        "Surrogate-Control": {
+          "type": "string",
+          "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+        }
+      }
     }
   },
   "x-google-allow": "all",
@@ -393,16 +437,46 @@ func init() {
             "description": "A JSON object of the repository's ScorecardResult",
             "schema": {
               "$ref": "#/definitions/ScorecardResult"
+            },
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              }
             }
           },
           "400": {
             "description": "The request provided to the server was invalid",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              }
             }
           },
           "404": {
-            "description": "The content requested could not be found"
+            "description": "The content requested could not be found",
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              }
+            }
           },
           "default": {
             "description": "There was an internal error in the server while processing the request",
@@ -439,6 +513,16 @@ func init() {
             "description": "The request provided to the server was invalid",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              }
             }
           },
           "default": {
@@ -522,7 +606,21 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "Scorecard badge for the repository"
+            "description": "Scorecard badge for the repository",
+            "headers": {
+              "Cache-Control": {
+                "type": "string",
+                "description": "TTL for browser caching. Example: max-age=3600"
+              },
+              "Surrogate-Control": {
+                "type": "string",
+                "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+              },
+              "Surrogate-Key": {
+                "type": "string",
+                "description": "Surrogate key for Fastly CDN purging."
+              }
+            }
           },
           "default": {
             "description": "There was an internal error in the server while processing the request",
@@ -685,6 +783,16 @@ func init() {
       "description": "The request provided to the server was invalid",
       "schema": {
         "$ref": "#/definitions/Error"
+      },
+      "headers": {
+        "Cache-Control": {
+          "type": "string",
+          "description": "TTL for browser caching. Example: max-age=3600"
+        },
+        "Surrogate-Control": {
+          "type": "string",
+          "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+        }
       }
     },
     "InternalServerError": {
@@ -694,7 +802,17 @@ func init() {
       }
     },
     "NotFound": {
-      "description": "The content requested could not be found"
+      "description": "The content requested could not be found",
+      "headers": {
+        "Cache-Control": {
+          "type": "string",
+          "description": "TTL for browser caching. Example: max-age=3600"
+        },
+        "Surrogate-Control": {
+          "type": "string",
+          "description": "TTL for Fastly CDN caching. Example: max-age=3600"
+        }
+      }
     }
   },
   "x-google-allow": "all",

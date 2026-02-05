@@ -80,6 +80,14 @@ PostResultBadRequest The request provided to the server was invalid
 swagger:response postResultBadRequest
 */
 type PostResultBadRequest struct {
+	/*TTL for browser caching. Example: max-age=3600
+
+	 */
+	CacheControl string `json:"Cache-Control"`
+	/*TTL for Fastly CDN caching. Example: max-age=3600
+
+	 */
+	SurrogateControl string `json:"Surrogate-Control"`
 
 	/*
 	  In: Body
@@ -91,6 +99,28 @@ type PostResultBadRequest struct {
 func NewPostResultBadRequest() *PostResultBadRequest {
 
 	return &PostResultBadRequest{}
+}
+
+// WithCacheControl adds the cacheControl to the post result bad request response
+func (o *PostResultBadRequest) WithCacheControl(cacheControl string) *PostResultBadRequest {
+	o.CacheControl = cacheControl
+	return o
+}
+
+// SetCacheControl sets the cacheControl to the post result bad request response
+func (o *PostResultBadRequest) SetCacheControl(cacheControl string) {
+	o.CacheControl = cacheControl
+}
+
+// WithSurrogateControl adds the surrogateControl to the post result bad request response
+func (o *PostResultBadRequest) WithSurrogateControl(surrogateControl string) *PostResultBadRequest {
+	o.SurrogateControl = surrogateControl
+	return o
+}
+
+// SetSurrogateControl sets the surrogateControl to the post result bad request response
+func (o *PostResultBadRequest) SetSurrogateControl(surrogateControl string) {
+	o.SurrogateControl = surrogateControl
 }
 
 // WithPayload adds the payload to the post result bad request response
@@ -106,6 +136,20 @@ func (o *PostResultBadRequest) SetPayload(payload *models.Error) {
 
 // WriteResponse to the client
 func (o *PostResultBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Cache-Control
+
+	cacheControl := o.CacheControl
+	if cacheControl != "" {
+		rw.Header().Set("Cache-Control", cacheControl)
+	}
+
+	// response header Surrogate-Control
+
+	surrogateControl := o.SurrogateControl
+	if surrogateControl != "" {
+		rw.Header().Set("Surrogate-Control", surrogateControl)
+	}
 
 	rw.WriteHeader(400)
 	if o.Payload != nil {

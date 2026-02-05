@@ -55,6 +55,9 @@ func GetBadgeHandler(params badge.GetBadgeParams) middleware.Responder {
 	}
 
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, producer runtime.Producer) {
+		rw.Header().Set("Surrogate-Control", fastlyTTL)
+		rw.Header().Set("Cache-Control", browserCacheTTL)
+		rw.Header().Set("Surrogate-Key", "scorecard-badge-redirect")
 		http.Redirect(rw, params.HTTPRequest, parsedURL.String(), http.StatusFound)
 	})
 }

@@ -79,6 +79,15 @@ GetResultOK describes a response with status code 200, with default header value
 A JSON object of the repository's ScorecardResult
 */
 type GetResultOK struct {
+
+	/* TTL for browser caching. Example: max-age=3600
+	 */
+	CacheControl string
+
+	/* TTL for Fastly CDN caching. Example: max-age=3600
+	 */
+	SurrogateControl string
+
 	Payload *models.ScorecardResult
 }
 
@@ -121,6 +130,20 @@ func (o *GetResultOK) GetPayload() *models.ScorecardResult {
 
 func (o *GetResultOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	// hydrates response header Cache-Control
+	hdrCacheControl := response.GetHeader("Cache-Control")
+
+	if hdrCacheControl != "" {
+		o.CacheControl = hdrCacheControl
+	}
+
+	// hydrates response header Surrogate-Control
+	hdrSurrogateControl := response.GetHeader("Surrogate-Control")
+
+	if hdrSurrogateControl != "" {
+		o.SurrogateControl = hdrSurrogateControl
+	}
+
 	o.Payload = new(models.ScorecardResult)
 
 	// response payload
@@ -142,6 +165,15 @@ GetResultBadRequest describes a response with status code 400, with default head
 The request provided to the server was invalid
 */
 type GetResultBadRequest struct {
+
+	/* TTL for browser caching. Example: max-age=3600
+	 */
+	CacheControl string
+
+	/* TTL for Fastly CDN caching. Example: max-age=3600
+	 */
+	SurrogateControl string
+
 	Payload *models.Error
 }
 
@@ -184,6 +216,20 @@ func (o *GetResultBadRequest) GetPayload() *models.Error {
 
 func (o *GetResultBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	// hydrates response header Cache-Control
+	hdrCacheControl := response.GetHeader("Cache-Control")
+
+	if hdrCacheControl != "" {
+		o.CacheControl = hdrCacheControl
+	}
+
+	// hydrates response header Surrogate-Control
+	hdrSurrogateControl := response.GetHeader("Surrogate-Control")
+
+	if hdrSurrogateControl != "" {
+		o.SurrogateControl = hdrSurrogateControl
+	}
+
 	o.Payload = new(models.Error)
 
 	// response payload
@@ -205,6 +251,14 @@ GetResultNotFound describes a response with status code 404, with default header
 The content requested could not be found
 */
 type GetResultNotFound struct {
+
+	/* TTL for browser caching. Example: max-age=3600
+	 */
+	CacheControl string
+
+	/* TTL for Fastly CDN caching. Example: max-age=3600
+	 */
+	SurrogateControl string
 }
 
 // IsSuccess returns true when this get result not found response has a 2xx status code
@@ -241,6 +295,20 @@ func (o *GetResultNotFound) String() string {
 }
 
 func (o *GetResultNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// hydrates response header Cache-Control
+	hdrCacheControl := response.GetHeader("Cache-Control")
+
+	if hdrCacheControl != "" {
+		o.CacheControl = hdrCacheControl
+	}
+
+	// hydrates response header Surrogate-Control
+	hdrSurrogateControl := response.GetHeader("Surrogate-Control")
+
+	if hdrSurrogateControl != "" {
+		o.SurrogateControl = hdrSurrogateControl
+	}
 
 	return nil
 }

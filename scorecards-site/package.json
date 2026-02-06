@@ -29,7 +29,7 @@
     "@tailwindcss/typography": "^0.4.1",
     "clipboard": "^2.0.10",
     "highlight.js": "^11.11.1",
-    "nuxt": "^2.15.8",
+    "nuxt": "^4.3.0",
     "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
     "sass-loader": "10",

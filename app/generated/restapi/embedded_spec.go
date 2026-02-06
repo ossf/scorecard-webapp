@@ -48,7 +48,7 @@ func init() {
     "title": "OpenSSF Scorecard API",
     "version": "1.0.0"
   },
-  "host": "api.securityscorecards.dev",
+  "host": "api.scorecard.dev",
   "paths": {
     "/projects/{platform}/{org}/{repo}": {
       "get": {
@@ -414,7 +414,7 @@ func init() {
     "title": "OpenSSF Scorecard API",
     "version": "1.0.0"
   },
-  "host": "api.securityscorecards.dev",
+  "host": "api.scorecard.dev",
   "paths": {
     "/projects/{platform}/{org}/{repo}": {
       "get": {

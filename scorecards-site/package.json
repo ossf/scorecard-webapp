@@ -17,7 +17,7 @@
     "*.**": "prettier --check --ignore-unknown"
   },
   "dependencies": {
-    "@nuxt/content": "^1.15.1",
+    "@nuxt/content": "^3.11.2",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/google-fonts": "^3.2.0",

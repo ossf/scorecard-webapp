@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/google/go-github/v65 v65.0.0
-	github.com/rhysd/actionlint v1.7.10
+	github.com/rhysd/actionlint v1.7.11
 	github.com/stretchr/testify v1.11.1
 )
 
@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/validate v0.25.1
 	github.com/google/go-cmp v0.7.0
 	github.com/onsi/ginkgo/v2 v2.28.1
-	github.com/onsi/gomega v1.39.0
+	github.com/onsi/gomega v1.39.1
 	github.com/rs/cors v1.11.1
 	github.com/spf13/pflag v1.0.10
 	github.com/transparency-dev/merkle v0.0.2
@@ -42,7 +42,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.53.0 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/bmatcuk/doublestar/v4 v4.9.1 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect

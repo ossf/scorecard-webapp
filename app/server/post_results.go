@@ -27,6 +27,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -73,6 +74,14 @@ var (
 	errNotRekordEntry           = errors.New("not a rekord entry")
 	errMismatchedTlogEntry      = errors.New("tlog entry does not match payload")
 	errNotOIDC                  = errors.New(`ensure your GitHub workflow has "id-token: write" permissions`)
+
+	// errRekorSearchUnavailable indicates the Rekor search-by-hash index could not be
+	// used to locate a tlog entry: the endpoint returned a non-OK status or a
+	// non-JSON body. Rekor v2 removed the search index (a best-effort service) and
+	// the v1 index is wound down, so this path can fail independently of whether a
+	// payload is legitimately logged. Callers that have a tlog index should prefer
+	// looking entries up directly; see extractAndVerifyCertForPayload.
+	errRekorSearchUnavailable = errors.New("rekor search index unavailable")
 )
 
 type certInfo struct {
@@ -368,9 +377,20 @@ func getUUIDsByPayload(ctx context.Context, payload []byte) ([]string, error) {
 	}
 	defer resp.Body.Close()
 
+	// A non-OK status means the search index isn't answering usefully (e.g. it has
+	// been wound down and an intermediary returns an HTML error page). Surface that
+	// as errRekorSearchUnavailable instead of letting the JSON decoder fail with an
+	// opaque "invalid character '<'" so callers can distinguish it from a real miss.
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		return nil, fmt.Errorf("%w: status %d: %s", errRekorSearchUnavailable,
+			resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+
 	var rekorResult []string
 	if err := json.NewDecoder(resp.Body).Decode(&rekorResult); err != nil {
-		return nil, fmt.Errorf("decoding Rekor response: %w", err)
+		// A 200 with a non-JSON body likewise means the index isn't usable.
+		return nil, fmt.Errorf("%w: decoding response: %w", errRekorSearchUnavailable, err)
 	}
 
 	return rekorResult, nil

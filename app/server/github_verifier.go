@@ -28,6 +28,11 @@ import (
 
 var errInvalidCodeQLVersion = errors.New("codeql version invalid")
 
+const (
+	codeQLActionOwner = "github"
+	codeQLActionRepo  = "codeql-action"
+)
+
 type githubVerifier struct {
 	ctx               context.Context
 	client            *github.Client
@@ -121,7 +126,7 @@ func (g *githubVerifier) getTags(owner, repo string) error {
 	if err != nil {
 		return fmt.Errorf("fetch tags: %w", err)
 	}
-	isCodeQL := owner == "github" && repo == "codeql-action"
+	isCodeQL := owner == codeQLActionOwner && repo == codeQLActionRepo
 	for _, t := range tags {
 		if t.Commit != nil && t.Commit.SHA != nil {
 			g.markContains(owner, repo, *t.Commit.SHA)
@@ -157,7 +162,7 @@ func (g *githubVerifier) checkReleaseBranches(owner, repo, hash, defaultBranch s
 
 	switch {
 	// special case: github/codeql-action releases all come from "main", even though the tags are on different branches
-	case owner == "github" && repo == "codeql-action":
+	case owner == codeQLActionOwner && repo == codeQLActionRepo:
 		branches, err = g.getCodeQLReleaseBranches()
 		if err != nil {
 			return false, err

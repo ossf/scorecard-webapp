@@ -36,6 +36,12 @@ linters:
     errcheck:
       check-type-assertions: true
       check-blank: true
+    gosec:
+      excludes:
+        # TODO investigate and fix separately (see also ossf/scorecard's .golangci.yml)
+        - G703 # path traversal via taint analysis
+        - G705 # XSS via taint analysis
+        - G706 # log injection via taint analysis
     gocritic:
       enabled-checks:
         - appendAssign
@@ -115,6 +121,10 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
+    rules:
+      - linters:
+          - goconst
+        path: (.+)_test\.go
     paths:
       - third_party$
       - builtin$

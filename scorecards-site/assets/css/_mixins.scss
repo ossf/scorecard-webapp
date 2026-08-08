@@ -1,3 +1,6 @@
+@use "sass:string";
+@use "sass:map";
+
 // Mixin helper
 
 // =============================================================================
@@ -5,12 +8,12 @@
 // =============================================================================
 
 @function str-replace($string, $search, $replace: '') {
-  $index: str-index($string, $search);
+  $index: string.index($string, $search);
 
   @if $index {
-    @return str-slice($string, 1, $index - 1) + $replace +
+    @return string.slice($string, 1, $index - 1) + $replace +
       str-replace(
-        str-slice($string, $index + str-length($search)),
+        string.slice($string, $index + string.length($search)),
         $search,
         $replace
       );
@@ -44,11 +47,11 @@
 
   @each $ext in $exts {
     $extmod: if(
-      map-has-key($extmods, $ext),
-      $ext + map-get($extmods, $ext),
+      map.get($extmods, $ext),
+      $ext + map.get($extmods, $ext),
       $ext
     );
-    $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+    $format: if(map.get($formats, $ext), map.get($formats, $ext), $ext);
     $src: append(
       $src,
       url(quote($path + '.' + $extmod)) format(quote($format)),

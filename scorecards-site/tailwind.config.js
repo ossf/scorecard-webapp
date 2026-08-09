@@ -131,7 +131,7 @@ module.exports = {
         298,
         322,
         333,
-        345
+        345,
       ),
     },
     fontSize: {
@@ -159,7 +159,7 @@ module.exports = {
         14,
         13,
         12,
-        11
+        11,
       ),
     },
     colors: {
@@ -217,7 +217,7 @@ module.exports = {
         16,
         17,
         15,
-        13
+        13,
       ),
     },
     minHeight: {

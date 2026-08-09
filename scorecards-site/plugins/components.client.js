@@ -5,7 +5,7 @@ const config = {
 
 const animateOnScrollObserver = new IntersectionObserver(function (
   entries,
-  animateOnScrollObserver
+  animateOnScrollObserver,
 ) {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -19,8 +19,7 @@ const animateOnScrollObserver = new IntersectionObserver(function (
       }
     }
   })
-},
-config)
+}, config)
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive('animate-on-scroll', {

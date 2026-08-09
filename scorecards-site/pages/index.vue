@@ -103,7 +103,7 @@ export default {
     const route = useRoute()
 
     const { data: page } = await useAsyncData('home', () =>
-      queryCollection('content').path('/home').first()
+      queryCollection('content').path('/home').first(),
     )
 
     return nuxtApp.runWithContext(() => {
@@ -243,7 +243,7 @@ export default {
     },
     importAll(modules) {
       Object.entries(modules).forEach(([path, url]) =>
-        this.logos.push({ pathLong: url, pathShort: path })
+        this.logos.push({ pathLong: url, pathShort: path }),
       )
     },
   },

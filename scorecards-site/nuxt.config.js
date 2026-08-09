@@ -83,6 +83,12 @@ export default defineNuxtConfig({
   },
 
   content: {
+    experimental: {
+      // Use Node's built-in `node:sqlite` instead of the `better-sqlite3`
+      // native addon, which ships prebuilt binaries per platform/Node ABI
+      // and can fail to load on build hosts it wasn't prebuilt for.
+      sqliteConnector: 'native',
+    },
     build: {
       markdown: {
         toc: {

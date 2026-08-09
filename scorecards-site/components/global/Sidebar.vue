@@ -70,7 +70,7 @@ export default {
     // Track all sections that have an `id` applied
     document
       .querySelectorAll(
-        '#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]'
+        '#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]',
       )
       .forEach((section) => {
         this.observer.observe(section)

@@ -80,7 +80,7 @@ export default {
 
         const d = first.commit.committer.date
         this.latestCommit = new Intl.DateTimeFormat('en-US', options).format(
-          new Date(d)
+          new Date(d),
         )
       } catch (e) {
         // Network issues or rate limits can cause generate to fail; fail gracefully

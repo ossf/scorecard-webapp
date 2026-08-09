@@ -22,8 +22,7 @@
       </div>
       <slot />
       <pre v-if="codeTabs.length < 1" class="pre-blank">
-// Make sure to add code blocks to your code group</pre
-      >
+// Make sure to add code blocks to your code group</pre>
     </div>
   </ClientOnly>
 </template>

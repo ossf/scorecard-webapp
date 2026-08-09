@@ -124,6 +124,11 @@ export default defineNuxtConfig({
     prerender: {
       failOnError: true,
     },
+    // Emit the prerendered static site to `dist/` (Nuxt 3 defaults to
+    // `.output/public`) so it matches Netlify's configured publish directory.
+    output: {
+      publicDir: 'dist',
+    },
   },
 
   vite: {

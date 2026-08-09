@@ -22,4 +22,10 @@ import 'prismjs/components/prism-bash.js'
 // Set vue SFC to markdown
 Prism.languages.vue = Prism.languages.markup
 
-export default Prism
+export default defineNuxtPlugin(() => {
+  return {
+    provide: {
+      prism: Prism,
+    },
+  }
+})

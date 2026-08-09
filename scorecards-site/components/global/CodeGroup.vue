@@ -50,16 +50,13 @@ export default {
       this.activeCodeTabIndex = index
     },
     loadTabs() {
-      this.codeTabs = (this.$slots.default || [])
-        .filter((slot) => Boolean(slot.componentOptions))
-        .map((slot, index) => {
-          if (slot.componentOptions.propsData.active === '') {
-            this.activeCodeTabIndex = index
-          }
+      this.codeTabs = (this.$slots.default?.() || [])
+        .filter((vnode) => typeof vnode.type === 'object')
+        .map((vnode, index) => {
           this.activeCodeTabIndex = index
           return {
-            title: slot.componentOptions.propsData.title,
-            elm: slot.elm,
+            title: vnode.props?.title,
+            elm: vnode.el,
           }
         })
       if (this.activeCodeTabIndex === -1 && this.codeTabs.length > 0) {

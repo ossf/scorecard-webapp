@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import GithubRepoIcon from '@/assets/icons/github-repo.svg?inline'
+import GithubRepoIcon from '@/assets/icons/github-repo.svg'
 export default {
   name: 'RepoButton',
   components: {

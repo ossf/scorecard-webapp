@@ -16,7 +16,7 @@ export default {
   watch: {
     onScreen(onScreen) {
       if (this.once && onScreen) {
-        this.$nuxt.$on('observer.observed', (observer) => {
+        this.$bus.on('observer.observed', (observer) => {
           for (const { el } of this.items) {
             observer.unobserve(el)
           }
@@ -32,7 +32,7 @@ export default {
     ].map((el) => ({ el, onScreen: false }))
 
     if (this.items.length) {
-      this.$nuxt.$on('observer.observed', (entries) => {
+      this.$bus.on('observer.observed', (entries) => {
         entries.forEach((entry) => {
           const item = this.items.find(({ el }) => entry.target === el)
 
@@ -44,7 +44,7 @@ export default {
         this.updateOnScreen()
       })
 
-      this.$nuxt.$on('observer.created', (observer) => {
+      this.$bus.on('observer.created', (observer) => {
         for (const { el } of this.items) {
           observer.observe(el)
         }
@@ -59,7 +59,7 @@ export default {
     },
   },
   render() {
-    return this.$scopedSlots.default({
+    return this.$slots.default?.({
       onScreen: this.onScreen,
     })
   },

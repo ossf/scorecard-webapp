@@ -2,32 +2,25 @@
 <template>
   <div v-if="loading">loading...</div>
   <div v-else>
-    <Header />
+    <AppHeader />
     <main>
-      <Nuxt class="w-full" />
+      <slot class="w-full" />
     </main>
-    <Footer :navigation="footerNavLinks" :socialLinks="footerSocialLinks" />
+    <AppFooter :navigation="footerNavLinks" :socialLinks="footerSocialLinks" />
   </div>
 </template>
 
 <script>
-import Header from '@/modules/Header/Header.vue'
-import Footer from '@/modules/Footer/Footer.vue'
+import AppHeader from '@/modules/Header/Header.vue'
+import AppFooter from '@/modules/Footer/Footer.vue'
 
 export default {
   name: 'MainLayout',
   components: {
-    Header,
-    Footer,
+    AppHeader,
+    AppFooter,
   },
 
-  filters: {
-    capitalize(value) {
-      if (!value) return ''
-      value = value.toString()
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    },
-  },
   data: () => ({
     scrollPos: '',
     isScrolling: false,
@@ -50,8 +43,8 @@ export default {
 
   watch: {
     $route(to, from) {
-      this.$nuxt.$emit('openNavigation', false)
-      this.$nuxt.$on('storeTocs', (payload) => {
+      this.$bus.emit('openNavigation', false)
+      this.$bus.on('storeTocs', (payload) => {
         this.tocList = payload
       })
     },
@@ -61,26 +54,26 @@ export default {
     window.addEventListener('scroll', this.getScrollPos)
 
     this.observer = new IntersectionObserver((entries) => {
-      this.$nuxt.$emit('observer.observed', entries)
+      this.$bus.emit('observer.observed', entries)
     })
 
-    this.$nuxt.$emit('observer.created', this.observer)
+    this.$bus.emit('observer.created', this.observer)
 
-    this.$nuxt.$on('openNavigation', (payload) => {
+    this.$bus.on('openNavigation', (payload) => {
       this.mobileNavOpen = payload
     })
   },
 
   created() {
-    this.$nuxt.$on('storeTocs', (payload) => {
+    this.$bus.on('storeTocs', (payload) => {
       this.tocList = payload
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('scroll', this.getScrollPos)
-    this.$nuxt.$off('openNavigation')
-    this.$nuxt.$off('storeTocs')
+    this.$bus.off('openNavigation')
+    this.$bus.off('storeTocs')
   },
 
   methods: {

@@ -24,7 +24,7 @@
     "@tailwindcss/typography": "^0.5.20",
     "clipboard": "^2.0.10",
     "mitt": "^3.0.1",
-    "nuxt": "^3.21.7",
+    "nuxt": "^4.5.1",
     "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
     "sass-loader": "10",

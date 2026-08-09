@@ -36,6 +36,18 @@ updates:
       prefix: fix
       prefix-development: chore
       include: scope
+    groups:
+      # Nuxt and Vue are tightly coupled (a Nuxt major requires a matching
+      # Vue major, plus compatible @nuxtjs/* modules); bundle them into one
+      # PR so a bump like nuxt alone doesn't land unbuildable.
+      nuxt-vue:
+        patterns:
+          - "nuxt"
+          - "@nuxt/*"
+          - "@nuxtjs/*"
+          - "vue"
+          - "vue-*"
+          - "@vue/*"
   # github-actions
   - package-ecosystem: "github-actions"
     directory: "/"

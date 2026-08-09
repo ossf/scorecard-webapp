@@ -78,11 +78,11 @@ export default {
 
     this.getNavLinks()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.observer.disconnect()
   },
   created() {
-    this.$nuxt.$on('setActiveToc', (id) => {
+    this.$bus.on('setActiveToc', (id) => {
       this.currentlyActiveToc = id
     })
   },
@@ -91,11 +91,16 @@ export default {
       this.currentlyActiveToc = link.id
     },
     async getNavLinks() {
-      const globalData = await this.$content('home')
-        .only(['title', 'slug', 'toc'])
-        .fetch()
+      const globalData = await queryCollection('content')
+        .path('/home')
+        .select('title', 'path', 'body')
+        .first()
       if (globalData) {
-        this.navList = globalData
+        this.navList = {
+          title: globalData.title,
+          slug: globalData.path,
+          toc: flattenToc(globalData.body?.toc?.links),
+        }
       }
     },
   },

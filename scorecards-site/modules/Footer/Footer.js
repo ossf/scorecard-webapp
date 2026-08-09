@@ -1,4 +1,4 @@
-import Logo from '@/assets/icons/logo.svg?inline'
+import Logo from '@/assets/icons/logo.svg'
 export default {
   name: 'FooterModule',
   components: {

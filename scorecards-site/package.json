@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt generate && nuxt start",
+    "start": "nuxt generate && npx serve dist",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint:prettier": "prettier --check .",
@@ -17,38 +17,27 @@
     "*.**": "prettier --check --ignore-unknown"
   },
   "dependencies": {
-    "@nuxt/content": "^1.15.1",
-    "@nuxtjs/axios": "^5.13.6",
-    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxt/content": "^3.15.2",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/proxy": "^2.1.0",
-    "@nuxtjs/redirect-module": "^0.3.1",
-    "@nuxtjs/sitemap": "^2.4.0",
-    "@nuxtjs/svg": "^0.4.0",
-    "@nuxtjs/tailwindcss": "^4.2.1",
-    "@tailwindcss/typography": "^0.4.1",
+    "@nuxtjs/sitemap": "^8.3.2",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@tailwindcss/typography": "^0.5.20",
     "clipboard": "^2.0.10",
-    "highlight.js": "^11.11.1",
-    "nuxt": "^2.15.8",
+    "mitt": "^3.0.1",
+    "nuxt": "^3.21.7",
     "prismjs": "^1.30.0",
     "rehype-add-classes": "^1.0.0",
     "sass-loader": "10",
-    "swiper": "6.x",
-    "vue": "^2.6.14",
-    "vue-awesome-swiper": "^4.1.1",
-    "vue-intersect": "^1.1.6",
-    "vue-intersect-directive": "^1.1.1",
-    "vue-server-renderer": "^2.6.14",
-    "vue-template-compiler": "^2.6.14"
+    "vite-svg-loader": "^5.1.1",
+    "vue": "^3.5.40"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
     "@nuxtjs/eslint-config": "^12.0.0",
-    "@nuxtjs/eslint-module": "^3.0.2",
-    "eslint": "^8.4.1",
+    "eslint": "^8.23.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-nuxt": "^3.1.0",
-    "eslint-plugin-vue": "^8.4.0",
+    "eslint-plugin-vue": "^9.7.0",
     "postcss": "^8.4.31",
     "prettier": "^2.5.1",
     "sass": "^1.97.3",
@@ -59,11 +48,9 @@
   },
   "resolutions": {
     "nuxt/**/**/**/glob-parent": "5.1.2",
-    "@nuxtjs/svg/**/**/**/postcss": "^8.2.13",
-    "@nuxtjs/svg/**/**/postcss": "^8.2.13",
     "rehype-add-classes/**/nth-check": "^2.0.1",
-    "@nuxtjs/svg/**/**/**/**/**/nth-check": "^2.0.1",
     "postcss-nesting": "^10.2.0",
-    "postcss-preset-env/postcss-nesting": "^10.2.0"
+    "postcss-preset-env/postcss-nesting": "^10.2.0",
+    "esbuild": "^0.28.1"
   }
 }

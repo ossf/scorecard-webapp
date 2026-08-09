@@ -23,7 +23,7 @@ OpenSSF Scorecard can be used in a couple of different ways:
 
 <section class="highlight-section">
 
-### Install time: <10 mins
+### Install time: &lt;10 mins
 
 Use the action to automatically scan any code updates for security vulnerabilities. Any time someone commits a change, the action will automatically check the repo and alert you (and other maintainers) if there are problems.
 
@@ -55,7 +55,7 @@ Use the action to automatically scan any code updates for security vulnerabiliti
 
 <section class="highlight-section">
 
-### Install time: <10mins
+### Install time: &lt;10mins
 
 You can use Scorecard on the Command Line. This enables you to:
 

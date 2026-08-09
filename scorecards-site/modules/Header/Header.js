@@ -1,6 +1,5 @@
-import { mapGetters } from 'vuex'
 import CommitData from '@/components/CommitData.vue'
-import Logo from '@/assets/icons/logo.svg?inline'
+import Logo from '@/assets/icons/logo.svg'
 import RepoButton from '@/components/RepoButton.vue'
 
 export default {
@@ -28,10 +27,14 @@ export default {
     },
   }),
 
-  computed: mapGetters({
-    bg: 'settings/bg',
-    text: 'settings/textColor',
-  }),
+  computed: {
+    bg() {
+      return useHeaderColour().value.bg
+    },
+    text() {
+      return useHeaderColour().value.textColor
+    },
+  },
 
   props: {
     navigation: Array,
@@ -40,7 +43,7 @@ export default {
 
   methods: {
     openNavDrawer() {
-      this.$nuxt.$emit('openNavigation', true)
+      this.$bus.emit('openNavigation', true)
     },
     async fetchData() {
       // TODO: store this is state/cache so we do not have to load every time
@@ -105,7 +108,7 @@ export default {
     this.fetchData()
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('scroll', this.getScrollPos)
   },
 }

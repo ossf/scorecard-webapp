@@ -73,44 +73,129 @@
         </div>
       </div>
     </section>
-    <nuxt-content
-      ref="nuxtContent"
-      class="container md:flex justify-start pb-132"
-      :document="page"
-    />
+    <div class="nuxt-content-container container md:flex justify-start pb-132">
+      <ContentRenderer
+        v-if="page"
+        ref="nuxtContent"
+        class="nuxt-content"
+        :value="page"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import Vue from 'vue'
+import { computed, createApp } from 'vue'
 import CodeCopyButton from '../components/global/CodeCopyButton'
+
+const logoModules = import.meta.glob('../assets/logos/**/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+})
 
 export default {
   components: {},
-  transition(to, from) {
-    if (!from) {
-      return 'slide-left'
-    }
-    const fromIndex = from.query.i
-    const toIndex = to.query.i
-    return toIndex < fromIndex ? 'slide-right' : 'slide-left'
+
+  async setup() {
+    const nuxtApp = useNuxtApp()
+    const config = useRuntimeConfig()
+    const route = useRoute()
+
+    const { data: page } = await useAsyncData('home', () =>
+      queryCollection('content').path('/home').first()
+    )
+
+    return nuxtApp.runWithContext(() => {
+      if (!page.value) {
+        throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+      }
+
+      const toc = computed(() => flattenToc(page.value?.body?.toc?.links))
+
+      useHead(() => ({
+        title: page.value.title,
+        titleTemplate: `OpenSSF Scorecard`,
+        script: [
+          {
+            src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
+          },
+          {
+            key: 'home',
+            defer: true,
+            src: '//gc.zgo.at/count.js',
+            'data-goatcounter':
+              'https://securityscorecards.goatcounter.com/count',
+          },
+          {
+            innerHTML: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'NewsArticle',
+              mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': `${config.public.frontendUrl}${route.path}`,
+              },
+              headline: `Home`,
+              url: `${config.public.frontendUrl}${route.path}`,
+            }),
+            type: 'application/ld+json',
+          },
+        ],
+        meta: [
+          { charset: 'utf-8' },
+          {
+            name: 'viewport',
+            content: 'width=device-width, initial-scale=1',
+          },
+          {
+            name: 'description',
+            content: page.value.description,
+          },
+          { name: 'format-detection', content: 'telephone=no' },
+          // Twitter Card
+          {
+            name: 'twitter:card',
+            content: config.public.siteName,
+          },
+          { name: 'twitter:title', content: page.value.title },
+          {
+            name: 'twitter:description',
+            content: page.value.description,
+          },
+          // image must be an absolute path
+          {
+            name: 'twitter:image',
+            content: '../assets/checks.png',
+          },
+          // Facebook OpenGraph
+          { property: 'og:title', content: page.value.title },
+          {
+            property: 'og:site_name',
+            content: config.public.siteName,
+          },
+          { property: 'og:type', content: 'website' },
+          {
+            property: 'og:image',
+            content: '../assets/checks.png',
+          },
+          {
+            property: 'og:description',
+            content: page.value.description,
+          },
+        ],
+        link: [
+          { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+          {
+            rel: 'canonical',
+            href: `${config.public.frontendUrl}${route.path}`,
+          },
+        ],
+      }))
+
+      return { page, toc }
+    })
   },
 
-  async asyncData({ $content, params, error }) {
-    // const slug = params.slug || "home";
-    const page = await $content('home').fetch()
-    const toc = page.toc
-
-    if (!page) {
-      return error({ statusCode: 404, message: 'Page not found' })
-    }
-
-    return {
-      page,
-      toc,
-    }
-  },
   data() {
     return {
       animation: '',
@@ -125,128 +210,40 @@ export default {
       },
     }
   },
-  head() {
-    return this.page
-      ? {
-          title: this.page.title,
-          titleTemplate: `OpenSSF Scorecard`,
-          script: [
-            {
-              src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
-            },
-            {
-              vmid: 'home',
-              defer: true,
-              // Changed after script load
-              callback: () => {
-                this.isGoatCounterLoaded = true
-              },
-              src: '//gc.zgo.at/count.js',
-              'data-goatcounter':
-                'https://securityscorecards.goatcounter.com/count',
-            },
-            {
-              json: {
-                '@context': 'https://schema.org',
-                '@type': 'NewsArticle',
-                mainEntityOfPage: {
-                  '@type': 'WebPage',
-                  '@id': `${process.env.VUE_APP_FRONTEND + this.$route.path}`,
-                },
-                headline: `Home`,
-                url: `${process.env.VUE_APP_FRONTEND + this.$route.path}`,
-              },
-              type: 'application/ld+json',
-            },
-          ],
-          meta: [
-            { charset: 'utf-8' },
-            {
-              name: 'viewport',
-              content: 'width=device-width, initial-scale=1',
-            },
-            {
-              hid: 'description',
-              name: 'description',
-              content: this.page.description,
-            },
-            { name: 'format-detection', content: 'telephone=no' },
-            // Twitter Card
-            {
-              name: 'twitter:card',
-              content: process.env.VUE_APP_SITENAME,
-            },
-            { name: 'twitter:title', content: this.page.title },
-            {
-              name: 'twitter:description',
-              content: this.page.description,
-            },
-            // image must be an absolute path
-            {
-              name: 'twitter:image',
-              content: '../assets/checks.png',
-            },
-            // Facebook OpenGraph
-            { property: 'og:title', content: this.page.title },
-            {
-              property: 'og:site_name',
-              content: process.env.VUE_APP_SITENAME,
-            },
-            { property: 'og:type', content: 'website' },
-            {
-              property: 'og:image',
-              content: '../assets/checks.png',
-            },
-            {
-              property: 'og:description',
-              content: this.page.description,
-            },
-          ],
-          link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-            {
-              rel: 'canonical',
-              href: `${process.env.VUE_APP_FRONTEND + this.$route.path}`,
-            },
-          ],
-        }
-      : null
-  },
   computed: {},
 
   created() {
     if (this.toc) {
-      this.$nuxt.$emit('storeTocs', this.toc)
+      this.$bus.emit('storeTocs', this.toc)
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.observer) {
       this.observer.disconnect()
     }
   },
   mounted() {
-    this.importAll(require.context('../assets/logos/', true, /\.svg$/))
+    this.importAll(logoModules)
 
     setTimeout(() => {
       const blocks = document.getElementsByClassName('nuxt-content-highlight')
       for (const block of blocks) {
-        const CopyButton = Vue.extend(CodeCopyButton)
-        const component = new CopyButton().$mount()
-        block.appendChild(component.$el)
+        const mountEl = document.createElement('div')
+        block.appendChild(mountEl)
+        createApp(CodeCopyButton).mount(mountEl)
       }
     }, 100)
   },
 
   methods: {
-    ...mapActions('settings', ['setHeaderColour']),
     scrollToAnchorPoint(refName) {
       const el = document.getElementById(refName)
       el.scrollIntoView({ behavior: 'smooth' })
       // this.$router.push({ hash: `#${refName}` });
     },
-    importAll(r) {
-      r.keys().forEach((key) =>
-        this.logos.push({ pathLong: r(key), pathShort: key })
+    importAll(modules) {
+      Object.entries(modules).forEach(([path, url]) =>
+        this.logos.push({ pathLong: url, pathShort: path })
       )
     },
   },

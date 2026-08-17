@@ -1,0 +1,146 @@
+name: Update Scorecard Visualizer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # run daily at 03:00 UTC
+
+permissions:
+  # We will create a pull request, so we need write permissions
+  pull-requests: write
+  # We will be committing to the repository, so we need write permissions
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scorecards-site/static/scorecard-visualizer
+
+    steps:
+    - name: Checkout hosting repo
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5
+      with:
+        path: .
+
+    - name: Ensure last synced file exists
+      run: |
+        if [ ! -f .last_commit ]; then
+          echo "none" > .last_commit
+        fi
+
+    - name: Read last synced SHA
+      id: last
+      run: echo "sha=$(cat .last_commit)" >> $GITHUB_OUTPUT
+
+    - name: Get latest commit SHA from visualizer repo
+      id: latest
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
+      with:
+        script: |
+          const result = await github.rest.repos.getCommit({
+            owner: "ossf",
+            repo: "scorecard-visualizer",
+            ref: "main"
+          });
+          core.setOutput("sha", result.data.sha);
+
+    - name: Compare SHAs
+      id: compare
+      run: |
+        if [ "${{ steps.latest.outputs.sha }}" = "${{ steps.last.outputs.sha }}" ]; then
+          echo "No new commit. Exiting."
+          echo "update_needed=false" >> $GITHUB_OUTPUT
+        else
+          echo "New commit found!"
+          echo "update_needed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Stop if no update needed
+      if: ${{ steps.compare.outputs.update_needed == 'false' }}
+      run: exit 0
+
+    # --- Build the React Project ---
+    - name: Checkout React repo
+      if: steps.compare.outputs.update_needed == 'true'
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5
+      with:
+        repository: ossf/scorecard-visualizer
+        ref: main
+        path: react-source
+        working-directory: .
+
+    - name: Setup Node
+      if: steps.compare.outputs.update_needed == 'true'
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 #v5
+      with:
+        node-version: 20.9.0
+        working-directory: .
+
+    - name: Install dependencies
+      if: steps.compare.outputs.update_needed == 'true'
+      run: npm ci
+      working-directory: react-source
+
+    - name: Build React project
+      if: steps.compare.outputs.update_needed == 'true'
+      run: npm run build
+      working-directory: react-source
+
+    # --- Copy Files to Static Folder ---
+    - name: Replace static folder
+      if: steps.compare.outputs.update_needed == 'true'
+      run: |
+        rm -rf ./*
+        cp -r ../../../react-source/build/* .
+
+    - name: Update stored SHA
+      if: steps.compare.outputs.update_needed == 'true'
+      run: echo "${{ steps.latest.outputs.sha }}" > .last_commit
+
+    - name: Debug Git Changes
+      if: steps.compare.outputs.update_needed == 'true'
+      run: |
+        git status
+        git diff
+
+    - name: Commit Changes
+      if: steps.compare.outputs.update_needed == 'true'
+      working-directory: .
+      run: |
+        git rm -r --cached react-source 2>/dev/null || true
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git checkout -B deps/upgrade-visualizer
+        git add scorecards-site/static/scorecard-visualizer
+        git diff --cached --quiet || git commit -m "deps: update visualizer to commit ${{ steps.latest.outputs.sha }}"
+        git fetch origin deps/upgrade-visualizer || true
+        git push -u origin deps/upgrade-visualizer --force-with-lease
+
+    # --- Create PR ---
+
+    - name: Check if PR exists
+      if: steps.compare.outputs.update_needed == 'true'
+      id: check_pr
+      run: |
+        if gh pr list --state open --head deps/upgrade-visualizer --json number | jq 'length > 0' | grep -q true; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create and Assign Pull Request
+      if: steps.check_pr.outputs.exists == 'false' && steps.compare.outputs.update_needed == 'true'
+      run: |
+        gh pr create \
+          --base main \
+          --head deps/upgrade-visualizer \
+          --title "[AUTO] Update visualizer" \
+          --body "This PR updates the Scorecard Visualizer to commit [**${{ steps.latest.outputs.sha }}**](https://github.com/ossf/scorecard-visualizer/commit/${{ steps.latest.outputs.sha }})." \
+          --assignee "${{ github.actor }}" \
+          --reviewer "${{ github.actor }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

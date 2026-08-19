@@ -1551,7 +1551,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     getRiskLevelValue(b.name) - getRiskLevelValue(a.name) ||
-                    parseFloat(a.score) - parseFloat(b.score),
+                    a.name.localeCompare(b.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1560,7 +1560,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     getRiskLevelValue(a.name) - getRiskLevelValue(b.name) ||
-                    parseFloat(a.score) - parseFloat(b.score),
+                    a.name.localeCompare(b.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]

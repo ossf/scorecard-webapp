@@ -77,7 +77,7 @@
       <ContentRenderer
         v-if="page"
         ref="nuxtContent"
-        class="nuxt-content"
+        class="nuxt-content w-full md:flex"
         :value="page"
       />
     </div>
@@ -249,4 +249,11 @@ export default {
   },
 }
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+@media (min-width: 768px) {
+  .nuxt-content > div {
+    display: flex;
+    width: 100%;
+  }
+}
+</style>

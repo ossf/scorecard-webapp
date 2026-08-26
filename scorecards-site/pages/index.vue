@@ -73,14 +73,12 @@
         </div>
       </div>
     </section>
-    <div class="nuxt-content-container container md:flex justify-start pb-132">
-      <ContentRenderer
-        v-if="page"
-        ref="nuxtContent"
-        class="nuxt-content"
-        :value="page"
-      />
-    </div>
+    <ContentRenderer
+      v-if="page"
+      ref="nuxtContent"
+      class="nuxt-content container md:flex justify-start pb-132"
+      :value="page"
+    />
   </div>
 </template>
 

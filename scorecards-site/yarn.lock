@@ -1070,21 +1070,21 @@
     unwasm "^0.5.3"
     vfile "^6.0.3"
 
-"@nuxtjs/sitemap@^8.3.4":
-  version "8.3.4"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/sitemap/-/sitemap-8.3.4.tgz#678fffbb83c348cb1733f88a7fb0b44bc99919d8"
-  integrity sha512-7WHLwtDlBGnriqb33crzt92fghz5o1vvumPYK0J7vutClduG6yzhx5CM22S/lcrwl7xliyvIYjrZ/2OvgqqJjA==
+"@nuxtjs/sitemap@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/sitemap/-/sitemap-8.4.0.tgz#a70d7ffc83c47ec4b72ac162b131081adcea1858"
+  integrity sha512-9XUGJDsV7UWPzXH1vlfWn0NaniJ+Lv2xFa/Bph6PgXbBCnIrfedy4su+/uiEKWx+KhWD+UwleE2greWVdAao8g==
   dependencies:
     "@nuxt/kit" "^4.5.2"
     consola "^3.4.2"
     defu "^6.1.7"
-    nuxt-site-config "^4.2.0"
-    nuxtseo-shared "^5.3.11"
+    nuxt-site-config "^4.2.3"
+    nuxtseo-shared "^5.3.14"
     ofetch "^1.5.1"
     pathe "^2.0.3"
     pkg-types "^2.3.1"
     radix3 "^1.1.2"
-    sitemapd "^0.2.1"
+    sitemapd "^0.2.2"
     ufo "^1.6.4"
     ultrahtml "^1.7.0"
 
@@ -6459,7 +6459,7 @@ nuxt-site-config-kit@4.2.3:
     std-env "^4.2.0"
     ufo "^1.6.4"
 
-nuxt-site-config@^4.2.0:
+nuxt-site-config@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/nuxt-site-config/-/nuxt-site-config-4.2.3.tgz#fd79baa777fdde4302a32d986d93aa5a06f8c11a"
   integrity sha512-m0CK1Q43T3qtVHSBYeDHav/hp8t/ahhlJGzwdBOQM6WcxeZpF1wcJazoGQAJEFamX1xcRAtA0ZuvvEkwHSMG0w==
@@ -6541,10 +6541,10 @@ nuxt@^4.5.2:
     vue-component-type-helpers "^3.3.9"
     vue-router "^5.2.0"
 
-nuxtseo-shared@^5.3.11, nuxtseo-shared@^5.3.12:
-  version "5.3.12"
-  resolved "https://registry.yarnpkg.com/nuxtseo-shared/-/nuxtseo-shared-5.3.12.tgz#fe3e45c046cd902c1f796e7a19636535faa067eb"
-  integrity sha512-fD/zlPWIYQ+tM+i9zGfcsPvOzJDgI+kVM7UPztF360wLN7e1fU7xO4Wbmq6bKhxLTboAuloJwYnv8igc7XOc/w==
+nuxtseo-shared@^5.3.12, nuxtseo-shared@^5.3.14:
+  version "5.3.14"
+  resolved "https://registry.yarnpkg.com/nuxtseo-shared/-/nuxtseo-shared-5.3.14.tgz#28cbd5eabdb4d1f5b1b14caa1d836300f5685830"
+  integrity sha512-kt3IrUILAD4ElsA5+3uroQUHmDLfQkiYWrdXm4Eb/tSm7L0ug2WQc6Okh9m/KtypCVBfwtChrAVMgSyT/VYP5w==
   dependencies:
     "@clack/prompts" "^1.7.0"
     "@nuxt/devtools-kit" "4.0.0-alpha.7"
@@ -8166,10 +8166,10 @@ site-config-stack@4.2.3:
   dependencies:
     ufo "^1.6.4"
 
-sitemapd@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/sitemapd/-/sitemapd-0.2.1.tgz#ed0e458b1e2037c174e2f9f345890ff5c2de9aac"
-  integrity sha512-ei/QCl/cxTPEC8b/KtibUalvORO4q1ZIN8h22gq6DaSUuHO9jolYViHSojEDPll/AmH4CQnFDkKNuiyMOs83ig==
+sitemapd@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/sitemapd/-/sitemapd-0.2.2.tgz#96389e701f7bbb089efd5eec8b5dc22021aeacc7"
+  integrity sha512-XAuW9x2cI3B757A/h2sFYfye5kBUHM8Gr6Muzwtve1oYRCv3BntoKMcgNu+GNF/LKIvUD1fQpBTVUCoHlzMihg==
   dependencies:
     fast-xml-parser "^5.10.1"
 

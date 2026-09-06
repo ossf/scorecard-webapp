@@ -50,53 +50,16 @@ const pxToRem = (base, ...items) => {
 
 module.exports = {
   // mode: 'jit',
-  purge: {
-    content: [
-      './pages/**/*.{js,vue}',
-      './components/*.{js,vue}',
-      './modules/**/*.{js,vue}',
-      './content/*.{md}',
-    ],
-    options: {
-      safelist: [
-        /^delay-/,
-        /^prose-/,
-        /^bg-/,
-        /^text-/,
-        /^gap-x-/,
-        /^gap-y-/,
-        /^gap-/,
-        /^top-/,
-        /^bottom-/,
-        /^left-/,
-        /^right-/,
-        /^border-/,
-        /^md:prose-/,
-        /^lg:prose-/,
-        'text-center',
-        'text-right',
-        'text-left',
-        'fixed',
-        'md:text-center',
-        'md:text-left',
-        'sticky',
-        'prose',
-        'min-w-max',
-        'top-100',
-        'h-400',
-        'mr-80',
-        'w-1/3',
-        'grid',
-        'grid-cols-1',
-        'grid-rows-1',
-        'md:grid-cols-2',
-        'md:grid-cols-2',
-        'inline-flex',
-        'gap-x-20',
-        'gap-x-40',
-      ],
-    },
-  },
+  content: [
+    './pages/**/*.{js,vue}',
+    './components/**/*.{js,vue}',
+    './layouts/**/*.{js,vue}',
+    './modules/**/*.{js,vue}',
+    './plugins/**/*.js',
+    './composables/**/*.js',
+    './utils/**/*.js',
+    './content/**/*.md',
+  ],
   plugins: [require('@tailwindcss/typography')],
   corePlugins: {
     // ...
@@ -131,7 +94,7 @@ module.exports = {
         298,
         322,
         333,
-        345
+        345,
       ),
     },
     fontSize: {
@@ -159,7 +122,7 @@ module.exports = {
         14,
         13,
         12,
-        11
+        11,
       ),
     },
     colors: {
@@ -217,7 +180,7 @@ module.exports = {
         16,
         17,
         15,
-        13
+        13,
       ),
     },
     minHeight: {

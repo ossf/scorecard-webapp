@@ -70,7 +70,7 @@ export default {
     // Track all sections that have an `id` applied
     document
       .querySelectorAll(
-        '#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]'
+        '#video-section, .nuxt-content h1[id], .nuxt-content h2[id], .nuxt-content h3[id], .nuxt-content h4[id]',
       )
       .forEach((section) => {
         this.observer.observe(section)
@@ -78,11 +78,11 @@ export default {
 
     this.getNavLinks()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.observer.disconnect()
   },
   created() {
-    this.$nuxt.$on('setActiveToc', (id) => {
+    this.$bus.on('setActiveToc', (id) => {
       this.currentlyActiveToc = id
     })
   },
@@ -91,11 +91,16 @@ export default {
       this.currentlyActiveToc = link.id
     },
     async getNavLinks() {
-      const globalData = await this.$content('home')
-        .only(['title', 'slug', 'toc'])
-        .fetch()
+      const globalData = await queryCollection('content')
+        .path('/home')
+        .select('title', 'path', 'body')
+        .first()
       if (globalData) {
-        this.navList = globalData
+        this.navList = {
+          title: globalData.title,
+          slug: globalData.path,
+          toc: flattenToc(globalData.body?.toc?.links),
+        }
       }
     },
   },

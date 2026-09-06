@@ -25,7 +25,7 @@
     - embed: Whether the rendered result would be embedded on another site (true/false).
 -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
@@ -85,9 +85,19 @@
         padding: 0;
         background-color: var(--bg-color);
         color: var(--color-font);
-        font-family: system-ui, -apple-system, 'Segoe UI', Roboto,
-          'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif,
-          'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          'Noto Sans',
+          'Liberation Sans',
+          Arial,
+          sans-serif,
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
           'Noto Color Emoji';
         font-size: 1rem;
         font-weight: 400;
@@ -1392,15 +1402,15 @@
       Handlebars.registerHelper('getScoreIcon', (score) => {
         if (score >= 0 && score < 2.5) {
           return new Handlebars.SafeString(
-            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path></svg>'
+            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path></svg>',
           )
         } else if (score >= 2.5 && score < 7.5) {
           return new Handlebars.SafeString(
-            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.553.553 0 0 1-1.1 0L7.1 4.995z"></path></svg>'
+            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.553.553 0 0 1-1.1 0L7.1 4.995z"></path></svg>',
           )
         } else {
           return new Handlebars.SafeString(
-            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"></path></svg>'
+            '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"></path></svg>',
           )
         }
       })
@@ -1443,7 +1453,7 @@
         if (section_open !== section) {
           if (section_open) {
             const currentActiveSection = document.getElementById(
-              `section-${section_open}`
+              `section-${section_open}`,
             )
             currentActiveSection.classList.remove('active')
           }
@@ -1467,7 +1477,7 @@
         window.history.replaceState(
           {},
           '',
-          decodeURIComponent(`${window.location.pathname}?${newSearch}`)
+          decodeURIComponent(`${window.location.pathname}?${newSearch}`),
         )
 
         renderDataTemplate({
@@ -1495,7 +1505,7 @@
         })
 
         const sortedChecksWithoutValue = CHECKS_WITHOUT_VALUE.sort((a, b) =>
-          a.name.localeCompare(b.name)
+          a.name.localeCompare(b.name),
         )
 
         switch (sortBy) {
@@ -1503,14 +1513,14 @@
             if (sortDirection === 'asc') {
               return [
                 ...CHECKS_WITH_VALUE.sort((a, b) =>
-                  a.name.localeCompare(b.name)
+                  a.name.localeCompare(b.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]
             } else {
               return [
                 ...CHECKS_WITH_VALUE.sort((a, b) =>
-                  b.name.localeCompare(a.name)
+                  b.name.localeCompare(a.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1521,7 +1531,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     parseFloat(b.score) - parseFloat(a.score) ||
-                    a.name.localeCompare(b.name)
+                    a.name.localeCompare(b.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1530,7 +1540,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     parseFloat(a.score) - parseFloat(b.score) ||
-                    a.name.localeCompare(b.name)
+                    a.name.localeCompare(b.name),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1541,7 +1551,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     getRiskLevelValue(b.name) - getRiskLevelValue(a.name) ||
-                    parseFloat(a.score) - parseFloat(b.score)
+                    parseFloat(a.score) - parseFloat(b.score),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1550,7 +1560,7 @@
                 ...CHECKS_WITH_VALUE.sort(
                   (a, b) =>
                     getRiskLevelValue(a.name) - getRiskLevelValue(b.name) ||
-                    parseFloat(a.score) - parseFloat(b.score)
+                    parseFloat(a.score) - parseFloat(b.score),
                 ),
                 ...sortedChecksWithoutValue,
               ]
@@ -1620,7 +1630,7 @@
                 {
                   error: 'The Scorecard report requested was not found',
                   alignment: 'center',
-                }
+                },
               )
             } else {
               let code
@@ -1639,9 +1649,9 @@
               document.querySelector('#scorecard-content').innerHTML = template(
                 {
                   error: new Handlebars.SafeString(
-                    `Something went wrong fetching the Scorecard Report data<br /><br />Status code: ${error.status}${code}`
+                    `Something went wrong fetching the Scorecard Report data<br /><br />Status code: ${error.status}${code}`,
                   ),
-                }
+                },
               )
             }
           })

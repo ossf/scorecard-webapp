@@ -46,15 +46,18 @@ var (
 	reCommitSHA = regexp.MustCompile(`^[0-9a-fA-F]{40}$`)
 )
 
-// TODO(#290): retrieve the runners dynamically.
-// List below is from https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners.
-var ubuntuRunners = map[string]bool{
-	"ubuntu-latest": true,
-	"ubuntu-24.04":  true,
-	"ubuntu-22.04":  true,
-	"ubuntu-20.04":  true,
-	"ubuntu-18.04":  true,
-}
+// ubuntuRunnerRe matches the labels for GitHub-hosted Ubuntu runners, e.g.
+// "ubuntu-latest", "ubuntu-24.04", and their "-arm" variants. Matching a
+// pattern instead of a hand-maintained allowlist (#290) avoids the recurring
+// breakage when GitHub ships a new image, which surfaced as opaque publishing
+// failures in ossf/scorecard-action#910, #1381, and #1684.
+// See https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners.
+var ubuntuRunnerRe = regexp.MustCompile(`^ubuntu-(latest|\d{2}\.\d{2})(-arm)?$`)
+
+// minUbuntuVersion is the oldest GitHub-hosted Ubuntu image we accept. Older
+// images (e.g. 18.04, 20.04) are end-of-life on GitHub-hosted runners. Version
+// labels are fixed-width "YY.MM", so lexical comparison matches numeric order.
+const minUbuntuVersion = "22.04"
 
 type commit struct {
 	owner, repo, hash string
@@ -138,8 +141,11 @@ func verifyScorecardWorkflow(workflowContent string, verifier commitVerifier) er
 		return verificationError{e: errScorecardJobRunsOn}
 	}
 	label := labels[0].Value
-	if _, ok := ubuntuRunners[label]; !ok {
-		return fmt.Errorf("%w: '%s'", errInvalidRunnerLabel, label)
+	if !isSupportedUbuntuRunner(label) {
+		// Wrap in verificationError so an unsupported runner is reported as a
+		// 400 Bad Request (client input error) rather than a 500 (see
+		// PostResultsHandler).
+		return verificationError{e: fmt.Errorf("%w: '%s'", errInvalidRunnerLabel, label)}
 	}
 
 	// Verify that there are no job env vars set.
@@ -250,6 +256,21 @@ func getStepUses(step *actionlint.Step) *actionlint.String {
 
 func isCommitHash(s string) bool {
 	return reCommitSHA.MatchString(s)
+}
+
+// isSupportedUbuntuRunner reports whether label is a GitHub-hosted Ubuntu
+// runner at or above minUbuntuVersion. "ubuntu-latest" always tracks a
+// currently-supported image and is accepted.
+func isSupportedUbuntuRunner(label string) bool {
+	m := ubuntuRunnerRe.FindStringSubmatch(label)
+	if m == nil {
+		return false
+	}
+	version := m[1]
+	if version == "latest" {
+		return true
+	}
+	return version >= minUbuntuVersion
 }
 
 func hasServices(j *actionlint.Job) bool {

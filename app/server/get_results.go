@@ -106,8 +106,8 @@ func sanitizeInputs(host, orgName, repoName string, commit *string) (string, err
 		resultsFile = filepath.Join(host, orgName, repoName, *commit, "results.json")
 	}
 	cleanResultsFile := filepath.Clean(resultsFile)
-	cleanResultsFile = strings.Replace(cleanResultsFile, "\n", "", -1)
-	cleanResultsFile = strings.Replace(cleanResultsFile, "\r", "", -1)
+	cleanResultsFile = strings.ReplaceAll(cleanResultsFile, "\n", "")
+	cleanResultsFile = strings.ReplaceAll(cleanResultsFile, "\r", "")
 	var matched bool
 	var err error
 	if commit == nil {

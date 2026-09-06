@@ -27,6 +27,8 @@ import (
 // https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/README.md
 const Kind = "hashedrekord"
 
+const sha256AlgorithmName = "sha256"
+
 // https://github.com/sigstore/rekor/blob/f01f9cd2c55eaddba9be28624fea793a26ad28c4/pkg/types/hashedrekord/v0.0.1/hashedrekord_v0_0_1_schema.json
 //
 //nolint:lll
@@ -56,7 +58,7 @@ type PublicKey struct {
 
 // check if the rekord object matches a given blob (currently compares sha256 hash).
 func (b Body) Matches(blob []byte) bool {
-	if b.Spec.Data.Hash.Algorithm != "sha256" {
+	if b.Spec.Data.Hash.Algorithm != sha256AlgorithmName {
 		log.Println("hashedrekord entry has no sha256")
 		return false
 	}

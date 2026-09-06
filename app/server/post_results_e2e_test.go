@@ -16,6 +16,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -27,6 +28,18 @@ import (
 	"github.com/ossf/scorecard-webapp/app/generated/models"
 )
 
+// skipIfRekorSearchUnavailable skips the current spec when a failure is caused by the
+// Rekor search-by-hash index being unavailable rather than by a genuine verification
+// problem. These e2e specs exercise the legacy no-tlog-index path, which depends on a
+// best-effort Rekor endpoint that Rekor v2 has removed; guarding on the typed error
+// keeps Rekor service/version changes from turning unrelated CI (e.g. dependency
+// bumps) into red builds, while still failing loudly on real verification errors.
+func skipIfRekorSearchUnavailable(err error) {
+	if errors.Is(err, errRekorSearchUnavailable) {
+		Skip("Rekor search index unavailable, skipping: " + err.Error())
+	}
+}
+
 var _ = Describe("E2E Test: extractAndVerifyCertForPayload", func() {
 	AssertValidPayload := func(filename string) {
 		It("Should successfully extract cert for payload", func() {
@@ -37,6 +50,7 @@ var _ = Describe("E2E Test: extractAndVerifyCertForPayload", func() {
 			Expect(err).Should(BeNil())
 
 			_, errCertExtract := extractAndVerifyCertForPayload(context.Background(), payload, noTlogIndex)
+			skipIfRekorSearchUnavailable(errCertExtract)
 			Expect(errCertExtract).Should(BeNil())
 		})
 	}
@@ -71,6 +85,7 @@ var _ = Describe("E2E Test: getAndVerifyWorkflowContent", func() {
 	}
 	extractCertInfo := func(payload []byte) certInfo {
 		cert, errCertExtract := extractAndVerifyCertForPayload(ctx, payload, noTlogIndex)
+		skipIfRekorSearchUnavailable(errCertExtract)
 		Expect(errCertExtract).Should(BeNil())
 		info, errCertExtractInfo := extractCertInfo(cert)
 		Expect(errCertExtractInfo).Should(BeNil())

@@ -92,6 +92,56 @@ func TestVerifyInvalidWorkflows(t *testing.T) {
 	}
 }
 
+func TestVerifyRunnerLabels(t *testing.T) {
+	t.Parallel()
+	// Start from a known-valid workflow and swap only the runs-on label so each
+	// case exercises the runner-label check in isolation.
+	base, err := os.ReadFile("testdata/workflow-valid.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	const origLabel = "runs-on: ubuntu-latest"
+	if !strings.Contains(string(base), origLabel) {
+		t.Fatalf("fixture no longer contains %q; update this test", origLabel)
+	}
+
+	tests := []struct {
+		label   string
+		wantErr bool
+	}{
+		{label: "ubuntu-latest", wantErr: false},
+		{label: "ubuntu-latest-arm", wantErr: false},
+		{label: "ubuntu-22.04", wantErr: false},
+		{label: "ubuntu-24.04", wantErr: false},
+		{label: "ubuntu-26.04", wantErr: false}, // ossf/scorecard-action#1684
+		{label: "ubuntu-22.04-arm", wantErr: false},
+		{label: "ubuntu-24.04-arm", wantErr: false},
+		{label: "ubuntu-20.04", wantErr: true}, // end-of-life, below minimum
+		{label: "ubuntu-18.04", wantErr: true}, // end-of-life, below minimum
+		{label: "macos-13", wantErr: true},
+		{label: "self-hosted", wantErr: true},
+		{label: "ubuntu-", wantErr: true},
+		{label: "Ubuntu-latest", wantErr: true}, // labels are case-sensitive
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.label, func(t *testing.T) {
+			t.Parallel()
+			content := strings.Replace(string(base), origLabel, "runs-on: "+tt.label, 1)
+			err := verifyScorecardWorkflow(content, allowCommitVerifier)
+			if !tt.wantErr {
+				assert.NoError(t, err)
+				return
+			}
+			// An unsupported runner must surface as a verificationError wrapping
+			// errInvalidRunnerLabel so the API returns 400, not 500.
+			assert.ErrorIs(t, err, errInvalidRunnerLabel)
+			var vErr verificationError
+			assert.ErrorAs(t, err, &vErr)
+		})
+	}
+}
+
 // suffix may not be the best term, but maps the final part of a path to a response file.
 // this is helpful when multiple API calls need to be made.
 // e.g. a call to /foo/bar/some/endpoint would have "endpoint" as a suffix.

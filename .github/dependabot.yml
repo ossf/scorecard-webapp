@@ -5,6 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ":seedling:"
     open-pull-requests-limit: 10
@@ -27,16 +29,32 @@ updates:
     schedule:
       interval: daily
       time: '00:00'
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
     commit-message:
       prefix: fix
       prefix-development: chore
       include: scope
+    groups:
+      # Nuxt and Vue are tightly coupled (a Nuxt major requires a matching
+      # Vue major, plus compatible @nuxtjs/* modules); bundle them into one
+      # PR so a bump like nuxt alone doesn't land unbuildable.
+      nuxt-vue:
+        patterns:
+          - "nuxt"
+          - "@nuxt/*"
+          - "@nuxtjs/*"
+          - "vue"
+          - "vue-*"
+          - "@vue/*"
   # github-actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ":seedling:"
     groups:
@@ -59,6 +77,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ":seedling:"
     open-pull-requests-limit: 10

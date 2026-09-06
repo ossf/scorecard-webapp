@@ -7,8 +7,8 @@
 
 <script>
 import Clipboard from 'clipboard'
-import IconClipboardCheck from '../../assets/icons/icon-clipboard-check.svg?inline'
-import IconClipboardCopy from '../../assets/icons/icon-clipboard-copy.svg?inline'
+import IconClipboardCheck from '../../assets/icons/icon-clipboard-check.svg'
+import IconClipboardCopy from '../../assets/icons/icon-clipboard-copy.svg'
 export default {
   components: {
     IconClipboardCopy,

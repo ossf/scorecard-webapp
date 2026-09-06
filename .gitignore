@@ -1,3 +1,5 @@
 scorecard-webapp
 scorecards-site/dist/*
+scorecards-site/.output/*
+scorecards-site/.data/*
 .idea

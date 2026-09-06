@@ -1,0 +1,13 @@
+{
+  "config": {
+    // OpenSpec planning artifacts (proposal/design/specs/tasks) follow the
+    // openspec CLI's own template contract: headings are immediately
+    // followed by requirement text or WHEN/THEN scenario bullets with no
+    // blank line, and files intentionally omit a top-level H1. Standard
+    // prose-markdown rules don't apply to this machine-templated format.
+    "MD013": false,
+    "MD022": false,
+    "MD032": false,
+    "MD041": false
+  }
+}

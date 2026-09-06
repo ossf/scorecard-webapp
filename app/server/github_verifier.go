@@ -104,7 +104,9 @@ func (g *githubVerifier) branchContains(branch, owner, repo, hash string) (bool,
 	opts := &github.ListOptions{PerPage: 1}
 	diff, resp, err := g.client.Repositories.CompareCommits(g.ctx, owner, repo, branch, hash, opts)
 	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
+		// resp is nil if the request failed before a response was received,
+		// so only inspect the status code when we actually have one.
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			// NotFound can be returned for some divergent cases: "404 No common ancestor between ..."
 			return false, nil
 		}

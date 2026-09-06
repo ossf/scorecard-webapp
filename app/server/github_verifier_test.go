@@ -16,6 +16,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -68,5 +69,29 @@ func Test_githubVerifier_contains_codeql_v2(t *testing.T) {
 	}
 	if got != true {
 		t.Errorf("expected to contain hash, but it didnt")
+	}
+}
+
+// errorTripper simulates a transport-level failure (DNS failure, connection
+// reset, context cancellation), where no HTTP response is ever produced.
+type errorTripper struct{}
+
+func (errorTripper) RoundTrip(r *http.Request) (*http.Response, error) {
+	return nil, errTransport
+}
+
+var errTransport = errors.New("simulated transport failure")
+
+func Test_githubVerifier_branchContains_transportError(t *testing.T) {
+	t.Parallel()
+	httpClient := http.Client{Transport: errorTripper{}}
+	client := github.NewClient(&httpClient)
+	gv := newGitHubVerifier(context.Background(), client)
+	got, err := gv.branchContains("main", "github", "codeql-action", "somehash")
+	if err == nil {
+		t.Fatalf("expected an error, got nil")
+	}
+	if got {
+		t.Errorf("expected contains to be false on error, got true")
 	}
 }

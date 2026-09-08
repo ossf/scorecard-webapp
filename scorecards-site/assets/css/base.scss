@@ -128,17 +128,6 @@ hr {
     & .language-scss > code {
       color: #fd9170;
     }
-
-    // Shiki's "nord" theme renders code comments as #616e88, which only
-    // hits a 2.61:1 contrast ratio against our #2f2f2f code block
-    // background. The class name below is a content hash of that exact
-    // color, generated inline per page by shiki (see the "nord" theme's
-    // comment token) and matched here with equal selector specificity
-    // (plus !important, since shiki's rule sets the CSS variable directly)
-    // to lift it to a compliant 4.5:1+.
-    html pre.shiki code .s8hdm {
-      --shiki-default: #99a1b3 !important;
-    }
   }
 }
 

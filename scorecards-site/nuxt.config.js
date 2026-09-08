@@ -1,4 +1,5 @@
 import svgLoader from 'vite-svg-loader'
+import nordTheme from '@shikijs/themes/nord'
 
 export default defineNuxtConfig({
   ssr: true,
@@ -96,7 +97,19 @@ export default defineNuxtConfig({
           searchDepth: 3,
         },
         highlight: {
-          theme: 'nord',
+          theme: {
+            default: {
+              ...nordTheme,
+              // Nord's comment color (#616e88) only hits a 2.61:1
+              // contrast ratio against our #2f2f2f code block
+              // background; WCAG AA needs 4.5:1. `colorReplacements`
+              // is Shiki's supported hook for remapping a theme color
+              // without forking the theme.
+              colorReplacements: {
+                '#616e88': '#99a1b3',
+              },
+            },
+          },
         },
         rehypePlugins: {
           'rehype-add-classes': { options: { table: 'table' } },

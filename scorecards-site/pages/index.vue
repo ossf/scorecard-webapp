@@ -33,26 +33,21 @@
       class="md:min-h-threeQuarters"
     >
       <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden bg-black">
-        <video
-          ref="videoD"
-          class="object-fit h-full w-full z-0 hidden md:block"
-          autoplay
-          loop
-          muted
-        >
-          <source src="../assets/hero-video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <video
-          ref="videoM"
-          class="object-fit h-full w-full z-0 block md:hidden px-16"
-          autoplay
-          loop
-          muted
-        >
-          <source src="../assets/hero-video-mobile.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <ClientOnly>
+          <video
+            class="object-fit h-full w-full z-0"
+            :class="{ 'px-16': !isDesktopVideo }"
+            autoplay
+            loop
+            muted
+          >
+            <source
+              :src="isDesktopVideo ? heroVideoDesktop : heroVideoMobile"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        </ClientOnly>
       </div>
       <div class="my-64 text-center">
         <p class="subheading">Part of the Open Source Security Foundation</p>
@@ -89,6 +84,8 @@
 <script>
 import { computed, createApp } from 'vue'
 import CodeCopyButton from '../components/global/CodeCopyButton'
+import heroVideoDesktop from '../assets/hero-video.mp4'
+import heroVideoMobile from '../assets/hero-video-mobile.mp4'
 
 const logoModules = import.meta.glob('../assets/logos/**/*.svg', {
   eager: true,
@@ -221,6 +218,10 @@ export default {
         rootMargin: '-50% 0% -50% 0%',
         threshold: 0,
       },
+      heroVideoDesktop,
+      heroVideoMobile,
+      isDesktopVideo: true,
+      desktopVideoQuery: null,
     }
   },
   computed: {},
@@ -234,9 +235,21 @@ export default {
     if (this.observer) {
       this.observer.disconnect()
     }
+    if (this.desktopVideoQuery) {
+      this.desktopVideoQuery.removeEventListener(
+        'change',
+        this.updateIsDesktopVideo,
+      )
+    }
   },
   mounted() {
     this.importAll(logoModules)
+
+    // Tailwind's default `md` breakpoint; kept in sync on resize so only
+    // one hero video is ever fetched instead of both.
+    this.desktopVideoQuery = window.matchMedia('(min-width: 768px)')
+    this.updateIsDesktopVideo(this.desktopVideoQuery)
+    this.desktopVideoQuery.addEventListener('change', this.updateIsDesktopVideo)
 
     setTimeout(() => {
       const blocks = document.getElementsByClassName('nuxt-content-highlight')
@@ -253,6 +266,9 @@ export default {
       const el = document.getElementById(refName)
       el.scrollIntoView({ behavior: 'smooth' })
       // this.$router.push({ hash: `#${refName}` });
+    },
+    updateIsDesktopVideo(query) {
+      this.isDesktopVideo = query.matches
     },
     importAll(modules) {
       Object.entries(modules).forEach(([path, url]) => {

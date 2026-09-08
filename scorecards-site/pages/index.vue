@@ -11,7 +11,7 @@
         <div class="pt-20 pb-32 text-22">
           Quickly assess open source projects for risky practices
         </div>
-        <div class="flex justify-center items-center my-32">
+        <div class="flex flex-wrap justify-center items-center gap-y-12 my-32">
           <button
             class="btn cta mx-12"
             @click="scrollToAnchorPoint('run-the-checks')"

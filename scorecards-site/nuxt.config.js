@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         },
         { name: 'format-detection', content: 'telephone=no' },
         { name: 'msapplication-TileColor', content: '#da532c' },
+        { name: 'theme-color', content: '#ff4d00' },
         {
           hid: 'description',
           name: 'description',

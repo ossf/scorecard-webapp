@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/google/go-github/v65 v65.0.0
 	github.com/rhysd/actionlint v1.7.12
-	github.com/stretchr/testify v1.12.0
+	github.com/stretchr/testify v1.12.1
 )
 
 require (
@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/validate v0.26.3
 	github.com/google/go-cmp v0.7.0
 	github.com/onsi/ginkgo/v2 v2.32.1
-	github.com/onsi/gomega v1.42.1
+	github.com/onsi/gomega v1.43.0
 	github.com/rs/cors v1.11.1
 	github.com/spf13/pflag v1.0.10
 	github.com/transparency-dev/merkle v0.0.2
@@ -112,5 +112,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
 	google.golang.org/grpc v1.82.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -68,6 +68,8 @@
               class="w-2/3 md:w-3/5 h-auto"
               :alt="`Logo ${index}`"
               :src="logo.pathLong"
+              :width="logo.width"
+              :height="logo.height"
             />
           </div>
         </div>
@@ -93,6 +95,16 @@ const logoModules = import.meta.glob('../assets/logos/**/*.svg', {
   query: '?url',
   import: 'default',
 })
+
+// Intrinsic SVG dimensions, keyed by filename, so the logo carousel can set
+// `width`/`height` and avoid layout shift while the image loads.
+const LOGO_SIZES = {
+  'cisco.svg': { width: 90, height: 47 },
+  'datto.svg': { width: 87, height: 29 },
+  'endor.svg': { width: 101, height: 40 },
+  'google.svg': { width: 121, height: 40 },
+  'openssf.svg': { width: 201, height: 77 },
+}
 
 export default {
   components: {},
@@ -242,9 +254,14 @@ export default {
       // this.$router.push({ hash: `#${refName}` });
     },
     importAll(modules) {
-      Object.entries(modules).forEach(([path, url]) =>
-        this.logos.push({ pathLong: url, pathShort: path }),
-      )
+      Object.entries(modules).forEach(([path, url]) => {
+        const filename = path.split('/').pop()
+        this.logos.push({
+          pathLong: url,
+          pathShort: path,
+          ...LOGO_SIZES[filename],
+        })
+      })
     },
   },
 }

@@ -1,28 +1,5 @@
 version: 2
 updates:
-  # For API code in app/
-  - package-ecosystem: gomod
-    directory: "/"
-    schedule:
-      interval: daily
-    cooldown:
-      default-days: 7
-    commit-message:
-      prefix: ":seedling:"
-    open-pull-requests-limit: 10
-    groups:
-      gomod:
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "github.com/go-openapi/*"
-          - "golang.org/x/*"
-      go-openapi:
-        patterns:
-          - "github.com/go-openapi/*"
-      golang-x:
-        patterns:
-          - "golang.org/x/*"
   # For the website code in scorecards-site.
   - package-ecosystem: npm
     directory: '/scorecards-site'
@@ -72,13 +49,3 @@ updates:
       golangci:
         patterns:
           - "golangci/*"
-  # Dockerfiles
-  - package-ecosystem: docker
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    cooldown:
-      default-days: 7
-    commit-message:
-      prefix: ":seedling:"
-    open-pull-requests-limit: 10

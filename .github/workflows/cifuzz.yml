@@ -10,6 +10,7 @@ jobs:
       with:
         oss-fuzz-project-name: 'scorecard-web'
         dry-run: false
+        # TODO(fuzz): Investigate a JavaScript fuzzing option: https://github.com/ossf/scorecard-webapp/issues/1046
         language: go
     - name: Run Fuzzers
       uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@0c39db7b0ddff51f31cae1abe25ba30224e7b7a4
@@ -17,6 +18,7 @@ jobs:
         oss-fuzz-project-name: 'scorecard-web'
         fuzz-seconds: 300
         dry-run: false
+        # TODO(fuzz): Investigate a JavaScript fuzzing option: https://github.com/ossf/scorecard-webapp/issues/1046
         language: go
     - name: Upload Crash
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

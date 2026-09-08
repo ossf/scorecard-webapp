@@ -19,10 +19,4 @@ for setting up external DNS.
 
 For HTTPS, we use Netlify's [managed certificates](https://docs.netlify.com/domains-https/https-ssl/#netlify-managed-certificates).
 They auto-generate and renew Let's Encrypt certs for the site.
-We don't currently set CAA records, as we also have certificates for the API hosted on Google Cloud.
-
-## API
-
-The API portion is hosted on [Cloud Run](https://cloud.google.com/run).
-We map our domain name to the service via Cloud Run domain mapping.
-Follow [these instructions](https://cloud.google.com/run/docs/mapping-custom-domains#map) to do the mapping.
+We don't currently set CAA records.

@@ -1,5 +1,11 @@
 <template>
-  <button ref="copy" class="copy">
+  <button
+    ref="copy"
+    class="copy"
+    :aria-label="
+      state === 'copied' ? 'Copied to clipboard' : 'Copy code to clipboard'
+    "
+  >
     <IconClipboardCheck v-if="state === 'copied'" class="w-26 h-26 mx-auto" />
     <IconClipboardCopy v-else class="w-26 h-26 mx-auto" />
   </button>

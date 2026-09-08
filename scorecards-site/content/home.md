@@ -149,7 +149,7 @@ That’s where Security Scorecards _[i.e., OpenSSF Scorecard]_ is helping. Its f
 
 ### What is OpenSSF Scorecard?
 
-##### Scorecard assesses open source projects for security risks through a series of automated checks.
+#### Scorecard assesses open source projects for security risks through a series of automated checks.
 
 It was created by OSS developers to help improve the health of critical projects that the community depends on.
 
@@ -216,7 +216,7 @@ Alongside the scores, the tool provides remediation prompts to help you **fix pr
 
 ### The checks
 
-##### The checks collect together security best practises and industry standards
+#### The checks collect together security best practises and industry standards
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
@@ -275,7 +275,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 ### Use cases
 
-##### OpenSSF Scorecard reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
+#### OpenSSF Scorecard reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
 #### For individual maintainers
 

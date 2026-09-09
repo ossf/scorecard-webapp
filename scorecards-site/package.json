@@ -40,7 +40,7 @@
     "eslint-plugin-vue": "^9.7.0",
     "postcss": "^8.4.31",
     "prettier": "^3.9.6",
-    "sass": "^1.97.3",
+    "sass": "^1.103.1",
     "sass-loader": "17"
   },
   "engines": {

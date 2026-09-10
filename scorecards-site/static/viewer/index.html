@@ -1581,6 +1581,11 @@
         const response = await fetch(apiURL)
         if (response.ok) {
           const data = await response.json()
+          if (!Array.isArray(data.checks) || data.checks.length === 0) {
+            throw {
+              status: 404,
+            }
+          }
           return data
         } else {
           if (response.status === 404) {

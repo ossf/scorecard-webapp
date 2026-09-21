@@ -1070,16 +1070,16 @@
     unwasm "^0.5.3"
     vfile "^6.0.3"
 
-"@nuxtjs/sitemap@^8.5.0":
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/sitemap/-/sitemap-8.5.0.tgz#c2692b223bcfb8d4e3887c57aa7c51acfdfcfd34"
-  integrity sha512-DfhUZzP29Wzr9ro3L2mBpYUocmLBKvGDAGThvLdHWKGR1kBFnbY5VBhJaZG4Jeuba5gVKCpDzH9PhKNW11d46Q==
+"@nuxtjs/sitemap@^8.5.1":
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/sitemap/-/sitemap-8.5.1.tgz#00a8be93ba860dfc70adc7aec27fde6ec3f125e6"
+  integrity sha512-CpF1zuf1XWGA9qwDy6lH57cVbHNoq2vF6WsEwQiR4aJD1jPkI8udqYZQt2OwQUZTNw3uu4UgGoKDYK6OoCFjcw==
   dependencies:
     "@nuxt/kit" "^4.5.2"
     consola "^3.4.2"
     defu "^6.1.7"
     nuxt-site-config "^4.2.3"
-    nuxtseo-shared "^5.3.14"
+    nuxtseo-shared "^5.3.16"
     ofetch "^1.5.1"
     pathe "^2.0.3"
     pkg-types "^2.3.1"
@@ -6546,10 +6546,10 @@ nuxt@^4.5.2:
     vue-component-type-helpers "^3.3.9"
     vue-router "^5.2.0"
 
-nuxtseo-shared@^5.3.12, nuxtseo-shared@^5.3.14:
-  version "5.3.14"
-  resolved "https://registry.yarnpkg.com/nuxtseo-shared/-/nuxtseo-shared-5.3.14.tgz#28cbd5eabdb4d1f5b1b14caa1d836300f5685830"
-  integrity sha512-kt3IrUILAD4ElsA5+3uroQUHmDLfQkiYWrdXm4Eb/tSm7L0ug2WQc6Okh9m/KtypCVBfwtChrAVMgSyT/VYP5w==
+nuxtseo-shared@^5.3.12, nuxtseo-shared@^5.3.16:
+  version "5.3.16"
+  resolved "https://registry.yarnpkg.com/nuxtseo-shared/-/nuxtseo-shared-5.3.16.tgz#a5332137008c56bfe63a63b799ce4fe1c4b31493"
+  integrity sha512-0Ood/aB/6PtWHFx6JB4Ub/InEbilW29cvTFGX5pIWyGf9Wewyil0T4481F/IUhvabHUGssWqErmn+mKoY/z6qA==
   dependencies:
     "@clack/prompts" "^1.7.0"
     "@nuxt/devtools-kit" "4.0.0-alpha.7"

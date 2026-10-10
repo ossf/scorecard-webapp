@@ -1,6 +1,7 @@
 <template>
   <div class="nuxt-content-highlight">
     <pre :class="$props.class"><slot /></pre>
+    <CodeCopyButton />
   </div>
 </template>
 

@@ -28,7 +28,7 @@
   }
 
   ol li {
-    &:before {
+    &::marker {
       color: white;
     }
 

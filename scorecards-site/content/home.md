@@ -12,7 +12,7 @@ thumbnail: /assets/checks.png
 
 <section class="bg-orange prose md:prose-lg w-full">
 
-<h2 class="h1" id="run-the-checks">Run the checks</h2>
+<h2 id="run-the-checks">Run the checks</h2>
 
 OpenSSF Scorecard can be used in a couple of different ways:
 
@@ -129,7 +129,7 @@ Scorecard also has standalone binaries and other platforms troubleshooting and c
 
 </section>
 
-<h2 class="h1" id="learn-more">Learn more</h2>
+<h2 id="learn-more">Learn more</h2>
 
 > We rely on Security Scorecards _[i.e., OpenSSF Scorecard]_ to ensure we follow secure development best practices.
 

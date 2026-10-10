@@ -7,7 +7,7 @@ thumbnail: /assets/checks.png
 ---
 
 <div>
-  <sidebar ref="sideBar" class="sticky top-60 h-400 min-w-max w-1/3 hidden md:block mr-80"></sidebar>
+  <sidebar ref="sideBar" class="sticky top-60 max-h-[calc(100vh-theme(spacing.120))] overflow-y-auto min-w-max w-1/3 hidden md:block mr-80"></sidebar>
 </div>
 
 <section class="bg-orange prose md:prose-lg w-full">

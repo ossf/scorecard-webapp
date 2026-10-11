@@ -11,7 +11,7 @@
         <div class="pt-20 pb-32 text-22">
           Quickly assess open source projects for risky practices
         </div>
-        <div class="flex justify-center items-center my-32">
+        <div class="flex flex-wrap justify-center items-center gap-y-12 my-32">
           <button
             class="btn cta mx-12"
             @click="scrollToAnchorPoint('run-the-checks')"
@@ -33,26 +33,21 @@
       class="md:min-h-threeQuarters"
     >
       <div class="mx-auto w-full md:w-3/4 rounded-lg overflow-hidden bg-black">
-        <video
-          ref="videoD"
-          class="object-fit h-full w-full z-0 hidden md:block"
-          autoplay
-          loop
-          muted
-        >
-          <source src="../assets/hero-video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <video
-          ref="videoM"
-          class="object-fit h-full w-full z-0 block md:hidden px-16"
-          autoplay
-          loop
-          muted
-        >
-          <source src="../assets/hero-video-mobile.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <ClientOnly>
+          <video
+            class="object-fit h-full w-full z-0"
+            :class="{ 'px-16': !isDesktopVideo }"
+            autoplay
+            loop
+            muted
+          >
+            <source
+              :src="isDesktopVideo ? heroVideoDesktop : heroVideoMobile"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        </ClientOnly>
       </div>
       <div class="my-64 text-center">
         <p class="subheading">Part of the Open Source Security Foundation</p>
@@ -68,6 +63,8 @@
               class="w-2/3 md:w-3/5 h-auto"
               :alt="`Logo ${index}`"
               :src="logo.pathLong"
+              :width="logo.width"
+              :height="logo.height"
             />
           </div>
         </div>
@@ -85,12 +82,24 @@
 <script>
 import { computed, createApp } from 'vue'
 import CodeCopyButton from '../components/global/CodeCopyButton'
+import heroVideoDesktop from '../assets/hero-video.mp4'
+import heroVideoMobile from '../assets/hero-video-mobile.mp4'
 
 const logoModules = import.meta.glob('../assets/logos/**/*.svg', {
   eager: true,
   query: '?url',
   import: 'default',
 })
+
+// Intrinsic SVG dimensions, keyed by filename, so the logo carousel can set
+// `width`/`height` and avoid layout shift while the image loads.
+const LOGO_SIZES = {
+  'cisco.svg': { width: 90, height: 47 },
+  'datto.svg': { width: 87, height: 29 },
+  'endor.svg': { width: 101, height: 40 },
+  'google.svg': { width: 121, height: 40 },
+  'openssf.svg': { width: 201, height: 77 },
+}
 
 export default {
   components: {},
@@ -117,6 +126,7 @@ export default {
         script: [
           {
             src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
+            defer: true,
           },
           {
             key: 'home',
@@ -206,6 +216,10 @@ export default {
         rootMargin: '-50% 0% -50% 0%',
         threshold: 0,
       },
+      heroVideoDesktop,
+      heroVideoMobile,
+      isDesktopVideo: true,
+      desktopVideoQuery: null,
     }
   },
   computed: {},
@@ -219,9 +233,21 @@ export default {
     if (this.observer) {
       this.observer.disconnect()
     }
+    if (this.desktopVideoQuery) {
+      this.desktopVideoQuery.removeEventListener(
+        'change',
+        this.updateIsDesktopVideo,
+      )
+    }
   },
   mounted() {
     this.importAll(logoModules)
+
+    // Tailwind's default `md` breakpoint; kept in sync on resize so only
+    // one hero video is ever fetched instead of both.
+    this.desktopVideoQuery = window.matchMedia('(min-width: 768px)')
+    this.updateIsDesktopVideo(this.desktopVideoQuery)
+    this.desktopVideoQuery.addEventListener('change', this.updateIsDesktopVideo)
 
     setTimeout(() => {
       const blocks = document.getElementsByClassName('nuxt-content-highlight')
@@ -239,10 +265,18 @@ export default {
       el.scrollIntoView({ behavior: 'smooth' })
       // this.$router.push({ hash: `#${refName}` });
     },
+    updateIsDesktopVideo(query) {
+      this.isDesktopVideo = query.matches
+    },
     importAll(modules) {
-      Object.entries(modules).forEach(([path, url]) =>
-        this.logos.push({ pathLong: url, pathShort: path }),
-      )
+      Object.entries(modules).forEach(([path, url]) => {
+        const filename = path.split('/').pop()
+        this.logos.push({
+          pathLong: url,
+          pathShort: path,
+          ...LOGO_SIZES[filename],
+        })
+      })
     },
   },
 }

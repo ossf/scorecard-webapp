@@ -149,7 +149,7 @@ That’s where Security Scorecards _[i.e., OpenSSF Scorecard]_ is helping. Its f
 
 ### What is OpenSSF Scorecard?
 
-##### Scorecard assesses open source projects for security risks through a series of automated checks.
+#### Scorecard assesses open source projects for security risks through a series of automated checks.
 
 It was created by OSS developers to help improve the health of critical projects that the community depends on.
 
@@ -161,7 +161,7 @@ Scorecard helps you enforce best practices that can guard against:
 
 <div>
 
-![malicious maintainers](assets/malicious-maintainer.svg)
+![malicious maintainers](assets/malicious-maintainer.svg){width="60" height="60"}
 
 #### Malicious maintainers
 
@@ -169,7 +169,7 @@ Scorecard helps you enforce best practices that can guard against:
 
 <div>
 
-![build system compromises](assets/compromised-build.svg)
+![build system compromises](assets/compromised-build.svg){width="60" height="60"}
 
 #### Build system compromises
 
@@ -177,7 +177,7 @@ Scorecard helps you enforce best practices that can guard against:
 
 <div>
 
-![source code compromises](assets/compromised-source.svg)
+![source code compromises](assets/compromised-source.svg){width="60" height="60"}
 
 #### Source code compromises
 
@@ -185,7 +185,7 @@ Scorecard helps you enforce best practices that can guard against:
 
 <div>
 
-![malicious packages](assets/malicious-package.svg)
+![malicious packages](assets/malicious-package.svg){width="60" height="60"}
 
 #### Malicious packages
 
@@ -210,13 +210,13 @@ Each automated check returns a **score out of 10** and a **risk level**. The ris
 
 Alongside the scores, the tool provides remediation prompts to help you **fix problems** and strengthen your development practices.
 
-![scale of risk](assets/diagram-risks.svg)
+![scale of risk](assets/diagram-risks.svg){width="680" height="204"}
 
 <br/>
 
 ### The checks
 
-##### The checks collect together security best practises and industry standards
+#### The checks collect together security best practises and industry standards
 
 The riskiness of each vulnerability is based on how easy it is to exploit. For example if something can be exploited via a pull request, we consider that a high risk. There are currently 18 checks made across 3 themes: holistic security practises, source code risk assessment and build process risk assessment.
 
@@ -224,7 +224,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 <div class="w-full items-center justify-center">
 
-![What Scorecard assesses](assets/diagram-flower.svg)
+![What Scorecard assesses](assets/diagram-flower.svg){width="602" height="583"}
 
 </div>
 
@@ -275,7 +275,7 @@ You can learn more about the scoring criteria, risks, and remediation suggestion
 
 ### Use cases
 
-##### OpenSSF Scorecard reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
+#### OpenSSF Scorecard reduces the effort required to continually evaluate changing packages when maintaining a project’s supply chain
 
 #### For individual maintainers
 
@@ -301,25 +301,25 @@ This project was initially called "Security Scorecards" but that form wasn't use
 
 <div>
 
-![cisco](assets/logos/cisco.svg)
+![cisco](assets/logos/cisco.svg){width="90" height="47"}
 
 </div>
 
 <div>
 
-![datto](assets/logos/datto.svg)
+![datto](assets/logos/datto.svg){width="87" height="29"}
 
 </div>
 
 <div>
 
-![endor](assets/logos/endor.svg)
+![endor](assets/logos/endor.svg){width="101" height="40"}
 
 </div>
 
 <div>
 
-![google](assets/logos/google.svg)
+![google](assets/logos/google.svg){width="121" height="40"}
 
 </div>
 
@@ -341,7 +341,7 @@ OpenSSF launched Scorecard in November 2020 with the intention of auto-generatin
 
 ### Get involved
 
-![Open Source Security Foundation](assets/logos/openssf.svg)
+![Open Source Security Foundation](assets/logos/openssf.svg){width="201" height="77"}
 
 Scorecard is part of the [OpenSSF Best Practices Working Group](https://github.com/ossf/wg-best-practices-os-developers).
 

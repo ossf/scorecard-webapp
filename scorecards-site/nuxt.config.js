@@ -1,4 +1,5 @@
 import svgLoader from 'vite-svg-loader'
+import nordTheme from '@shikijs/themes/nord'
 
 export default defineNuxtConfig({
   ssr: true,
@@ -24,6 +25,7 @@ export default defineNuxtConfig({
         },
         { name: 'format-detection', content: 'telephone=no' },
         { name: 'msapplication-TileColor', content: '#da532c' },
+        { name: 'theme-color', content: '#ff4d00' },
         {
           hid: 'description',
           name: 'description',
@@ -38,24 +40,18 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
-        { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
         {
           rel: 'icon',
           type: 'image/png',
-          sizes: '16x16',
-          href: '/favicon-16x16.png',
-        },
-        {
-          rel: 'icon',
-          type: 'image/png',
-          sizes: '32x32',
-          href: '/favicon-32x32.png',
+          sizes: '192x192',
+          href: '/icons/icon-192.png',
         },
         {
           rel: 'apple-touch-icon',
-          sizes: '180x180',
-          href: '/apple-touch-icon.png',
+          sizes: '192x192',
+          href: '/icons/icon-192.png',
         },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
       ],
     },
   },
@@ -96,7 +92,19 @@ export default defineNuxtConfig({
           searchDepth: 3,
         },
         highlight: {
-          theme: 'nord',
+          theme: {
+            default: {
+              ...nordTheme,
+              // Nord's comment color (#616e88) only hits a 2.61:1
+              // contrast ratio against our #2f2f2f code block
+              // background; WCAG AA needs 4.5:1. `colorReplacements`
+              // is Shiki's supported hook for remapping a theme color
+              // without forking the theme.
+              colorReplacements: {
+                '#616e88': '#99a1b3',
+              },
+            },
+          },
         },
         rehypePlugins: {
           'rehype-add-classes': { options: { table: 'table' } },

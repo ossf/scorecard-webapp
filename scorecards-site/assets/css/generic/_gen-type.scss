@@ -179,6 +179,29 @@ a {
       border-bottom: 1px solid #7c6153;
     }
   }
+
+  // Keep words whole on small screens. The .table-scroll wrapper scrolls instead.
+  @include media-breakpoint-down(sm) {
+    td,
+    th {
+      overflow-wrap: normal;
+    }
+  }
+}
+
+// ProseTable wraps each Markdown table in this. Below md, wide check tables
+// scroll inside it, so the page itself does not scroll sideways. The scroll
+// sits on the wrapper because display: block on the table itself makes some
+// browsers stop reading it as a table.
+.table-scroll {
+  @include media-breakpoint-down(sm) {
+    overflow-x: auto;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ff4d00;
+    outline-offset: 2px;
+  }
 }
 
 blockquote,

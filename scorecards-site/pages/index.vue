@@ -11,7 +11,7 @@
         <div class="pt-20 pb-32 text-22">
           Quickly assess open source projects for risky practices
         </div>
-        <div class="flex justify-center items-center my-32">
+        <div class="flex flex-wrap justify-center items-center gap-y-16 my-32">
           <button
             class="btn cta mx-12"
             @click="scrollToAnchorPoint('run-the-checks')"
@@ -83,8 +83,7 @@
 </template>
 
 <script>
-import { computed, createApp } from 'vue'
-import CodeCopyButton from '../components/global/CodeCopyButton'
+import { computed } from 'vue'
 
 const logoModules = import.meta.glob('../assets/logos/**/*.svg', {
   eager: true,
@@ -222,15 +221,6 @@ export default {
   },
   mounted() {
     this.importAll(logoModules)
-
-    setTimeout(() => {
-      const blocks = document.getElementsByClassName('nuxt-content-highlight')
-      for (const block of blocks) {
-        const mountEl = document.createElement('div')
-        block.appendChild(mountEl)
-        createApp(CodeCopyButton).mount(mountEl)
-      }
-    }, 100)
   },
 
   methods: {

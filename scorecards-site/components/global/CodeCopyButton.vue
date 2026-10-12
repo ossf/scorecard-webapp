@@ -1,8 +1,12 @@
 <template>
-  <button ref="copy" class="copy">
+  <button ref="copy" type="button" class="copy" aria-label="Copy code">
     <IconClipboardCheck v-if="state === 'copied'" class="w-26 h-26 mx-auto" />
     <IconClipboardCopy v-else class="w-26 h-26 mx-auto" />
   </button>
+  <!-- The icon swap is visual only. Screen readers read this status instead. -->
+  <span class="sr-only" role="status">{{
+    state === 'copied' ? 'Code copied' : ''
+  }}</span>
 </template>
 
 <script>

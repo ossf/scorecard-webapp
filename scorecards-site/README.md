@@ -4,7 +4,10 @@
 
 - [NVM](https://github.com/nvm-sh/nvm)
 - NPM
-- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/) v1. Node 22 ships
+  Corepack, so without a global Yarn you can run `corepack enable` once, or
+  replace `yarn` in the commands below with `corepack yarn@1`, for example
+  `corepack yarn@1 install`.
 
 ## Build Setup
 

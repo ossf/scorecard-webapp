@@ -88,6 +88,12 @@ hr {
         outline: 2px solid #ff4d00;
         outline-offset: 2px;
       }
+
+      // Touch screens cannot hover, so the button always shows there. A tap
+      // then never lands on a button the reader cannot see.
+      @media (hover: none) {
+        @apply opacity-100;
+      }
     }
 
     & code[class*='language-'],

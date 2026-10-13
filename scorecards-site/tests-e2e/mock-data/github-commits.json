@@ -1,0 +1,248 @@
+[
+  {
+    "sha": "80ee3ecfedf8b19ab8991713a9fdb2e7dcd7262e",
+    "node_id": "C_kwDOEgpjzdoAKDgwZWUzZWNmZWRmOGIxOWFiODk5MTcxM2E5ZmRiMmU3ZGNkNzI2MmU",
+    "commit": {
+      "author": {
+        "name": "Spencer Schrock",
+        "email": "sschrock@google.com",
+        "date": "2025-11-13T19:49:44Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2025-11-13T19:49:44Z"
+      },
+      "message": "osv: re-enable transitive scanning without pypi (#4848)\n\nPlugins are a new osv-scanner/osv-scalibr way of disabling specific\nfeatures, which give us finer control over what features to toggle.\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+      "tree": {
+        "sha": "71d2fecddcb23a2001261642b9d2d077c1f2067e",
+        "url": "https://api.github.com/repos/ossf/scorecard/git/trees/71d2fecddcb23a2001261642b9d2d077c1f2067e"
+      },
+      "url": "https://api.github.com/repos/ossf/scorecard/git/commits/80ee3ecfedf8b19ab8991713a9fdb2e7dcd7262e",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpFjZYCRC1aQ7uu5UhlAAAWwEQAIlaZnJY86UIQlknjPiLUI9i\noI0EaZnzUj/VrAKOWsLG88thrXVMrm6/z84ZKOcbqswNxdkLpSHnMNjydwDgB+Y1\n6z4yPG9d5eUR/Sa/g0HqOdLcNHxCbSP3zDVPsmPGVv2enYUlrJaAeBxu3EgJaZRt\n/bS6e5LlDtWobZotTYqIn71YAWucKoKG6auA728quKZFbtfjM7iUNFvSBukq1O1W\neok0Yb4v5EE5jpRe9PMdnWIXbRub0YTJPSMTD0qivtGMaUPi26ojLNlBoa8b4dBD\nAC4LEJxXqcO5LmUz9qPILTnu/AnxnHPWMSOUdFPuISmkcg7fAut5qpYsDlQrNOrW\nn1ST85i738C67OmsaR6ddHNa9fmS2bP8mmeYBY3JYLf9weetOZsk3OebBT8USafO\nqy1OebH1JkWyhfFESqZXbn3XL96XoODbq0qrgjp1BGyX2MxP/CZOGmPyxHZa91QR\n2Nt26ZwjJdI74I3fATaR6vNwZkdYXQnr4gxlhxmgfNOTaOJit7jIUY8/kpKFUvBZ\n6JCPvpbSKGp97f436mGnMHRkOqyqYG4/qKoOkchA8vME5Lxzd6kgBd/wdbObMqIj\n1qyJg8A/wsYV9qY1EpBEVcU3AedrqAvW4Uj/WDDLlqYsXmd4TbIrGoBV6tvUCOIj\n5v09kw22UMGgXROGnGL/\n=8Cj3\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 71d2fecddcb23a2001261642b9d2d077c1f2067e\nparent 1cefd4386d725580417420612abec5baf2323e4b\nauthor Spencer Schrock <sschrock@google.com> 1763063384 -0700\ncommitter GitHub <noreply@github.com> 1763063384 -0700\n\nosv: re-enable transitive scanning without pypi (#4848)\n\nPlugins are a new osv-scanner/osv-scalibr way of disabling specific\nfeatures, which give us finer control over what features to toggle.\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+        "verified_at": "2025-11-13T19:49:45Z"
+      }
+    },
+    "url": "https://api.github.com/repos/ossf/scorecard/commits/80ee3ecfedf8b19ab8991713a9fdb2e7dcd7262e",
+    "html_url": "https://github.com/ossf/scorecard/commit/80ee3ecfedf8b19ab8991713a9fdb2e7dcd7262e",
+    "comments_url": "https://api.github.com/repos/ossf/scorecard/commits/80ee3ecfedf8b19ab8991713a9fdb2e7dcd7262e/comments",
+    "author": {
+      "login": "spencerschrock",
+      "id": 6064089,
+      "node_id": "MDQ6VXNlcjYwNjQwODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6064089?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/spencerschrock",
+      "html_url": "https://github.com/spencerschrock",
+      "followers_url": "https://api.github.com/users/spencerschrock/followers",
+      "following_url": "https://api.github.com/users/spencerschrock/following{/other_user}",
+      "gists_url": "https://api.github.com/users/spencerschrock/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/spencerschrock/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/spencerschrock/subscriptions",
+      "organizations_url": "https://api.github.com/users/spencerschrock/orgs",
+      "repos_url": "https://api.github.com/users/spencerschrock/repos",
+      "events_url": "https://api.github.com/users/spencerschrock/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/spencerschrock/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "1cefd4386d725580417420612abec5baf2323e4b",
+        "url": "https://api.github.com/repos/ossf/scorecard/commits/1cefd4386d725580417420612abec5baf2323e4b",
+        "html_url": "https://github.com/ossf/scorecard/commit/1cefd4386d725580417420612abec5baf2323e4b"
+      }
+    ]
+  },
+  {
+    "sha": "1cefd4386d725580417420612abec5baf2323e4b",
+    "node_id": "C_kwDOEgpjzdoAKDFjZWZkNDM4NmQ3MjU1ODA0MTc0MjA2MTJhYmVjNWJhZjIzMjNlNGI",
+    "commit": {
+      "author": {
+        "name": "Spencer Schrock",
+        "email": "sschrock@google.com",
+        "date": "2025-11-10T19:09:16Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2025-11-10T19:09:16Z"
+      },
+      "message": "cron: remove local OSV client experiment (#4840)\n\nUsing a local, downloaded database was significantly slower at\nprocessing the daily release batch of repos. Additionally, there was a\n10x increase in CPU usage (from 0.1 to 1.0 vCPU per worker).\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+      "tree": {
+        "sha": "190c28feb80ea74dce0d4c7ba4ce7ad8378e43aa",
+        "url": "https://api.github.com/repos/ossf/scorecard/git/trees/190c28feb80ea74dce0d4c7ba4ce7ad8378e43aa"
+      },
+      "url": "https://api.github.com/repos/ossf/scorecard/git/commits/1cefd4386d725580417420612abec5baf2323e4b",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpEjhcCRC1aQ7uu5UhlAAAxmcQAHrYXEcAjPrDLvw6r+RUdRLF\nJxiWlItpDXTFojwxefrqWuqyOle1qyGROpkxCLyQVOYBY7DHuHtE9eOEpKxpol/p\n5umJxOW42SI9Ik2mSnRduLm22/MvXNrqJuAODSKexyP9CEOzNb7WPZBX2aIt7g8J\n4a0AKvR31X1aZUD8gUBbOSI3+rHLmUQraACd8p6o1/hqAYxlNdUym5A1z6iOIBAM\nOpbAZHlOgQiklJG3OZycq/f/ZEFgaNpJKYWOliqICHMV2ziIKynp/CD7LhZQEfT5\nCcarePEhJuojFcSepTD9JQjboNq/ocLQ/8it0BdnfLIuPcNShV5Pxp2r35Huw2JG\nqx82ODfM8BBTGmQ7VWYbbjzRjbeRqciH+dFwzvHIcTKukK0IQ0Rw1YIL91b8emhM\nT4Wd6VXpuznMLhc1QFVajpnY6yz3oCTjoCvlXIbAXHspH8+Y5nR6qya01Q+hGLCl\nyV391jEi/5w2NBsDyJZdB7d9dPXTp2BgoPlFTzb0M5Wq/ia0tP5LM6fmi68J4moy\nfIuhCPojBSQ3t2cMC5hnqM2sX6qBcRA28N1fApVT8Cc+n2xHG150Q0klxS5dFX/X\nnJ5KHeEaXITDZMcJt+59HnaoIXTcCRxuaImDQIhWb5X2+GwsfPEmCCEuH+0hQxkC\n4kD1Z8TzSVBCA7epDMbw\n=xXGJ\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 190c28feb80ea74dce0d4c7ba4ce7ad8378e43aa\nparent ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b\nauthor Spencer Schrock <sschrock@google.com> 1762801756 -0700\ncommitter GitHub <noreply@github.com> 1762801756 +0000\n\ncron: remove local OSV client experiment (#4840)\n\nUsing a local, downloaded database was significantly slower at\nprocessing the daily release batch of repos. Additionally, there was a\n10x increase in CPU usage (from 0.1 to 1.0 vCPU per worker).\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+        "verified_at": "2025-11-10T19:09:16Z"
+      }
+    },
+    "url": "https://api.github.com/repos/ossf/scorecard/commits/1cefd4386d725580417420612abec5baf2323e4b",
+    "html_url": "https://github.com/ossf/scorecard/commit/1cefd4386d725580417420612abec5baf2323e4b",
+    "comments_url": "https://api.github.com/repos/ossf/scorecard/commits/1cefd4386d725580417420612abec5baf2323e4b/comments",
+    "author": {
+      "login": "spencerschrock",
+      "id": 6064089,
+      "node_id": "MDQ6VXNlcjYwNjQwODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6064089?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/spencerschrock",
+      "html_url": "https://github.com/spencerschrock",
+      "followers_url": "https://api.github.com/users/spencerschrock/followers",
+      "following_url": "https://api.github.com/users/spencerschrock/following{/other_user}",
+      "gists_url": "https://api.github.com/users/spencerschrock/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/spencerschrock/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/spencerschrock/subscriptions",
+      "organizations_url": "https://api.github.com/users/spencerschrock/orgs",
+      "repos_url": "https://api.github.com/users/spencerschrock/repos",
+      "events_url": "https://api.github.com/users/spencerschrock/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/spencerschrock/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+        "url": "https://api.github.com/repos/ossf/scorecard/commits/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+        "html_url": "https://github.com/ossf/scorecard/commit/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b"
+      }
+    ]
+  },
+  {
+    "sha": "ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+    "node_id": "C_kwDOEgpjzdoAKGFlMjA1NzdkOGRkNTQ2ZjdjYjdhYzRkYWUxYWViMjhmNWMxNjQ3OWI",
+    "commit": {
+      "author": {
+        "name": "Spencer Schrock",
+        "email": "sschrock@google.com",
+        "date": "2025-11-10T18:42:22Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2025-11-10T18:42:22Z"
+      },
+      "message": ":bug: add a codeowner expansion limit to prevent api exhaustion (#4817)\n\n* add a codeowner expansion limit to prevent api exhaustion\n\nSome repositories have 5,000+ CODEOWNERS, which completely exhaust API\nquota. 100 was arbitrarily chosen, as a large but not extreme amount of\nAPI quota to try and stay under.\n\nhttps://github.com/DefinitelyTyped/DefinitelyTyped/blob/95890e39aca378c38427afd218e76cc2bbd3fc31/.github/CODEOWNERS\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>\n\n* add unit test for limiting contributors\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>\n\n---------\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+      "tree": {
+        "sha": "00c2c409d9adefe7a2f538b816a086824ecc1ff8",
+        "url": "https://api.github.com/repos/ossf/scorecard/git/trees/00c2c409d9adefe7a2f538b816a086824ecc1ff8"
+      },
+      "url": "https://api.github.com/repos/ossf/scorecard/git/commits/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpEjIOCRC1aQ7uu5UhlAAAd00QADV3Ts/NZBvRfqkBR/W7avQL\nNWFztrIURdCQsBch/20G13qX8cr/1rOqumHybs1MmbAvyLb/WeuZjTo255FkedII\nFK969tYr6lRlSlyy4aPyGqRcwQttjAdLRhyetpAZHYGwlVihe7BcjIWFsrmGOKpJ\nY/mo1dbSY5PEUJls5zdACH9S+iB7tJPX04GfX143CCq6SQGg3OicqxWKd5ulagnq\naSx8oohd4Buq1FfPPd93fzJFfUN4JwmA+ncPi87g3f3AHDFyQ6GA2UOf6MdMZESS\n0pvLiBz81YXHpWapoKqhWAzyLQbLtxptyLW09+CQzF23HIcGNXbEOyT2Sjrko1oG\nKNiot2Pb4gnQ2H7Yf0/OmAQS+rHQp+Y8pqdOmsfkZf2u04O1W7Qm23xBoLUHMTvb\nDvzgjTPqsjVSyaKdnZCmdP/xVeZmIJlbQ2Yo/BlI8z28KFVTuFt52hGFwoEn5Iry\nSsQGoV7nktcfY428GKeW/r7M00GUgCs8nBDHc1e3fOx/yAObTkWFroOZFJqCPLEJ\nlyJFTBQpYuqH+RGyKKYYIy3LeBMIkc+BbFy+zIULBp4RAlzuW+Cp5D3aIe3TnJgY\nLQpNT1FmxfJaEceqp+pat78jgy/UhU7s0FeGRKvUJfglWqUOoxdavXnhysPPfNwO\nLmYRIdWnghT57Zii8Hjk\n=u8XH\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 00c2c409d9adefe7a2f538b816a086824ecc1ff8\nparent 11e9ecb82060049e94eea14516f6f10ecf03bc2f\nauthor Spencer Schrock <sschrock@google.com> 1762800142 -0700\ncommitter GitHub <noreply@github.com> 1762800142 +0000\n\n:bug: add a codeowner expansion limit to prevent api exhaustion (#4817)\n\n* add a codeowner expansion limit to prevent api exhaustion\n\nSome repositories have 5,000+ CODEOWNERS, which completely exhaust API\nquota. 100 was arbitrarily chosen, as a large but not extreme amount of\nAPI quota to try and stay under.\n\nhttps://github.com/DefinitelyTyped/DefinitelyTyped/blob/95890e39aca378c38427afd218e76cc2bbd3fc31/.github/CODEOWNERS\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>\n\n* add unit test for limiting contributors\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>\n\n---------\n\nSigned-off-by: Spencer Schrock <sschrock@google.com>",
+        "verified_at": "2025-11-10T18:42:23Z"
+      }
+    },
+    "url": "https://api.github.com/repos/ossf/scorecard/commits/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+    "html_url": "https://github.com/ossf/scorecard/commit/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b",
+    "comments_url": "https://api.github.com/repos/ossf/scorecard/commits/ae20577d8dd546f7cb7ac4dae1aeb28f5c16479b/comments",
+    "author": {
+      "login": "spencerschrock",
+      "id": 6064089,
+      "node_id": "MDQ6VXNlcjYwNjQwODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6064089?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/spencerschrock",
+      "html_url": "https://github.com/spencerschrock",
+      "followers_url": "https://api.github.com/users/spencerschrock/followers",
+      "following_url": "https://api.github.com/users/spencerschrock/following{/other_user}",
+      "gists_url": "https://api.github.com/users/spencerschrock/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/spencerschrock/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/spencerschrock/subscriptions",
+      "organizations_url": "https://api.github.com/users/spencerschrock/orgs",
+      "repos_url": "https://api.github.com/users/spencerschrock/repos",
+      "events_url": "https://api.github.com/users/spencerschrock/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/spencerschrock/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "11e9ecb82060049e94eea14516f6f10ecf03bc2f",
+        "url": "https://api.github.com/repos/ossf/scorecard/commits/11e9ecb82060049e94eea14516f6f10ecf03bc2f",
+        "html_url": "https://github.com/ossf/scorecard/commit/11e9ecb82060049e94eea14516f6f10ecf03bc2f"
+      }
+    ]
+  }
+]

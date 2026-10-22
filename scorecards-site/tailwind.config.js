@@ -230,13 +230,18 @@ module.exports = {
             },
             ol: {
               li: {
-                '&:before': {
-                  color: '#302825',
-                },
                 a: {
                   textDecoration: 'underline',
                 },
               },
+            },
+            // Typography v0.5 numbers list items with ::marker. Hide the '01.'
+            // counter from _gen-type.scss, or each item shows two numbers.
+            'ol > li::before': {
+              content: 'none',
+            },
+            'ol > li::marker': {
+              color: '#302825',
             },
             blockquote: {
               border: '2px solid #FF4D00',

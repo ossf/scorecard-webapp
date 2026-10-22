@@ -45,11 +45,31 @@ hr {
 .nuxt-content {
   @apply break-words;
 
+  // Content v3 wraps heading text in a link to the heading's #id. Keep the
+  // link, so a click still puts the hash in the URL, but make it look like the
+  // heading. The global and prose link styles would underline it, make it
+  // thinner and turn it orange on hover. Their position: relative also
+  // changes how Chrome smooths the text.
+  & :is(h2, h3, h4)[id] > a[href^='#'] {
+    position: static;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-decoration: none;
+  }
+
   & .nuxt-content-highlight {
     position: relative;
 
+    // Hide the copy button with opacity, not display: none, so Tab can still
+    // reach it. It shows on hover and on keyboard focus.
+    &:hover > .copy,
+    & > .copy:focus-visible {
+      @apply opacity-100;
+    }
+
     & > .copy {
-      @apply hidden absolute right-10 bottom-10 leading-none shadow-lg px-2 py-2 bg-gray-dark text-11 uppercase rounded-md border border-white font-semibold mr-3 mb-3;
+      @apply absolute right-10 bottom-10 leading-none shadow-lg px-2 py-2 bg-gray-dark text-11 uppercase rounded-md border border-white font-semibold mr-3 mb-3 opacity-0;
       height: 27px;
       width: 27px;
       color: #feece3;
@@ -61,11 +81,18 @@ hr {
       &:focus {
         @apply outline-none bg-gray-light;
       }
-    }
 
-    &:hover {
-      & > .copy {
-        @apply block;
+      // Stay dark on keyboard focus. The cream icon is unreadable on gray-light.
+      &:focus-visible {
+        @apply bg-gray-dark;
+        outline: 2px solid #ff4d00;
+        outline-offset: 2px;
+      }
+
+      // Touch screens cannot hover, so the button always shows there. A tap
+      // then never lands on a button the reader cannot see.
+      @media (hover: none) {
+        @apply opacity-100;
       }
     }
 

@@ -5,7 +5,7 @@
         <ul class="theme-code-group__ul">
           <li
             v-for="(tab, i) in codeTabs"
-            :key="tab.title"
+            :key="tab.id"
             class="theme-code-group__li"
           >
             <button
@@ -30,52 +30,29 @@
 <script>
 export default {
   name: 'CodeGroup',
+  provide() {
+    return { codeGroup: this }
+  },
   data() {
     return {
       codeTabs: [],
-      activeCodeTabIndex: -1,
+      activeCodeTabIndex: 0,
     }
-  },
-  watch: {
-    activeCodeTabIndex(index) {
-      this.activateCodeTab(index)
-    },
-  },
-  mounted() {
-    this.loadTabs()
   },
   methods: {
     changeCodeTab(index) {
       this.activeCodeTabIndex = index
     },
-    loadTabs() {
-      this.codeTabs = (this.$slots.default?.() || [])
-        .filter((vnode) => typeof vnode.type === 'object')
-        .map((vnode, index) => {
-          this.activeCodeTabIndex = index
-          return {
-            title: vnode.props?.title,
-            elm: vnode.el,
-          }
-        })
-      if (this.activeCodeTabIndex === -1 && this.codeTabs.length > 0) {
-        this.activeCodeTabIndex = 0
+    // Each CodeBlock calls this once and keeps the returned id. Titles can
+    // repeat, so blocks match on the id. The last block marked `active` opens
+    // first. With none marked, the first tab opens.
+    registerTab(title, active) {
+      const id = this.codeTabs.length
+      this.codeTabs.push({ id, title })
+      if (active) {
+        this.activeCodeTabIndex = id
       }
-      this.activateCodeTab(this.activeCodeTabIndex)
-    },
-    activateCodeTab(index) {
-      this.codeTabs.forEach((tab) => {
-        if (tab.elm && tab.elm.classList) {
-          tab.elm.classList.remove('theme-code-block__active')
-        }
-      })
-      if (
-        this.codeTabs[index] &&
-        this.codeTabs[index].elm &&
-        this.codeTabs[index].elm.classList
-      ) {
-        this.codeTabs[index].elm.classList.add('theme-code-block__active')
-      }
+      return id
     },
   },
 }
@@ -85,7 +62,6 @@ export default {
 .theme-code-group {
 }
 .theme-code-group__nav {
-  margin-bottom: -35px;
   background-color: black;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;

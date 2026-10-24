@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/scorecard-visualizer/static/css/main.a335621d.css",
+    "main.js": "/scorecard-visualizer/static/js/main.4317218d.js",
+    "static/js/488.cfa91f5e.chunk.js": "/scorecard-visualizer/static/js/488.cfa91f5e.chunk.js",
+    "index.html": "/scorecard-visualizer/index.html",
+    "main.a335621d.css.map": "/scorecard-visualizer/static/css/main.a335621d.css.map",
+    "main.4317218d.js.map": "/scorecard-visualizer/static/js/main.4317218d.js.map",
+    "488.cfa91f5e.chunk.js.map": "/scorecard-visualizer/static/js/488.cfa91f5e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a335621d.css",
+    "static/js/main.4317218d.js"
+  ]
+}

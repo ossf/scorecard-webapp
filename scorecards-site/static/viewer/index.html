@@ -865,8 +865,12 @@
       </div>
     </div>
 
-    <!-- Include Handlebars from a CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <!-- Include Handlebars from a CDN, pinned with an SRI hash (update both when bumping) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/handlebars@4.7.10/dist/handlebars.js"
+      integrity="sha384-cI4uGtPRstB34+js1FsiPa18hcyNAdBKVvOMOkGae5X8BMd7bMrCaaCCnaIzranK"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Error template -->
     <script id="error-template" type="text/x-handlebars-template">

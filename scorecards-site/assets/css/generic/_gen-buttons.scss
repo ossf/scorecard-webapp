@@ -28,7 +28,9 @@
   padding: 16px 12px;
   color: white;
   min-width: 188px;
-  background-color: #ff4d00;
+  // Darkened from brand orange #ff4d00 so white text meets the WCAG AA
+  // 4.5:1 contrast ratio (was 3.32:1).
+  background-color: #cc3d00;
   border-radius: 8px;
   font-family: Public Sans;
   font-style: normal;
@@ -46,7 +48,9 @@
 .cta-icon {
   position: relative;
   padding: 17px 50px 17px 16px;
-  color: #ff4d00;
+  // Lightened from brand orange #ff4d00 so text meets the WCAG AA
+  // 4.5:1 contrast ratio against the dark section background (was 4.33:1).
+  color: #ff6a26;
   border: 1px solid #ff4d00;
   border-radius: 8px;
   font-family: 'Public Sans';

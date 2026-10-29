@@ -154,7 +154,9 @@ details {
     padding-left: 0px;
     cursor: pointer;
     font-weight: 600;
-    color: #ff4d00;
+    // Lightened from brand orange #ff4d00 so text meets the WCAG AA
+    // 4.5:1 contrast ratio against the dark section background (was 4.33:1).
+    color: #ff6a26;
     @apply text-16;
   }
   summary::-webkit-details-marker {

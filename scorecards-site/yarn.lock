@@ -1667,7 +1667,7 @@
     "@shikijs/vscode-textmate" "^10.0.2"
     "@types/hast" "^3.0.5"
 
-"@shikijs/themes@4.4.3", "@shikijs/themes@^4.4.2":
+"@shikijs/themes@4.4.3", "@shikijs/themes@^4.3.0", "@shikijs/themes@^4.4.2":
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/@shikijs/themes/-/themes-4.4.3.tgz#8310a78261f4cf742663e07e2028df046a02bd72"
   integrity sha512-w8UHjeUnIR965KMWJHUPXOc2mNJUnK3vpVLYLvw5IYU2mnTTJ89E24OrJDBNiJDQ0qzb0tc4l7mrIXx5cFeIyw==

@@ -1,0 +1,28 @@
+{{- /* Fails the build when a data file is missing a required field, and
+       names the file and entry. Hugo has no schema for data files. */ -}}
+{{- $h := site.Data.home -}}
+{{- if not $h -}}
+  {{- errorf "data/home.yml: missing or empty" -}}
+{{- else -}}
+  {{- range slice "headline" "tagline" "image" "imageAlt" -}}
+    {{- $v := index $h . -}}
+    {{- if or (not $v) (ne (printf "%T" $v) "string") -}}
+      {{- errorf "data/home.yml: %q is required and must be text" . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $i, $t := site.Data.testimonials -}}
+  {{- $id := $t.id | default (printf "entry %d" (add $i 1)) -}}
+  {{- range slice "quote" "name" "project" "link" -}}
+    {{- $v := index $t . -}}
+    {{- if or (not $v) (ne (printf "%T" $v) "string") -}}
+      {{- errorf "data/testimonials.yml: %s: %q is required and must be text" $id . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with $t.link -}}
+    {{- if and (eq (printf "%T" .) "string") (not (hasPrefix . "https://")) -}}
+      {{- errorf "data/testimonials.yml: %s: link must start with https://" $id -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

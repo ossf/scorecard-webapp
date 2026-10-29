@@ -2,6 +2,9 @@ name: Build Scorecard Site
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,3 +22,77 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn generate
+
+  # The Hugo site in site/, built the way Netlify builds it, then the
+  # content-check fixtures in site/tests/.
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: true
+      - name: Install Hugo (the version in netlify.toml)
+        run: |
+          set -euo pipefail
+          version=$(sed -n 's/^HUGO_VERSION = "\(.*\)"$/\1/p' netlify.toml)
+          if [ -z "$version" ]; then
+            echo "::error file=netlify.toml::HUGO_VERSION not found"
+            exit 1
+          fi
+          cd "$RUNNER_TEMP"
+          base="https://github.com/gohugoio/hugo/releases/download/v${version}"
+          archive="hugo_extended_${version}_linux-amd64.tar.gz"
+          curl -fsSLO "${base}/${archive}"
+          curl -fsSLO "${base}/hugo_${version}_checksums.txt"
+          grep " ${archive}\$" "hugo_${version}_checksums.txt" | sha256sum --check
+          mkdir hugo-bin
+          tar -xzf "${archive}" -C hugo-bin hugo
+          echo "${RUNNER_TEMP}/hugo-bin" >> "$GITHUB_PATH"
+      - name: Build site/
+        run: hugo --source site --minify --panicOnWarning --destination "${RUNNER_TEMP}/public"
+      - name: Check that each content check rejects its bad fixture
+        env:
+          OUT: ${{ runner.temp }}/fixtures
+        run: |
+          set -u
+          fail=0
+          # check NAME EXPECTED COMMAND...: an empty EXPECTED means the build
+          # must pass; otherwise it must fail with EXPECTED in its output.
+          check() {
+            name=$1 want=$2; shift 2
+            if out=$("$@" 2>&1); then
+              if [ -z "$want" ]; then echo "ok: $name passes"; return; fi
+              echo "::error::$name: build passed, expected it to fail with: $want"
+            elif [ -n "$want" ] && grep -qF -- "$want" <<<"$out"; then
+              echo "ok: $name fails with: $want"; return
+            else
+              echo "::error::$name: unexpected build result, expected: ${want:-a passing build}"
+            fi
+            echo "$out"
+            fail=1
+          }
+          build() { hugo --source site --panicOnWarning --destination "$OUT" "$@"; }
+          content() { build --contentDir "tests/$1/content"; }
+          data() { HUGO_DATADIR="tests/$1/data" build --contentDir tests/clean/content; }
+
+          check clean "" content clean
+          check fm-missing-title 'content/page.md: front matter: "title" is required and must be text' content fm-missing-title
+          check fm-description-not-text 'content/page.md: front matter: "description" is required and must be text' content fm-description-not-text
+          check fm-bad-yaml 'page.md' content fm-bad-yaml
+          check raw-html 'Raw HTML omitted while rendering' content raw-html
+          check shortcode 'content/page.md: shortcodes are not allowed in content: {{< callout' content shortcode
+          check directive 'content/page.md: directives are not allowed in content: :::note' content directive
+          check link-missing-page 'content/page.md: link to a missing page: /no-such-page/' content link-missing-page
+          check link-missing-heading 'content/page.md: link to a missing heading: /page/#no-such-heading' content link-missing-heading
+          check home-missing-headline 'data/home.yml: "headline" is required' data home-missing-headline
+          check testimonial-missing-link 'data/testimonials.yml: kaniko: "link" is required' data testimonial-missing-link
+          check testimonial-http-link 'data/testimonials.yml: envoy: link must start with https://' data testimonial-http-link
+          HUGO_PARAMS_CHECKSFIXTURE=tests/checks/unknown-risk.yaml \
+            check checks-unknown-risk 'check Fixture-Check has unknown risk "Severe"' build
+          HUGO_PARAMS_SCORECARDVERSION=v0.0.0-does-not-exist \
+            check upstream-missing-tag 'docs/checks/internal/checks.yaml not found' build
+          # Last, since it empties the theme: a checkout without submodules.
+          git submodule deinit --force site/themes/hextra
+          check theme-missing 'themes/hextra is missing or empty' build
+          exit "$fail"

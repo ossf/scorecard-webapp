@@ -1,0 +1,18 @@
+{{- /* Fails the build when a content page uses a shortcode anywhere, or a
+       directive outside code blocks and code spans. Hugo runs shortcodes
+       before Markdown, even inside code, so they can't be shown as code.
+       Raw HTML is caught separately by Goldmark (unsafe: false) and
+       `hugo --panicOnWarning`. */ -}}
+{{- with .File -}}
+  {{- if eq .Ext "md" -}}
+    {{- with findRE `\{\{[<%]\s*/?\s*[^\s>%]*` $.RawContent 1 -}}
+      {{- errorf "content/%s: shortcodes are not allowed in content: %s" $.File.Path (index . 0) -}}
+    {{- end -}}
+    {{- $text := $.RawContent -}}
+    {{- $text = replaceRE "(?ms)^[ \t]*(```+|~~~+).*?^[ \t]*(```+|~~~+)[ \t]*$" "" $text -}}
+    {{- $text = replaceRE "(?s)(`+)[^`].*?(`+)" "" $text -}}
+    {{- with findRE `(?m)^[ \t]*:::.*$` $text 1 -}}
+      {{- errorf "content/%s: directives are not allowed in content: %s" $.File.Path (index . 0) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

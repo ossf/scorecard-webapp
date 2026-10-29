@@ -1,0 +1,22 @@
+{{- /* Returns the text of a file in ossf/scorecard at the pinned release
+       (params.scorecardVersion), and fails the build naming the file if it
+       can't be fetched or is empty. */ -}}
+{{- $tag := site.Params.scorecardVersion -}}
+{{- if not $tag -}}
+  {{- errorf "hugo.yaml: params.scorecardVersion is not set" -}}
+{{- end -}}
+{{- $url := printf "https://raw.githubusercontent.com/ossf/scorecard/%s/%s" $tag . -}}
+{{- $text := "" -}}
+{{- with try (resources.GetRemote $url) -}}
+  {{- with .Err -}}
+    {{- errorf "ossf/scorecard %s: can't fetch %s: %s" $tag $url . -}}
+  {{- else with .Value -}}
+    {{- $text = .Content -}}
+  {{- else -}}
+    {{- errorf "ossf/scorecard %s: %s not found at %s" $tag $ $url -}}
+  {{- end -}}
+{{- end -}}
+{{- if not (strings.TrimSpace $text) -}}
+  {{- errorf "ossf/scorecard %s: %s is empty" $tag . -}}
+{{- end -}}
+{{- return $text -}}

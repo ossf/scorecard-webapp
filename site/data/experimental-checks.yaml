@@ -1,0 +1,5 @@
+# Checks that Scorecard runs only when SCORECARD_EXPERIMENTAL is set.
+# Stopgap until the pinned checks.yaml has an `experimental` field; delete
+# this file then.
+- SBOM
+- Webhooks

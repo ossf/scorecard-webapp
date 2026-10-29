@@ -1,0 +1,46 @@
+{{/* Home page. The hero comes from data/home.yml and the testimonials from
+     data/testimonials.yml, so content/_index.md stays plain Markdown. */}}
+{{ define "main" }}
+  {{ partial "check-data.html" . }}
+  {{ $h := site.Data.home }}
+  <div class="hx:mx-auto hextra-max-page-width">
+    <main id="content" class="sc-home hx:w-full hx:min-w-0 hx:px-6 hx:pb-8 hx:md:px-12">
+      <section class="sc-hero">
+        <div class="sc-hero-text">
+          <h1>{{ $h.headline }}</h1>
+          <p class="sc-tagline">{{ $h.tagline }}</p>
+          <div class="sc-actions">
+            {{ range $h.actions }}
+              <a class="sc-btn{{ if .primary }} sc-btn-primary{{ end }}" href="{{ .link | relURL }}">{{ .text }}</a>
+            {{ end }}
+          </div>
+        </div>
+        <img class="sc-hero-image" src="{{ $h.image | relURL }}" alt="{{ $h.imageAlt }}" />
+      </section>
+
+      <form class="sc-lookup" action="{{ "viewer/" | relURL }}" method="get">
+        <label for="lookup-uri">See a project's score</label>
+        <div>
+          <input id="lookup-uri" name="uri" type="text" required placeholder="github.com/ossf/scorecard" />
+          <button type="submit">View score</button>
+        </div>
+      </form>
+
+      <div class="content sc-body">{{ .Content }}</div>
+
+      {{ with site.Data.testimonials }}
+        <section class="content sc-testimonials">
+          <h2>What maintainers say</h2>
+          {{ range . }}
+            <figure>
+              <blockquote>{{ .quote }}</blockquote>
+              <figcaption>{{ .name }}, <a href="{{ .link }}">{{ .project }}</a></figcaption>
+            </figure>
+          {{ end }}
+        </section>
+      {{ end }}
+
+      {{ partial "custom/page-end.html" . }}
+    </main>
+  </div>
+{{ end }}

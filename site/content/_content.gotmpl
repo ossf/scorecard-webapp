@@ -1,0 +1,6 @@
+{{- /* Content adapters run before any page is rendered, so this check
+       reports a missing theme by name instead of failing later with
+       missing-layout errors. */ -}}
+{{- if not (fileExists "themes/hextra/theme.toml") -}}
+  {{- errorf "themes/hextra is missing or empty: run `git submodule update --init`" -}}
+{{- end -}}

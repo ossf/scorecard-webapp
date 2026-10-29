@@ -1,0 +1,49 @@
+{{- /* Resolves links and fails the build on a broken internal link.
+       - External links (with a scheme) are left as they are.
+       - On pages rendered from ossf/scorecard (params.upstreamPath), links
+         relative to the upstream file open it on GitHub at the pinned tag.
+       - Site links must reach a page, or a file under static/, and a
+         fragment must match a heading on the target page. */ -}}
+{{- $dest := .Destination -}}
+{{- $u := urls.Parse $dest -}}
+{{- $p := .PageInner -}}
+{{- $src := cond (and $p.File (eq $p.File.Ext "md")) (printf "content/%s" $p.File.Path) $p.Path -}}
+{{- $external := or $u.IsAbs (hasPrefix $dest "mailto:") -}}
+{{- $upstream := $p.Params.upstreamPath -}}
+
+{{- if $external -}}
+{{- else if and $upstream $u.Path -}}
+  {{- /* Relative to the upstream file, or to the repository root for "/". */ -}}
+  {{- $file := cond (hasPrefix $u.Path "/") (strings.TrimPrefix "/" $u.Path) (path.Join (path.Dir $upstream) $u.Path) -}}
+  {{- $dest = printf "https://github.com/ossf/scorecard/blob/%s/%s" site.Params.scorecardVersion $file -}}
+  {{- with $u.Fragment }}{{ $dest = printf "%s#%s" $dest . }}{{ end -}}
+  {{- $external = true -}}
+{{- else -}}
+  {{- /* GitHub matches fragments case-insensitively; upstream files rely on it. */ -}}
+  {{- if and $upstream $u.Fragment -}}
+    {{- $u = urls.Parse (printf "#%s" (lower $u.Fragment)) -}}
+    {{- $dest = $u.String -}}
+  {{- end -}}
+  {{- $target := $p -}}
+  {{- if $u.Path -}}
+    {{- $target = $p.GetPage (strings.TrimSuffix ".md" $u.Path) -}}
+    {{- if $target -}}
+      {{- $dest = printf "%s%s%s" $target.RelPermalink (cond $u.RawQuery (printf "?%s" $u.RawQuery) "") (cond $u.Fragment (printf "#%s" $u.Fragment) "") -}}
+    {{- else -}}
+      {{- $static := path.Join "static" $u.Path -}}
+      {{- if hasSuffix $u.Path "/" }}{{ $static = path.Join $static "index.html" }}{{ end -}}
+      {{- if not (fileExists $static) -}}
+        {{- errorf "%s: link to a missing page: %s" $src $dest -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if and $u.Fragment $target -}}
+    {{- if not ($target.Fragments.Identifiers.Contains $u.Fragment) -}}
+      {{- errorf "%s: link to a missing heading: %s" $src $dest -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $dest | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>
+  {{- .Text | safeHTML -}}
+</a>
+{{- /**/ -}}

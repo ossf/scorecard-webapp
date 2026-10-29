@@ -25,6 +25,15 @@ updates:
           - "vue"
           - "vue-*"
           - "@vue/*"
+  # The Hugo theme in site/themes/hextra.
+  - package-ecosystem: gitsubmodule
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ":seedling:"
   # github-actions
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -1,0 +1,82 @@
+baseURL: https://scorecard.dev/
+title: OpenSSF Scorecard
+theme: hextra
+
+# English only, at the root URLs.
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: false
+languages:
+  en:
+    languageName: English
+    weight: 1
+
+markup:
+  goldmark:
+    renderer:
+      # Pages are plain Markdown. Raw HTML is dropped with a warning, and
+      # `hugo --panicOnWarning` turns that warning into a failed build.
+      unsafe: false
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Get started
+      pageRef: /get-started
+      weight: 1
+    - name: Docs
+      pageRef: /docs
+      weight: 2
+    - name: Use cases
+      pageRef: /use-cases
+      weight: 3
+    - name: Community
+      pageRef: /community
+      weight: 4
+    - name: Scorecard viewer
+      url: /viewer/
+      weight: 5
+    - name: Search
+      weight: 6
+      params:
+        type: search
+    - name: GitHub
+      weight: 7
+      url: https://github.com/ossf/scorecard
+      params:
+        icon: github
+
+params:
+  description: Quickly assess open source projects for risky practices.
+  # The ossf/scorecard release the Checks page and guides are built from.
+  # Bump it after each Scorecard release.
+  scorecardVersion: v5.6.0
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/scorecard_logo.svg
+      dark: images/scorecard_logo.svg
+      height: 36
+  theme:
+    default: system
+    displayToggle: true
+  footer:
+    enable: true
+    displayCopyright: false
+    displayPoweredBy: false
+  # Edit and report links are rendered in layouts/_partials/custom/page-end.html.
+  editURL:
+    enable: false
+  editBase: https://github.com/ossf/scorecard-webapp/edit/main/site/content
+  reportBase: https://github.com/ossf/scorecard-webapp/issues/new
+  search:
+    enable: true
+    type: flexsearch
+    # Local copy (0.8.143, Apache-2.0), so builds don't fetch it from jsDelivr.
+    flexsearch:
+      js: lib/flexsearch.bundle.min.js
+  highlight:
+    copy:
+      enable: true
+      display: hover

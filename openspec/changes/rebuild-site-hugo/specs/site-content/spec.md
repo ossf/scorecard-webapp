@@ -5,7 +5,7 @@ Defines what the site's content is made of: plain Markdown pages, YAML data file
 ## ADDED Requirements
 
 ### Requirement: Pages are plain Markdown
-Content pages SHALL be GitHub-flavored Markdown. Outside code blocks and code spans, pages SHALL NOT contain inline HTML, MDX, shortcodes, or directive syntax. Layout, spacing, and color SHALL come from templates, not content.
+Content pages SHALL be GitHub-flavored Markdown. Outside code blocks and code spans, pages SHALL NOT contain inline HTML, MDX, or directive syntax. Pages SHALL NOT contain shortcode syntax anywhere, since Hugo runs it even inside code. Layout, spacing, and color SHALL come from templates, not content.
 
 #### Scenario: Ordinary page
 - **WHEN** a contributor opens any page under `site/content/` in GitHub's web editor

@@ -1,0 +1,11 @@
+# Home page hero. Edited by hand or through a visual editor; a missing
+# field fails the build (layouts/_partials/check-data.html).
+tagline: Scorecard checks open source projects for risky security practices. It scans more than 1.3 million repositories every week.
+image: images/scorecard_logo_alt.svg
+imageAlt: Honk the goose holding up a scorecard reading 10
+actions:
+  - text: Get started
+    link: /get-started/github-action/
+    primary: true
+  - text: How it works
+    link: /docs/how-it-works/

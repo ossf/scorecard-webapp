@@ -27,7 +27,7 @@ Every page SHALL show a "Report a problem with this page" link that opens a new 
 - **THEN** a new-issue form opens with a title naming the FAQ and a body containing the page URL
 
 ### Requirement: The build rejects markup and syntax outside the content rules
-The site build SHALL fail when a page under `site/content/` contains inline HTML, shortcodes, or directive syntax outside code blocks and code spans, so both CI and the Netlify preview fail. Pages that follow the rules SHALL pass.
+The site build SHALL fail when a page under `site/content/` contains inline HTML or directive syntax outside code blocks and code spans, or shortcode syntax anywhere, so both CI and the Netlify preview fail. Pages that follow the rules SHALL pass.
 
 #### Scenario: Inline HTML
 - **WHEN** a change adds `<div>` to a page's prose
@@ -38,7 +38,7 @@ The site build SHALL fail when a page under `site/content/` contains inline HTML
 - **THEN** the build fails and names the file and the shortcode
 
 #### Scenario: Clean page
-- **WHEN** a change touches only plain Markdown prose, including HTML shown inside a code block
+- **WHEN** a change touches only plain Markdown prose, including HTML or directive syntax shown inside a code block
 - **THEN** the build passes
 
 ### Requirement: The build rejects bad front matter and data

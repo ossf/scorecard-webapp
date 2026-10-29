@@ -1,0 +1,97 @@
+{{- /* Builds three pages from files in the pinned ossf/scorecard release
+       (params.scorecardVersion): the Checks page from checks.yaml, and the
+       FAQ and the beginner's guide from their Markdown. Nothing generated is
+       committed, so the pages can't drift from the release. */ -}}
+{{- $tag := site.Params.scorecardVersion -}}
+{{- $editBase := "https://github.com/ossf/scorecard/edit/main" -}}
+{{- $blobBase := printf "https://github.com/ossf/scorecard/blob/%s" $tag -}}
+
+{{- /* Checks page. Tests can point params.checksFixture at a local file. */ -}}
+{{- $checksPath := "docs/checks/internal/checks.yaml" -}}
+{{- $raw := "" -}}
+{{- with site.Params.checksFixture -}}
+  {{- $raw = os.ReadFile . -}}
+{{- else -}}
+  {{- $raw = partial "upstream-file.html" $checksPath -}}
+{{- end -}}
+{{- $data := transform.Unmarshal (dict "format" "yaml") $raw -}}
+{{- if not $data.checks -}}
+  {{- errorf "%s: no checks found" $checksPath -}}
+{{- end -}}
+
+{{- $order := dict "Critical" 0 "High" 1 "Medium" 2 "Low" 3 -}}
+{{- $override := index site.Data "experimental-checks" | default slice -}}
+{{- $rows := slice -}}
+{{- $experimental := 0 -}}
+{{- range $name, $c := $data.checks -}}
+  {{- $rank := index $order $c.risk -}}
+  {{- if eq $rank nil -}}
+    {{- errorf "%s: check %s has unknown risk %q" $checksPath $name $c.risk -}}
+  {{- end -}}
+  {{- $exp := or $c.experimental (in $override $name) -}}
+  {{- if $exp }}{{ $experimental = add $experimental 1 }}{{ end -}}
+  {{- $rows = $rows | append (dict "key" (printf "%d-%s" $rank $name) "name" $name "c" $c "exp" $exp) -}}
+{{- end -}}
+{{- $rows = sort $rows "key" -}}
+
+{{- $md := printf "> [!NOTE]\n> This page is generated from [`checks.yaml`](%s/%s) in Scorecard %s, the same\n> file the Scorecard binary embeds. \"Edit upstream\" opens that file in `ossf/scorecard`.\n\n" $blobBase $checksPath $tag -}}
+{{- $md = printf "%sScorecard has %d checks. %d run by default; %d are experimental and run only\nwhen the `SCORECARD_EXPERIMENTAL` environment variable is set. Each check\nreturns a score from 0 to 10 and carries a risk level that weights it in the\naggregate score.\n\n| Check | Risk | What it checks |\n| --- | --- | --- |\n" $md (len $rows) (sub (len $rows) $experimental) $experimental -}}
+{{- range $rows -}}
+  {{- $md = printf "%s| [%s](#%s)%s | %s | %s |\n" $md .name (lower .name) (cond .exp " (experimental)" "") .c.risk .c.short -}}
+{{- end -}}
+{{- range $rows -}}
+  {{- $lines := split (strings.TrimSpace .c.description) "\n" -}}
+  {{- if hasPrefix (index $lines 0) "Risk:" }}{{ $lines = after 1 $lines }}{{ end -}}
+  {{- $body := delimit $lines "\n" | strings.TrimSpace | replaceRE `(?m)^(#+) ` "$1## " -}}
+  {{- $md = printf "%s\n## %s\n\n**Risk:** %s\n\n" $md .name .c.risk -}}
+  {{- if .exp -}}
+    {{- $md = printf "%s> [!IMPORTANT]\n> This check is experimental. To run it, set `SCORECARD_EXPERIMENTAL=1`\n> when you run Scorecard.\n\n" $md -}}
+  {{- end -}}
+  {{- $md = printf "%s%s\n\n### Remediation\n\n" $md $body -}}
+  {{- range .c.remediation -}}
+    {{- $md = printf "%s- %s\n" $md (replaceRE `\s*\n\s*` " " . | strings.TrimSpace) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $.AddPage (dict
+  "path" "checks"
+  "title" "Checks"
+  "kind" "page"
+  "weight" 3
+  "content" (dict "mediaType" "text/markdown" "value" $md)
+  "params" (dict
+    "description" "Every Scorecard check, sorted from Critical to Low risk."
+    "upstream" true
+    "editURL" (printf "%s/%s" $editBase $checksPath))
+) -}}
+
+{{- /* User guides, rendered from upstream Markdown. */ -}}
+{{- $guides := slice
+  (dict "path" "faq" "file" "docs/faq.md" "weight" 5
+    "title" "Frequently asked questions"
+    "description" "Answers to common questions about Scorecard, its checks, and how to use it.")
+  (dict "path" "beginners-guide" "file" "docs/beginner-checks.md" "weight" 6
+    "title" "Beginner's guide to Scorecard checks"
+    "description" "Which Scorecard checks to start with as a maintainer, by stage of development.")
+-}}
+{{- range $guides -}}
+  {{- $text := partial "upstream-file.html" .file -}}
+  {{- /* The site sets the title, so drop the upstream H1. */ -}}
+  {{- $text = replaceRE `\A\s*# [^\n]*\n` "" $text -}}
+  {{- /* Stopgap: show <placeholder> text instead of dropping it as raw HTML.
+         Delete once the pinned release escapes it upstream. */ -}}
+  {{- $text = replaceRE `<([a-z][a-z_]*)>` `\<$1\>` $text -}}
+  {{- $notice := printf "> [!NOTE]\n> This page comes from [`%s`](%s/%s) in Scorecard %s.\n\n" .file $blobBase .file $tag -}}
+  {{- $.AddPage (dict
+    "path" .path
+    "title" .title
+    "kind" "page"
+    "weight" .weight
+    "content" (dict "mediaType" "text/markdown" "value" (printf "%s%s" $notice $text))
+    "params" (dict
+      "description" .description
+      "upstream" true
+      "upstreamPath" .file
+      "editURL" (printf "%s/%s" $editBase .file))
+  ) -}}
+{{- end -}}

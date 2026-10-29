@@ -1,0 +1,16 @@
+checks:
+  Code-Review:
+    risk: High
+    short: Determines if the project requires review before code is merged.
+    description: |
+      Risk: `High`
+
+      A fixture check.
+    remediation:
+      - Require review.
+  Fixture-Check:
+    risk: Severe
+    short: A check with a risk Scorecard doesn't define.
+    description: A fixture check.
+    remediation:
+      - None.

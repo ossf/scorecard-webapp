@@ -1,0 +1,19 @@
+{{- /* "Edit this page" and "Report a problem" on every page. Generated and
+       mirrored pages set `editURL` to their upstream source. */ -}}
+{{- $edit := "" -}}
+{{- with .Params.editURL -}}
+  {{- $edit = . -}}
+{{- else -}}
+  {{- with .File -}}
+    {{- $edit = urls.JoinPath site.Params.editBase (replace .Path "\\" "/") -}}
+  {{- end -}}
+{{- end -}}
+{{- $title := printf "Problem on %q" .Title -}}
+{{- $body := printf "Page: %s\n\nWhat's wrong:\n" .Permalink -}}
+{{- $report := printf "%s?title=%s&body=%s" site.Params.reportBase (urlquery $title) (urlquery $body) -}}
+<div class="sc-page-links">
+  {{- with $edit }}
+    <a href="{{ . }}" target="_blank" rel="noreferrer">{{ if $.Params.upstream }}Edit upstream{{ else }}Edit this page{{ end }}</a>
+  {{- end }}
+  <a href="{{ $report }}" target="_blank" rel="noreferrer">Report a problem with this page</a>
+</div>

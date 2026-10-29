@@ -1,0 +1,16 @@
+# Quotes from the current scorecard.dev home page.
+- id: distroless
+  quote: We rely on Security Scorecards [i.e., OpenSSF Scorecard] to ensure we follow secure development best practices.
+  name: Appu Goundan
+  project: Distroless
+  link: https://github.com/GoogleContainerTools/distroless
+- id: kaniko
+  quote: It took less than 5 minutes to install. It quickly analysed the repo and identified easy ways to make the project more secure.
+  name: Priya Wadhwa
+  project: Kaniko
+  link: https://github.com/GoogleContainerTools/kaniko
+- id: envoy
+  quote: Machine checkable properties are an essential part of a sound security process. That’s why we have incorporated Security Scorecards [i.e., OpenSSF Scorecard] into our dependency acceptance criteria.
+  name: Harvey Tuch
+  project: Envoy
+  link: https://www.envoyproxy.io/

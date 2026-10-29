@@ -1,6 +1,6 @@
 ## Purpose
 
-Defines how people change the site: links on every page that start an edit or a problem report, CI checks that keep content within the content rules, and documentation that explains the path, including DCO sign-off.
+Defines how people change the site: links on every page that start an edit or a problem report, build-time checks that keep content within the content rules, and documentation that explains the path, including DCO sign-off.
 
 ## ADDED Requirements
 
@@ -26,35 +26,35 @@ Every page SHALL show a "Report a problem with this page" link that opens a new 
 - **WHEN** a visitor selects "Report a problem with this page" on the FAQ
 - **THEN** a new-issue form opens with a title naming the FAQ and a body containing the page URL
 
-### Requirement: CI rejects markup and syntax outside the content rules
-A pull request SHALL fail CI when a page under `site/content/` contains inline HTML, shortcodes, or directive syntax outside code blocks and code spans. Pages that follow the rules SHALL pass.
+### Requirement: The build rejects markup and syntax outside the content rules
+The site build SHALL fail when a page under `site/content/` contains inline HTML, shortcodes, or directive syntax outside code blocks and code spans, so both CI and the Netlify preview fail. Pages that follow the rules SHALL pass.
 
 #### Scenario: Inline HTML
-- **WHEN** a pull request adds `<div>` to a page
-- **THEN** CI fails and names the file and line
+- **WHEN** a change adds `<div>` to a page's prose
+- **THEN** the build fails and names the file
 
 #### Scenario: Shortcode
-- **WHEN** a pull request adds `{{< callout >}}` to a page outside a code block
-- **THEN** CI fails and names the file and line
+- **WHEN** a change adds `{{< callout >}}` to a page outside a code block
+- **THEN** the build fails and names the file and the shortcode
 
 #### Scenario: Clean page
-- **WHEN** a pull request changes only plain Markdown prose
-- **THEN** the content checks pass
+- **WHEN** a change touches only plain Markdown prose, including HTML shown inside a code block
+- **THEN** the build passes
 
-### Requirement: CI rejects bad front matter and data
-A pull request SHALL fail CI when a page's front matter does not parse, lacks a `title` or `description`, or has a non-text `description`, or when a data-file entry lacks a required field or has a testimonial link not starting with `https://`. The error SHALL name the file and the field.
+### Requirement: The build rejects bad front matter and data
+The site build SHALL fail when a page's front matter does not parse, lacks a `title` or `description`, or has a non-text `description`, or when a data-file entry lacks a required field or has a testimonial link not starting with `https://`. The error SHALL name the file and the field.
 
 #### Scenario: Missing title
-- **WHEN** a pull request removes `title` from a page's front matter
-- **THEN** CI fails with an error naming the page and `title`
+- **WHEN** a change removes `title` from a page's front matter
+- **THEN** the build fails with an error naming the page and `title`
 
 #### Scenario: Broken YAML
-- **WHEN** a pull request leaves a page's front matter unparseable
-- **THEN** CI fails and names the page
+- **WHEN** a change leaves a page's front matter unparseable
+- **THEN** the build fails and names the page
 
 #### Scenario: Testimonial missing its link
-- **WHEN** a pull request adds a testimonial without a `link`
-- **THEN** CI fails with an error naming the testimonials file, the entry, and `link`
+- **WHEN** a change adds a testimonial without a `link`
+- **THEN** the build fails with an error naming the testimonials file, the entry, and `link`
 
 ### Requirement: Content checks are tested both ways
 Each content and data check SHALL have at least one passing and one failing test case that run in CI, so a check that silently stops failing is caught.
@@ -63,19 +63,19 @@ Each content and data check SHALL have at least one passing and one failing test
 - **WHEN** a change causes a check to accept its known-bad input
 - **THEN** CI fails on that check's failing test case
 
-### Requirement: CI rejects broken links
-A pull request SHALL fail CI when the built site contains an internal link to a page or anchor that does not exist.
+### Requirement: The build rejects broken internal links
+The site build SHALL fail when a page links to a site page or an anchor on a site page that does not exist.
 
 #### Scenario: Link to a removed page
-- **WHEN** a pull request deletes a page that another page links to
-- **THEN** CI fails and names the page with the broken link
+- **WHEN** a change deletes a page that another page links to
+- **THEN** the build fails and names the page with the broken link
 
-### Requirement: The new site is built on every pull request
-Every pull request and push SHALL build `site/` in CI with the pinned generator, and fail if the build fails.
+### Requirement: The new site is built on every push and pull request
+Every push and pull request SHALL build `site/` in CI with the pinned Hugo version, and the CI job SHALL fail if the build fails.
 
 #### Scenario: Pull request touching site/
-- **WHEN** a pull request changes a file under `site/`
-- **THEN** CI builds `site/` and reports the result as a check on the pull request
+- **WHEN** a commit that changes a file under `site/` is pushed
+- **THEN** CI builds `site/` and reports the result as a check
 
 ### Requirement: Contributor guide
 The repository SHALL have a `CONTRIBUTING.md` that explains how to change a page through GitHub's web editor, how DCO sign-off works for web edits, and how to fix a failed DCO check. What it says about web-editor sign-off for people without write access SHALL reflect a recorded test.

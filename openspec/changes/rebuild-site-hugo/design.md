@@ -3,18 +3,19 @@
 See proposal.md for motivation and the specs for required behavior. Constraints that shape the approach:
 
 - **Netlify** deploys the site today from `scorecards-site/` (`netlify.toml`: `base = "scorecards-site/"`, `nuxt generate`, publish `dist`). DNS for scorecard.dev is managed in `ossf/scorecard-infra`, so the site stays on Netlify.
-- **Required checks on `main`** (ruleset 22586671): DCO, CodeQL, and dependency-review. Web commits must be signed off (`web_commit_signoff_required`).
+- **Required checks on `main`** (ruleset 22586671): DCO, CodeQL, and dependency-review. Web commits must be signed off (`web_commit_signoff_required`). Actions on pull requests from first-time contributors wait for maintainer approval; Netlify deploy previews do not.
+- **The repository has no Go, Python, or shell code.** The only toolchain today is the Nuxt site's Node and Yarn.
 - **The viewer** is a standalone `scorecards-site/static/viewer/index.html` that calls `api.scorecard.dev`; it is not Nuxt code.
+- **Upstream docs** live in `ossf/scorecard`: `docs/checks/internal/checks.yaml` (embedded in the binary), `docs/faq.md`, and `docs/beginner-checks.md`. The latest release is v5.6.0. `docs/faq.md` has three bare `<placeholder>` strings in prose. `checks.yaml` does not say which checks are experimental. Its reader (`docs/checks/internal/reader.go`) decodes it into a struct.
 - **GoatCounter**: the home page loads `//gc.zgo.at/count.js` for `securityscorecards.goatcounter.com`, and the footer discloses it. The viewer has no counter. Whether hits are being recorded has not been checked; the public counter is off.
-- **Anchors** `#run-the-checks` and `#learn-more` are section IDs in today's `home.md`, used by its sidebar.
-- **A reference implementation exists**: a Hugo + Hextra mockup with the planned pages, data files, generated Checks page, mirrored guides, edit and report links, and build-time checks. It builds in about 0.2 seconds with only Hugo on `PATH` and the network blocked.
+- **A reference implementation exists**: a Hugo + Hextra mockup with the planned pages, data files, Checks page, guides, edit and report links, and template checks.
 
 ## Goals / Non-Goals
 
 **Goals:**
 - `main` is unchanged until cutover; `staging-00` carries the new site and its build configuration.
-- Every guard on content runs inside the Hugo build or in CI, never only on a contributor's machine.
-- Each step lands as a small, reviewable pull request.
+- One tool, Hugo, builds the site and enforces the content rules, so CI and the Netlify preview fail the same way.
+- No custom scripts or workflows to maintain.
 
 **Non-Goals:**
 - Changing the viewer, or adding analytics to it.
@@ -24,71 +25,70 @@ See proposal.md for motivation and the specs for required behavior. Constraints 
 ## Decisions
 
 ### Hugo with the Hextra theme
-Hugo is a single binary, so builds need no npm tree; that removes the Dependabot churn that dominates the current site's history. Hextra provides the landing-page hero, docs sidebar, table of contents, search, and dark mode. It renders GitHub alert syntax through a blockquote render hook, and its CSS is prebuilt.
-- *Astro Starlight*: its build validates front matter completely, and it marks untranslated pages. But it keeps an npm tree (about 350 packages), had 49 releases in a year on a pre-1.0 version, and needs a plugin for GitHub alerts.
-- *Other Hugo themes* (Docsy, hugo-book, Relearn, Geekdoc, Lotus Docs, Hinode, Doks): each lacked something Hextra has. Docsy, Hinode, and Doks need Go or Node. hugo-book, Relearn, and Geekdoc lack a landing-page hero, and Geekdoc and Lotus Docs need shortcodes for callouts. Relearn, Docsy, Geekdoc, and hugo-book require Hugo 0.158 or newer. Hextra's top author made 62% of last year's commits, the lowest share among them.
+Hugo is a single binary, so builds need no npm tree; that removes the Dependabot churn that dominates the current site's history. Hextra provides the landing-page hero, docs sidebar, table of contents, search, and dark mode, renders GitHub alert syntax through a blockquote render hook, and ships prebuilt CSS.
+- *Astro Starlight*: its build validates front matter completely and marks untranslated pages, but it keeps an npm tree (about 350 packages), had 49 releases in a year on a pre-1.0 version, and needs a plugin for GitHub alerts.
+- *Other Hugo themes* (Docsy, hugo-book, Relearn, Geekdoc, Lotus Docs, Hinode, Doks): Docsy, Hinode, and Doks need Go or Node. hugo-book, Relearn, and Geekdoc lack a landing-page hero, and Geekdoc and Lotus Docs need shortcodes for callouts. Hextra's top author made 62% of last year's commits, the lowest share among them.
 - *Stay on Nuxt*: Nuxt Content schemas do not fail the build on bad front matter, adding a page needs a catch-all route, and the dependency churn stays.
 
 ### Theme as a git submodule pinned to a release tag
-`site/themes/hextra` is a submodule at `v0.13.0`. Netlify checks out submodules automatically, and Dependabot's `gitsubmodule` ecosystem proposes updates as pull requests.
-- *Hugo module*: tracks versions in `go.mod` but needs Go at build time.
-- *Vendored copy*: builds with Hugo alone, but 200+ committed files, and updates need Go and are invisible to Dependabot.
+`site/themes/hextra` is a submodule at `v0.13.0`. Netlify checks out submodules automatically, and Dependabot's `gitsubmodule` ecosystem proposes updates as pull requests. Builds need only Hugo and Git.
+- *Hugo module*: `go.sum` checksums, but every build and local preview would need Go just for the theme.
+- *Vendored copy*: 200+ committed files, and updates would need Go and be invisible to Dependabot.
 
-### One pinned Hugo version, read from `netlify.toml`
-`HUGO_VERSION` (Hugo extended 0.154.5, the version the mockup was verified with) is set once in `netlify.toml`. CI reads that value and installs the matching release archive, verifying its published checksum, so Netlify and CI cannot drift. Hextra's minimum is 0.146.0. Upgrades are deliberate pull requests that change the one value.
+### Upstream content fetched at build from a pinned release tag
+`hugo.yaml` sets `params.scorecardVersion` (`v5.6.0`). Templates fetch `checks.yaml`, `faq.md`, and `beginner-checks.md` with `resources.GetRemote` from `https://raw.githubusercontent.com/ossf/scorecard/<tag>/`. A failed or missing fetch calls `errorf` with the file name. A test fetched 20 checks and the FAQ in about 1 second, and a nonexistent tag failed the build. The files are used unmodified, and the site documents the release people install. Bumping the tag is a one-line pull request, added to Scorecard's `RELEASE.md` checklist, because Dependabot cannot track a value in `hugo.yaml`.
+- *Weekly sync workflow* copying files from `main` into the repository: a custom workflow, bot commits that need DCO sign-off, and pull requests opened with `GITHUB_TOKEN` do not trigger the required Actions checks. It also tracks unreleased content.
+- *`ossf/scorecard` as a Hugo module*: file mounts work, but fetching it resolves the whole Go dependency graph. A test filled a 4.6 GB module cache without finishing.
+- *Hosting the site in `ossf/scorecard`*: would make upstream files local, but site-only pull requests would face seven required checks (unit, integration, Docker, lint, and others) and a site that follows `main`. Not chosen; the site stays in this repository.
+
+### Content checks inside the Hugo build
+- **Front matter and data files**: template partials call `errorf` naming the file and field. In the mockup this caught a missing `title`, a non-text `description`, broken YAML, missing data fields, and a non-`https` link. Hugo turns a numeric `title` into text before templates see it, so that one case passes.
+- **Inline HTML**: Goldmark's `unsafe: false` plus `hugo --panicOnWarning`. In a test, raw HTML in prose failed the build with `Raw HTML omitted while rendering "<file>"`, and HTML inside a code block passed.
+- **Shortcodes and directives**: a partial scans each page's `.RawContent` with fenced code blocks and code spans removed. It fails on `{{<`, `{{%`, or a line starting with `:::`.
+- **Broken internal links and anchors**: a render-link hook resolves site-relative links with `.GetPage` and checks fragments against the target page's `.Fragments.Identifiers`, calling `errorf` on a miss.
+- **Tests**: fixtures under `site/tests/` hold known-good and known-bad pages and data. A CI job builds each fixture set and asserts the expected exit status and message, so a check that stops failing is caught.
+
+### Checks page and guides from content adapters
+`site/content/docs/_content.gotmpl` creates three pages from the fetched files. The Checks page is sorted by risk then name, with counts of default and experimental checks. It reads experimental status from an `experimental` field when the pinned `checks.yaml` has one, and from `site/data/experimental-checks.yaml` until then. The FAQ and the beginner's guide get their title from front matter set by the adapter, with the upstream H1 removed, a "from `ossf/scorecard`" notice, and `editURL` pointing at the upstream file on `main`. Relative links in the guides are rewritten by the render-link hook to `https://github.com/ossf/scorecard/blob/<tag>/…`. Until the pinned release escapes the FAQ's placeholders, the adapter escapes `<word>` patterns in the guides. That is safe for both files today, because neither has placeholders inside code. Both stopgaps are deleted when the pinned release includes the upstream fixes.
 
 ### Build on `staging-00` and merge once
-All work happens on `staging-00`. Its `netlify.toml` sets `[build]` to `base = "site/"`, `command = "hugo --minify"`, `publish = "public"`, and `HUGO_VERSION`, so its Netlify branch deploy previews every push. Context-specific values are placed so the same file is right before and after the merge: `noindex` under `[context.branch-deploy.environment]` and `[context.deploy-preview.environment]`, and the GoatCounter code under `[context.production.environment]`. Merging `staging-00` into `main` is the cutover. Production then builds `site/` with analytics on and no `noindex`, with no further edit.
+All work happens on `staging-00`. Its `netlify.toml` sets `[build]` to `base = "site/"`, `command = "hugo --minify --panicOnWarning"`, `publish = "public"`, and `HUGO_VERSION`. Context-specific values are placed so the same file is right before and after the merge: `noindex` under `[context.branch-deploy.environment]` and `[context.deploy-preview.environment]`, and the GoatCounter code under `[context.production.environment]`. Merging `staging-00` into `main` is the cutover.
 - *Merge to `main` in steps* behind a `[context.staging-00]` block: smaller reviews, but `main` carries an unused site for weeks. Not chosen, in favor of one cutover.
-- *Second Netlify site*: continuous previews, but it needs a new site created in Netlify.
 
 ### Environment-specific output through Hugo params set per Netlify context
-Netlify runs every context with Hugo's `production` environment, so `hugo.IsProduction` cannot tell staging from production. Instead, the production context sets the GoatCounter site code as a Hugo parameter through an environment variable (`HUGO_PARAMS_…`), and the branch-deploy and deploy-preview contexts set a `noindex` parameter the same way. Templates emit the counter only when the code is present, and the robots `noindex` tag only when the flag is set. Hextra already supports `params.analytics.goatCounter`; its output is checked against today's snippet.
+Netlify runs every context with Hugo's `production` environment, so `hugo.IsProduction` cannot tell staging from production. Instead, each context sets Hugo params through `HUGO_PARAMS_…` environment variables. Templates emit the GoatCounter script only when its code is set, and the robots `noindex` tag only when that flag is set. Hextra already supports `params.analytics.goatCounter`; its output is checked against today's snippet.
 
-### Content checks: build-time templates plus two CI linters
-- **Front matter and data files** are checked in Hugo templates with `errorf`, so a bad page fails the Netlify build and CI with a message naming the file and field. In the mockup this caught a missing `title`, a non-text `description`, broken YAML, missing data fields, a non-`https` link, missing `checks.yaml`, and an unknown risk. Hugo turns a numeric `title` into text before templates see it, so that one case passes.
-- **Inline HTML** is caught by `markdownlint-cli2` with MD033 enabled for `site/content/`. CI pins the version, and `site/` gets its own config, because `scorecards-site/.markdownlint.yaml` disables MD033.
-- **Shortcodes and directives** (`{{<`, `{{%`, `{%`, `::`) outside code are caught by a small Python standard-library script.
-- **Broken links** are caught by running `lychee` offline against the built `public/` directory, with fragment checking.
-- Each check has known-good and known-bad fixtures under `site/tests/`. A CI job asserts that the good fixtures pass and that each bad fixture fails with its expected message.
+### One pinned Hugo version, read from `netlify.toml`
+`HUGO_VERSION` (Hugo extended 0.154.5, the version the mockup was verified with) is set once in `netlify.toml`. CI reads that value and installs the matching release archive, verifying its published checksum. Hextra's minimum is 0.146.0.
 
-### Checks page from a content adapter
-`site/content/docs/_content.gotmpl` builds the Checks page from `site/data/checks.yaml`, sorting by risk then name. No generated Markdown is committed, and the page's headings appear in the table of contents. Experimental checks come from a small `site/data/experimental-checks.yaml` override list, because `checks.yaml` does not mark them.
-
-### Guides transformed at sync time, not build time
-The sync script (Python standard library) copies upstream guides and transforms them: it drops the title and hand-written table of contents, points relative links at GitHub, escapes `<placeholder>` text outside code, and adds the "copied from" notice and `editURL`. Doing this in Go templates would need code-fence-aware escaping, which is fragile. The committed result is reviewable in the sync pull request.
-
-### Sync workflow opens pull requests with the repository token
-A scheduled workflow (weekly plus `workflow_dispatch`) runs the sync script. GitHub runs scheduled workflows only from the default branch, and manual runs also need the file on `main`, so the workflow first runs after cutover; until then the script runs by hand on `staging-00`. The workflow signs off its commit as `github-actions[bot]`, and opens or updates one pull request with `gh`. Permissions are `contents: write` and `pull-requests: write` on that job only. Actions are pinned by SHA, checkout credentials are not persisted, and `zizmor` must pass.
-
-### Legacy anchors in the home template
-The home layout wraps its getting-started paths in an element with `id="run-the-checks"` and its learn-more links in `id="learn-more"`. Fragments never reach the server, so redirects cannot handle them; the IDs live in the template, not in content.
-
-### Search, fonts, and assets served locally
-FlexSearch 0.8.143 (the version Hextra v0.13.0 expects) is committed under `site/assets/lib/` and set through `params.search.flexsearch.js`. By default Hextra fetches it from jsDelivr at build time, and an offline build fails. Cairo and IBM Plex Sans are self-hosted from Fontsource under the SIL Open Font License. After cutover, the hero videos move to `site/assets/media/`, where Hugo publishes nothing that no template references; they stay in `scorecards-site/` until then so a rollback still builds.
+### Viewer, search, fonts, and videos
+- **The viewer** moves once with `git mv` into `site/static/viewer/`. Reverting the cutover restores it.
+- **Search**: FlexSearch 0.8.143 (the version Hextra v0.13.0 expects) is committed under `site/assets/lib/` and set through `params.search.flexsearch.js`. By default Hextra fetches it from jsDelivr at build time with no pinned hash.
+- **Fonts**: Cairo and IBM Plex Sans are self-hosted from Fontsource under the SIL Open Font License.
+- **Videos**: after cutover, the hero videos move to `site/assets/media/`, where Hugo publishes nothing that no template references. They stay in `scorecards-site/` until then, so a rollback still builds.
 
 ## Risks / Trade-offs
 
-- **Single dominant theme maintainer** → Pin a release tag, keep content in portable Markdown, and fork the theme if it stalls. Templates the site overrides stay small.
-- **Fast-moving Hugo releases** (41 in a year; 0.146 changed the template system) → One pinned version shared by CI and Netlify, upgraded deliberately with a preview.
-- **`staging-00` drifts from `main`** (Dependabot and workflow changes keep landing there) → Rebase `staging-00` onto `main` before each review checkpoint and before cutover; `main` requires linear history, so the cutover pull request must apply cleanly.
-- **A large final review** → Split the cutover into pull requests by task group, with the `netlify.toml` change in the last one. Reviewers can follow `staging-00` along the way through its preview and the compare view.
+- **`--panicOnWarning` fails the build on any warning**, including deprecation warnings after a Hugo or theme upgrade → Upgrades are deliberate pull requests with a preview; fix the warning or hold the pin. `ignoreLogs` can silence a specific, understood warning.
+- **Builds depend on `raw.githubusercontent.com`** → An outage fails the build loudly instead of shipping stale or empty pages. Retry the deploy; the production site keeps serving the last good build.
+- **The site lags `main` until the tag is bumped** → Intended: the site documents the release people install. The `RELEASE.md` checklist item keeps the bump from being forgotten.
+- **Single dominant theme maintainer** → Pin a release tag, keep content in portable Markdown, and fork the theme if it stalls.
+- **Fast-moving Hugo releases** (41 in a year; 0.146 changed the template system) → One pinned version shared by CI and Netlify.
+- **`staging-00` drifts from `main`** → Rebase `staging-00` onto `main` before each review checkpoint and before cutover; `main` requires linear history.
+- **A large final review** → Split the cutover into pull requests by task group, with the `netlify.toml` change in the last one.
 - **Rebasing rewrites `staging-00`** → It is a staging-only branch; force-push with lease, and nobody bases other work on it.
-- **Pull requests opened with `GITHUB_TOKEN` do not trigger Actions workflows**, so the required CodeQL and dependency-review checks will not report on sync pull requests → A maintainer closes and reopens the pull request to trigger them, documented in the workflow. A GitHub App token would remove this step (see Open Questions).
 - **Web-editor sign-off for people without write access is unverified** → Test it on the staging preview before writing that section of `CONTRIBUTING.md`; the guide covers fixing a failed DCO check either way.
-- **Lighthouse and contrast thresholds are untested with the brand colors** → Measure on the first staging deploy, and adjust colors in `site/assets/css/custom.css` before content work.
-- **Both directories exist on `main` between cutover and clean-up** → Remove `scorecards-site/` as soon as production is confirmed; until then the README says `site/` is live, and npm Dependabot entries stay scoped to `scorecards-site/`.
+- **The upstream fixes may be declined or slow** → The stopgaps keep working; they are small and listed for removal.
 - **GoatCounter may not be recording today** → Port it unchanged in behavior, and confirm hits in the dashboard before cutover.
 
 ## Migration Plan
 
-1. Build on `staging-00` in task-group order: skeleton, theme, `netlify.toml`, and CI; content checks with fixtures; pages and data; Checks page, sync script, and mirrored guides; sync workflow; `CONTRIBUTING.md`. CI runs on every push, and the branch deploy previews each one.
-2. Before cutover: all specs pass on the staging preview; Lighthouse and accessibility thresholds are met; the viewer, anchors, and edit links work; the GoatCounter dashboard shows hits on production.
+1. Build on `staging-00` in task-group order. CI runs on every push, and the branch deploy previews each one. Open the upstream pull requests to `ossf/scorecard` early so the stopgaps can be retired at the next release.
+2. Before cutover: all specs pass on the staging preview; Lighthouse thresholds are met; the viewer and edit links work; the GoatCounter dashboard shows hits on production.
 3. **Cutover**: rebase `staging-00` onto `main` and open pull requests from it, split by task group if reviewers ask, with the `netlify.toml` change in the last one. Merging that one switches production. **Rollback**: revert it; `scorecards-site/` is still present and unchanged.
 4. After production is confirmed: move the hero videos into `site/assets/media/`, then remove `scorecards-site/`, its npm Dependabot entry, and Nuxt-only CI steps. Archive `migrate-nuxt3-vue3` without syncing its specs, then archive this change.
 
 ## Open Questions
 
-- Whether sync pull requests should use a GitHub App token, so required Actions checks run without a manual close and reopen. This needs an app installed on the repository.
 - Who holds the GoatCounter `securityscorecards` login and can confirm hits before cutover.
 - How often to upgrade Hugo after the initial pin.

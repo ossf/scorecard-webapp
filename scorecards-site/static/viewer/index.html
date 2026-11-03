@@ -1640,8 +1640,8 @@
                   <div class="error-code">
                     <pre>
 {
-  "code": ${error.content.code},
-  "message": ${error.content.message || '-'}
+  "code": ${Handlebars.escapeExpression(error.content.code)},
+  "message": ${Handlebars.escapeExpression(error.content.message || '-')}
 }</pre>
                   </div>
                 `

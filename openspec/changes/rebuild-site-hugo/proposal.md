@@ -35,4 +35,5 @@ Rebuilding the site as plain Markdown on Hugo with the Hextra theme removes the 
 - **Upstream (`ossf/scorecard`)**: pull requests to escape placeholders in `docs/faq.md`, add an `experimental` field to `checks.yaml` and its reader, and add the site tag bump to `RELEASE.md`.
 - **Removed after cutover**: `scorecards-site/`, its npm Dependabot entry, and the Nuxt-only CI steps.
 - **In-flight change**: `migrate-nuxt3-vue3` specifies `scorecards-site-platform` for the Nuxt site. Its specs have not been synced. After cutover it describes removed code, so archive it without syncing its specs.
-- **Out of scope**: the viewer's own code, the REST API and its docs on `api.scorecard.dev`, translations (English only for now), and a visual CMS.
+- **Viewer**: changes to the viewer's own code are specified in `improve-viewer` and land on `main`; rebasing `staging-00` carries them across the move.
+- **Out of scope**: the REST API and its docs on `api.scorecard.dev`, translations (English only for now), and a visual CMS.
